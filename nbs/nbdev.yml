@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "feedback_control"
+  site-url: "https://andreamunafo.github.io/feedback_control"
+  description: "Course in feedback control for the University of Pisa"
+  repo-branch: main
+  repo-url: "https://github.com/andreamunafo/feedback_control"
