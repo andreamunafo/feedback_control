@@ -1,0 +1,31 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_Syllabus.ipynb
+      - 01_Getting_started_with_Python_and_Jupyter_Notebook.ipynb
+      - 02_Intro_to_control_theory.ipynb
+      - 03_Transfer_functions.ipynb
+      - 04_Block_Diagrams.ipynb
+      - 05_System_response.ipynb
+      - 06_Intro_to_freq_response_and_bode_plots.ipynb
+      - 07_Final_value_theorem_and_steady_state_error.ipynb
+      - 08_Main_types_of_loops_and_transfer_functions.ipynb
+      - 09_Routh_hurwitz_criterion.ipynb
+      - 10_Part_1_recap.ipynb
+      - 11_Nyquist_stability_criterion.ipynb
+      - 12_Stability_Margins.ipynb
+      - 13_Loop-shaping.ipynb
+      - 14_Root_locus.ipynb
+      - 15_Lead_lag_compensators.ipynb
+      - 16_PID_Control.ipynb
+      - 17_Part_2_recap.ipynb
+      - 90_Simple_pendulum.ipynb
+      - 91_DC_motor.ipynb
+      - 99_workspace.ipynb
+      - 99_workspace_solution.ipynb
+      - A_assignment_part_1.ipynb
+      - A_assignment_part_1_solution.ipynb
+      - A_assignment_part_2.ipynb
+      - A_assignment_part_2_solution-to-verify-design-of-lead-compensator-nise.ipynb
+      - A_assignment_part_2_solution.ipynb
