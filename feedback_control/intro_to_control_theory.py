@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 45
+# %% ../nbs/02_Intro_to_control_theory.ipynb 44
 class Car:
     _g = 9.8 # Gravity
     
@@ -36,7 +36,7 @@ class Car:
         v = self._x_2
         return (x_i, y_i, v)
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 48
+# %% ../nbs/02_Intro_to_control_theory.ipynb 47
 class LinearCar:
     _g = 9.8
     
@@ -71,7 +71,7 @@ class LinearCar:
         v = self._x_2
         return (x_i, y_i, v)
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 93
+# %% ../nbs/02_Intro_to_control_theory.ipynb 92
 def step(t, step_time=0):
     """Heaviside step function"""
     return 1 * (t >= step_time)
@@ -85,7 +85,7 @@ def delta(t, delta_t=0, eps=None): # Impulse
         _eps = eps
     return 1/_eps*(step(t, delta_t-_eps/2)-step(t, delta_t+_eps/2))
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 104
+# %% ../nbs/02_Intro_to_control_theory.ipynb 103
 def ramp_as_impulses(t, time_vector):    
     u = t*delta(time_vector, delta_t=t, eps=.01)
     return u

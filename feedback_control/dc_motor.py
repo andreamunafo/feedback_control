@@ -216,7 +216,7 @@ class AnimateControlledPendulum():
         """Initialize animation.
            Plot the background of each frame. """
         self._line.set_data([], [])        
-        return self._line
+        return self._line,
             
     def animate(self, i):           
         """Animation function. 

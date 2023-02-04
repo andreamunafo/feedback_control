@@ -24,11 +24,11 @@ Teaching semester: SPRING 2023
 
 Language of instruction: Italian and English
 
-## Course coordinator:
+## Course coordinator
 
 Andrea Munafo
 
-## Lecturer(s):
+## Lecturer(s)
 
 Andrea Munafo
 

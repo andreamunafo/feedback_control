@@ -175,7 +175,7 @@ class AnimatePendulum():
         """Initialize animation.
            Plot the background of each frame. """
         self._line.set_data([], [])        
-        return self._line
+        return self._line,
     
     def simulate(self, u):        
         for t in np.arange(start=t0, stop=tf, step=dt):
@@ -369,7 +369,7 @@ class AnimateControlledPendulum():
         """Initialize animation.
            Plot the background of each frame. """
         self._line.set_data([], [])        
-        return self._line
+        return self._line,
     
     def simulate(self, angle_ref, controller_flag=True):        
         for t in np.arange(start=self._t0, stop=self._tf, step=self._dt):            

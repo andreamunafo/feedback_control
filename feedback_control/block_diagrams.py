@@ -7,7 +7,7 @@ __all__ = ['SimplerCar']
 import numpy as np
 import matplotlib.pyplot as plt
 
-# %% ../nbs/04_Block_Diagrams.ipynb 72
+# %% ../nbs/04_Block_Diagrams.ipynb 71
 class SimplerCar:
     _g = 9.8
     
