@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 44
+# %% ../nbs/02_Intro_to_control_theory.ipynb 41
 class Car:
     _g = 9.8 # Gravity
     
@@ -36,7 +36,7 @@ class Car:
         v = self._x_2
         return (x_i, y_i, v)
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 47
+# %% ../nbs/02_Intro_to_control_theory.ipynb 56
 class LinearCar:
     _g = 9.8
     
@@ -53,7 +53,7 @@ class LinearCar:
         B = np.array([[0, 0], [self._gamma/self._m, -LinearCar._g]])
         
         x = np.array([[self._x_1],[self._x_2]])
-        U = np.array([[u],[theta]])
+        U = np.array([[u],[np.cos(theta)]])
         
         self._x_1 = (self._x_1 + dt*(A[0,np.newaxis,:].dot(x) + B[0,np.newaxis,:].dot(U))).item()
         self._x_2 = (self._x_2 + dt*(A[1,np.newaxis,:].dot(x) + B[1,np.newaxis,:].dot(U))).item()
@@ -61,9 +61,8 @@ class LinearCar:
     def speedometer(self):        
         v = self._x_2
         return (v,)
-    
-    # Utility function to simplify plotting
-    def sensor_i(self):
+        
+    def sensor_i(self): # Utility function to simplify plotting
         # Rotation matrix to get back to the inertial frame..
         R = np.array(((np.cos(self._theta), -np.sin(self._theta)), 
                       (np.sin(self._theta), np.cos(self._theta))))
@@ -71,21 +70,45 @@ class LinearCar:
         v = self._x_2
         return (x_i, y_i, v)
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 92
+# %% ../nbs/02_Intro_to_control_theory.ipynb 102
 def step(t, step_time=0):
     """Heaviside step function"""
     return 1 * (t >= step_time)
 
-def delta(t, delta_t=0, eps=None): # Impulse
+def delta(t, delta_t=0, eps=None): 
+    """
+    Dirac Pulse
+    
+    The function delta computes an approximation of the impulse function (also called Dirac delta function) 
+    over a given time range t. 
+    The impulse function is a theoretical function that is zero everywhere except at t=0, where it is infinite. 
+    In practice, we cannot generate an infinite impulse, so we use a finite approximation.
+
+    The function takes three arguments:
+    t:       a scalar or an array of time values at which to compute the function.
+    delta_t: the time at which the impulse occurs. This is an optional argument with a default value of 0, which means the impulse occurs at t=0.
+    eps:     the width of the pulse used to approximate the impulse. 
+             This is an optional argument with a default value of None, 
+             which means the function will try to estimate it automatically based on the time values in t.
+             If eps is not defined and t has more than one element, 
+             eps is estimated as the difference between the first two elements of t. 
+             Otherwise, eps is set to the value of the eps argument.
+
+    Computation of the impulse approximation: 
+        It uses the step function to create a pulse that has a width of eps centered at delta_t, 
+        and then subtracts two of these pulses to create a pulse that approximates the impulse function.
+        
+    The function returns the computed pulse as an array of the same shape as t.
+    """
     if np.isscalar(t) and eps is None:
         raise Exception('eps must be defined for scalar values.')
     if eps is None and len(t) > 1: 
         _eps=t[1]-t[0]
     else:
         _eps = eps
-    return 1/_eps*(step(t, delta_t-_eps/2)-step(t, delta_t+_eps/2))
+    return 1/_eps*(step(t, delta_t-_eps/2) - step(t, delta_t+_eps/2)) # area 1
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 103
+# %% ../nbs/02_Intro_to_control_theory.ipynb 113
 def ramp_as_impulses(t, time_vector):    
     u = t*delta(time_vector, delta_t=t, eps=.01)
     return u

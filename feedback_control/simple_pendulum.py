@@ -101,10 +101,6 @@ class Pendulum(Load):
     
     def rod_position(self):
         return self.rod_position_at(self.sense_theta_deg())
-#         rod_end_1 = 0, 0
-#         rod_end_2 = rod_end_1[0]+ self._params._rod_length*np.sin(np.radians(self.sense_theta_deg())), \
-#                     rod_end_1[1]- self._params._rod_length*np.cos(np.radians(self.sense_theta_deg())), 
-#         return rod_end_1, rod_end_2
     
     def position(self):    
         return self._x_1 # we measure theta (rad)
