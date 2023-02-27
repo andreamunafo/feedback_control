@@ -3,6 +3,7 @@ website:
     contents:
       - index.ipynb
       - 00_Syllabus.ipynb
+      - 00_Syllabus.slides.html
       - 01_Getting_started_with_Python_and_Jupyter_Notebook.ipynb
       - 02_Intro_to_control_theory.ipynb
       - 03_Transfer_functions.ipynb
