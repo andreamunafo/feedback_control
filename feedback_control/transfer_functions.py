@@ -3,12 +3,12 @@
 # %% auto 0
 __all__ = ['step', 'ramp', 'delta']
 
-# %% ../nbs/03_Transfer_functions.ipynb 4
+# %% ../nbs/03_Transfer_functions.ipynb 5
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# %% ../nbs/03_Transfer_functions.ipynb 28
+# %% ../nbs/03_Transfer_functions.ipynb 29
 def step(t, step_time=0):
     """Heaviside step function"""
     return 1 * (t >= step_time) #np.ones((1,len(t))).squeeze()

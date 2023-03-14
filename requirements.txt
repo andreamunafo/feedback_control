@@ -2,4 +2,5 @@ control==0.9.3.post2
 matplotlib==3.5.3
 numpy==1.22.4
 pandas==1.5.2
+sympy==1.11.1
 setuptools==65.5.0

@@ -21,12 +21,15 @@ website:
       - 15_Lead_lag_compensators.ipynb
       - 16_PID_Control.ipynb
       - 17_Part_2_recap.ipynb
-      - 90_Simple_pendulum.ipynb
-      - 91_DC_motor.ipynb
-      - 99_workspace.ipynb
-      - 99_workspace_solution.ipynb
-      - A_assignment_part_1.ipynb
-      - A_assignment_part_1_solution.ipynb
-      - A_assignment_part_2.ipynb
-      - A_assignment_part_2_solution-to-verify-design-of-lead-compensator-nise.ipynb
-      - A_assignment_part_2_solution.ipynb
+      - 18_Murray_Hopper.ipynb
+      - section: assignments
+        contents:
+          - assignments/90_Simple_pendulum.ipynb
+          - assignments/91_DC_motor.ipynb
+          - assignments/99_workspace.ipynb
+          - assignments/99_workspace_solution.ipynb
+          - assignments/A_assignment_part_1.ipynb
+          - assignments/A_assignment_part_1_solution.ipynb
+          - assignments/A_assignment_part_2.ipynb
+          - assignments/A_assignment_part_2_solution-to-verify-design-of-lead-compensator-nise.ipynb
+          - assignments/A_assignment_part_2_solution.ipynb

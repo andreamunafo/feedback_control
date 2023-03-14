@@ -53,7 +53,7 @@ class LinearCar:
         B = np.array([[0, 0], [self._gamma/self._m, -LinearCar._g]])
         
         x = np.array([[self._x_1],[self._x_2]])
-        U = np.array([[u],[np.cos(theta)]])
+        U = np.array([[u],[theta]]) 
         
         self._x_1 = (self._x_1 + dt*(A[0,np.newaxis,:].dot(x) + B[0,np.newaxis,:].dot(U))).item()
         self._x_2 = (self._x_2 + dt*(A[1,np.newaxis,:].dot(x) + B[1,np.newaxis,:].dot(U))).item()
@@ -70,7 +70,7 @@ class LinearCar:
         v = self._x_2
         return (x_i, y_i, v)
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 102
+# %% ../nbs/02_Intro_to_control_theory.ipynb 104
 def step(t, step_time=0):
     """Heaviside step function"""
     return 1 * (t >= step_time)
@@ -108,7 +108,7 @@ def delta(t, delta_t=0, eps=None):
         _eps = eps
     return 1/_eps*(step(t, delta_t-_eps/2) - step(t, delta_t+_eps/2)) # area 1
 
-# %% ../nbs/02_Intro_to_control_theory.ipynb 113
+# %% ../nbs/02_Intro_to_control_theory.ipynb 115
 def ramp_as_impulses(t, time_vector):    
     u = t*delta(time_vector, delta_t=t, eps=.01)
     return u
