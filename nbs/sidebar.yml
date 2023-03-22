@@ -14,6 +14,7 @@ website:
       - 08_Main_types_of_loops_and_transfer_functions.ipynb
       - 09_Routh_hurwitz_criterion.ipynb
       - 10_Part_1_recap.ipynb
+      - 11_Nyquist_stability_criterion-Copy1.ipynb
       - 11_Nyquist_stability_criterion.ipynb
       - 12_Stability_Margins.ipynb
       - 13_Loop-shaping.ipynb
