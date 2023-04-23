@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Introduction to Frequency Response Methods: Bode Plots</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Introduction to Frequency Response Methods: Bode Plots">
+<meta property="og:description" content="Given an LTI system with transfer function: \(G(s) = C(sI - A)^{-1}B\)">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Introduction to Frequency Response Methods: Bode Plots">
+<meta name="twitter:description" content="Given an LTI system with transfer function: \(G(s) = C(sI - A)^{-1}B\)">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Introduction to Frequency Response Methods: Bode Plots</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link active">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#frequency-response" id="toc-frequency-response" class="nav-link active" data-scroll-target="#frequency-response">Frequency response</a>
+  <ul class="collapse">
+  <li><a href="#comments" id="toc-comments" class="nav-link" data-scroll-target="#comments">Comments</a></li>
+  </ul></li>
+  <li><a href="#complex-numbers-and-their-representation-through-magnitude-and-phase" id="toc-complex-numbers-and-their-representation-through-magnitude-and-phase" class="nav-link" data-scroll-target="#complex-numbers-and-their-representation-through-magnitude-and-phase">Complex numbers and their representation through magnitude and phase</a></li>
+  <li><a href="#frequency-response-and-bode-plots" id="toc-frequency-response-and-bode-plots" class="nav-link" data-scroll-target="#frequency-response-and-bode-plots">Frequency Response and Bode Plots</a>
+  <ul class="collapse">
+  <li><a href="#lets-be-more-formal" id="toc-lets-be-more-formal" class="nav-link" data-scroll-target="#lets-be-more-formal">Let’s be more formal</a></li>
+  <li><a href="#magnitude-and-phase" id="toc-magnitude-and-phase" class="nav-link" data-scroll-target="#magnitude-and-phase">Magnitude and Phase</a></li>
+  <li><a href="#bode-amplitude-plot" id="toc-bode-amplitude-plot" class="nav-link" data-scroll-target="#bode-amplitude-plot">Bode Amplitude Plot</a></li>
+  <li><a href="#sketching-bode-plots" id="toc-sketching-bode-plots" class="nav-link" data-scroll-target="#sketching-bode-plots">Sketching Bode Plots</a></li>
+  </ul></li>
+  <li><a href="#representing-the-simplest-transfer-function-on-a-bode-plot" id="toc-representing-the-simplest-transfer-function-on-a-bode-plot" class="nav-link" data-scroll-target="#representing-the-simplest-transfer-function-on-a-bode-plot">Representing the simplest transfer function on a Bode Plot</a>
+  <ul class="collapse">
+  <li><a href="#represent-on-a-bode-plot" id="toc-represent-on-a-bode-plot" class="nav-link" data-scroll-target="#represent-on-a-bode-plot">Represent on a Bode Plot</a></li>
+  </ul></li>
+  <li><a href="#bode-plot-of-the-integrator" id="toc-bode-plot-of-the-integrator" class="nav-link" data-scroll-target="#bode-plot-of-the-integrator">Bode Plot of the Integrator</a>
+  <ul class="collapse">
+  <li><a href="#what-about-a-zero" id="toc-what-about-a-zero" class="nav-link" data-scroll-target="#what-about-a-zero">What about a zero?</a></li>
+  </ul></li>
+  <li><a href="#frequency-response-of-simple-poles-and-zeros" id="toc-frequency-response-of-simple-poles-and-zeros" class="nav-link" data-scroll-target="#frequency-response-of-simple-poles-and-zeros">Frequency Response of Simple Poles and Zeros</a>
+  <ul class="collapse">
+  <li><a href="#transfer-function-with-a-single-real-pole" id="toc-transfer-function-with-a-single-real-pole" class="nav-link" data-scroll-target="#transfer-function-with-a-single-real-pole">Transfer function with a single real pole</a></li>
+  <li><a href="#transfer-function-with-a-single-real-zero" id="toc-transfer-function-with-a-single-real-zero" class="nav-link" data-scroll-target="#transfer-function-with-a-single-real-zero">Transfer function with a single real zero</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#transfer-function-with-a-pair-of-complex-poles-zeros" id="toc-transfer-function-with-a-pair-of-complex-poles-zeros" class="nav-link" data-scroll-target="#transfer-function-with-a-pair-of-complex-poles-zeros">Transfer function with a pair of complex poles / zeros</a></li>
+  <li><a href="#final-comments" id="toc-final-comments" class="nav-link" data-scroll-target="#final-comments">Final comments</a></li>
+  <li><a href="#ok-really-the-final-comment---bode-plot-of-a-delay" id="toc-ok-really-the-final-comment---bode-plot-of-a-delay" class="nav-link" data-scroll-target="#ok-really-the-final-comment---bode-plot-of-a-delay">OK, really the final comment - Bode plot of a delay</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a>
+  <ul class="collapse">
+  <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise 1</a></li>
+  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise 2</a></li>
+  </ul></li>
+  <li><a href="#final-notes-on-bode-plots" id="toc-final-notes-on-bode-plots" class="nav-link" data-scroll-target="#final-notes-on-bode-plots">Final notes on Bode Plots</a>
+  <ul class="collapse">
+  <li><a href="#bandwidth" id="toc-bandwidth" class="nav-link" data-scroll-target="#bandwidth">Bandwidth</a></li>
+  <li><a href="#bandwidth-and-system-response" id="toc-bandwidth-and-system-response" class="nav-link" data-scroll-target="#bandwidth-and-system-response">Bandwidth and system response</a></li>
+  <li><a href="#bandwidth-in-feedback-systems" id="toc-bandwidth-in-feedback-systems" class="nav-link" data-scroll-target="#bandwidth-in-feedback-systems">Bandwidth in feedback systems</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Introduction to Frequency Response Methods: Bode Plots</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<section id="frequency-response" class="level2">
+<h2 class="anchored" data-anchor-id="frequency-response">Frequency response</h2>
+<p>Given an LTI system with transfer function: <span class="math inline">\(G(s) = C(sI - A)^{-1}B\)</span></p>
+<p>and an input signal: <span class="math inline">\(u(t)=Asin(\omega t)\)</span></p>
+<p>Assuming that the system is <strong>asymptotically stable</strong>, it is possible to verify that:</p>
+<p><span class="math display">\[y(t)=A|G(j\omega)|sin(\omega t + \angle G(j\omega) ) \]</span></p>
+<p>This means that the output <span class="math inline">\(y(t)\)</span> converges to a sinusoidal signal that has the <strong>same frequency</strong> of the input, and that has magnitude <span class="math inline">\(A|G(j\omega)|\)</span> and is shifted in phase by <span class="math inline">\(\angle G(j\omega)\)</span>.</p>
+<p>Note also that this is true independently of the initial state <span class="math inline">\(x_0\)</span>. In fact, since the system is asymptotically stable, the effect of the initial state on the output will go to zero.</p>
+
+
+<img src="img/26.freq-response.png" alt="freq-response.png" style="width: 550px;">
+
+
+<p>Let’s see what this means with our LinearCar:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> feedback_control.intro_to_control_theory <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's define its initial conditions</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># no slope terrain</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">0</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the car parameters</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>beta <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> (m, alpha, beta, gamma)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the car</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> LinearCar(x_0, params)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># run it!</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">30</span>, <span class="fl">0.1</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.arange(t0, tf, dt)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="dv">1</span> <span class="co"># rad/s</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> <span class="dv">1</span><span class="op">*</span>np.sin(w<span class="op">*</span>time) <span class="co"># SINUSOIDAL INPUT</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, t <span class="kw">in</span> <span class="bu">enumerate</span>(np.arange(t0, tf, dt)):</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u[i], theta)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    x_i, y_i, v <span class="op">=</span> car.sensor_i()</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    position.append((x_i,y_i)), velocity.append(v)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And now we plot it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First set up the figure, the axis, and the plot element we want to animate</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ax.set_xlim((<span class="bu">min</span>(position)[<span class="dv">0</span>], <span class="bu">max</span>(position)[<span class="dv">0</span>]))<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylim((<span class="op">-</span><span class="dv">50</span>, <span class="dv">10</span>))<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>line, <span class="op">=</span> ax.plot([], [], lw<span class="op">=</span><span class="dv">4</span>)<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="bu">int</span>(position[<span class="dv">0</span>][<span class="dv">0</span>]), <span class="bu">int</span>(position[<span class="op">-</span><span class="dv">1</span>][<span class="dv">0</span>]), num<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># animation function. This is called sequentially</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> animate(i):    </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    x_min, x_max <span class="op">=</span> position[<span class="bu">max</span>(<span class="dv">0</span>,i<span class="op">-</span><span class="dv">2</span>)][<span class="dv">0</span>], position[i][<span class="dv">0</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    y_min, y_max <span class="op">=</span> position[<span class="bu">max</span>(<span class="dv">0</span>,i<span class="op">-</span><span class="dv">2</span>)][<span class="dv">1</span>], position[i][<span class="dv">1</span>]</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    line.set_data([x_min, x_max], [y_min, y_max])</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (line,)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># call the animator. blit=True means only re-draw the parts that have changed.</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>anim <span class="op">=</span> animation.FuncAnimation(fig, animate,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                               frames<span class="op">=</span><span class="bu">len</span>(time), interval<span class="op">=</span><span class="dv">40</span>, blit<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                               repeat_delay<span class="op">=</span><span class="dv">10000</span>, repeat<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>plt.close()</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>HTML(anim.to_html5_video())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<video width="640" height="480" controls="" autoplay="" loop="">
+  <source type="video/mp4" src="data:video/mp4;base64,AAAAHGZ0eXBNNFYgAAACAGlzb21pc28yYXZjMQAAAAhmcmVlAABKgW1kYXQAAAKhBgX//53cRem9
+5tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTU3IC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENv
+cHlsZWZ0IDIwMDMtMjAxOCAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9w
+dGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1o
+ZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2
+IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0
+X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD0tMiB0aHJlYWRzPTE1IGxvb2thaGVhZF90aHJlYWRz
+PTIgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9j
+b21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiBiX2FkYXB0
+PTEgYl9iaWFzPTAgZGlyZWN0PTEgd2VpZ2h0Yj0xIG9wZW5fZ29wPTAgd2VpZ2h0cD0yIGtleWlu
+dD0yNTAga2V5aW50X21pbj0yNSBzY2VuZWN1dD00MCBpbnRyYV9yZWZyZXNoPTAgcmNfbG9va2Fo
+ZWFkPTQwIHJjPWNyZiBtYnRyZWU9MSBjcmY9MjMuMCBxY29tcD0wLjYwIHFwbWluPTAgcXBtYXg9
+NjkgcXBzdGVwPTQgaXBfcmF0aW89MS40MCBhcT0xOjEuMDAAgAAADvVliIQAO//+906/AptFl2oD
+klcK9sqkJlm5UmsB8qYAAAMAAAMAAAMAkIRx7muVyT1mgAAAL2AJm14IP0Bf+AAqnwlR/n0uQlsP
+Jfg8IhWWi5SrerMqHEjXX4YQEzBx9TJZgM+EkrZyfeVCsNHx7WlihMSj7SXNHX0YzhGEv5PQeiNM
+cS8Hv37+cvWlOBW3zSkCPR9fN7vWTqk+uXa1SSRs14YgNr8mw0uNplgL1grwGe05cSUlERghhW+8
+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
+AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAgAAEFx0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAALuAA
+AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAoAAAAHg
+AAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAC7gAAAEAAABAAAAAA/UbWRpYQAAACBtZGhkAAAA
+AAAAAAAAAAAAAAAyAAACWABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRl
+b0hhbmRsZXIAAAAPf21pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAA
+AAAAAQAAAAx1cmwgAAAAAQAADz9zdGJsAAAAs3N0c2QAAAAAAAAAAQAAAKNhdmMxAAAAAAAAAAEA
+AAAAAAAAAAAAAAAAAAAAAoAB4ABIAAAASAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAGP//AAAAMWF2Y0MBZAAe/+EAGGdkAB6s2UCgPaEAAAMAAQAAAwAyDxYtlgEABmjr
+48siwAAAABx1dWlka2hA8l8kT8W6OaUbzwMj8wAAAAAAAAAYc3R0cwAAAAAAAAABAAABLAAAAgAA
+AAAYc3RzcwAAAAAAAAACAAAAAQAAAPsAAAlgY3R0cwAAAAAAAAEqAAAAAQAABAAAAAABAAAKAAAA
+AAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAA
+AQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAAB
+AAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEA
+AAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAA
+BAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAK
+AAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIA
+AAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAA
+AAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACAAAAAACAAACAAAA
+AAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAA
+AQAAAgAAAAABAAAEAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAAB
+AAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEA
+AAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAA
+AgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAA
+AAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAIAAAAAAIAAAIA
+AAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAA
+AAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAA
+AAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAA
+AQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAAB
+AAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEA
+AAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAA
+AAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAE
+AAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoA
+AAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAA
+AAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAA
+AAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAA
+AQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAAB
+AAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEA
+AAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAA
+AgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAA
+AAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQA
+AAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAA
+AAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAEAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAA
+AAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAEAAAAAAEAAAoAAAAA
+AQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAAB
+AAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAQAAAAAAQAACgAAAAABAAAEAAAAAAEA
+AAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAA
+BAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAK
+AAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIA
+AAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAA
+AAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAACgAAAAABAAAEAAAA
+AAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAA
+AQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAABAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAASwAAAAB
+AAAExHN0c3oAAAAAAAAAAAAAASwAABGeAAAAhwAAACgAAAAeAAAAGQAAAEwAAAAgAAAAGAAAABsA
+AABCAAAAJQAAABwAAAAaAAAAMwAAACkAAAAbAAAAHwAAAC0AAAAiAAAAHQAAABsAAAAvAAAAIgAA
+ABwAAAAaAAAAOQAAAB8AAAAZAAAAGwAAACkAAAAhAAAAGwAAABwAAAAiAAAAIgAAABsAAAAbAAAA
+IgAAACIAAAAcAAAAHQAAACMAAAAlAAAAHgAAAB4AAAAzAAAAIgAAABsAAAAdAAAAJwAAACIAAAAd
+AAAAHQAAADMAAAAhAAAAGwAAABwAAAA9AAAAIQAAAB0AAAAiAAAAIgAAABwAAAAbAAAAMwAAACIA
+AAAdAAAAHQAAADoAAAAjAAAAIgAAABwAAAAbAAAAIwAAACIAAAAdAAAAHQAAACQAAAAhAAAAHQAA
+ABsAAAA2AAAAIQAAABwAAAAdAAAALgAAACIAAAAdAAAAHQAAAB8AAAAgAAAAGwAAABwAAAAzAAAA
+IgAAAB0AAAAdAAAAIwAAACEAAAAdAAAAHAAAAD0AAAAgAAAAHAAAADMAAAAiAAAAHQAAAB0AAAAk
+AAAAIQAAABwAAAAbAAAAMQAAACIAAAAdAAAAHQAAACIAAAAhAAAAHQAAABsAAAA5AAAAIgAAABwA
+AAAdAAAAKAAAACMAAAAdAAAAGwAAADUAAAAiAAAAHAAAAB0AAAAkAAAAIwAAAB0AAAAcAAAAQgAA
+ACMAAAAcAAAAHAAAACQAAAAkAAAAHQAAAB0AAAAiAAAAJAAAABwAAAAbAAAAMwAAACQAAAAcAAAA
+HQAAACQAAAAlAAAAHQAAABwAAAA7AAAAJAAAABsAAAAcAAAAJgAAACUAAAAdAAAAHQAAACkAAAAk
+AAAAHAAAABsAAAAnAAAAJQAAAB0AAAAdAAAAJAAAACQAAAAdAAAAGwAAACQAAAAlAAAAHAAAAB0A
+AAAoAAAAJAAAAB0AAAAcAAAAOgAAACQAAAAbAAAAHQAAACcAAAAlAAAAHQAAABwAAAA5AAAAJAAA
+ABsAAAAdAAAAKAAAACUAAAAdAAAAHQAAACEAAAAjAAAAHAAAABsAAAAwAAAAJAAAAB0AAAAdAAAA
+JAAAACQAAAAdAAAAGwAAADEAAAAoAAAAHAAAAB4AAAAnAAAAJgAAAB0AAAAdAAAAKgAAACQAAAAb
+AAAAGwAAACUAAAAkAAAAHQAAAB0AAAAkAAAAIQAAACQAAAAcAAAAGwAAADQAAAAkAAAAHQAAAB0A
+AAAhAAAAIgAAACQAAAAcAAAAGwAAAD4AAAAmAAAAHQAAAB8AAAAjAAAAJQAAAB4AAAAdAAARCgAA
+AFsAAAAdAAAAGwAAABkAAAAmAAAAHgAAABgAAAAVAAAANQAAABsAAAAWAAAAGAAAACMAAAAcAAAA
+GQAAABYAAAAzAAAAGwAAABcAAAAYAAAAKQAAABsAAAAXAAAAGAAAAB8AAAAaAAAAFwAAABUAAAAy
+AAAAHAAAABgAAAAYAAAAIgAAABsAAAAYAAAAFwAAAEAAAAAcAAAAFQAAABcAAAA5AAAAHAAAABgA
+AAAYAAAAOgAAAC0AAAAuAAAAHwAAACsAAAAUc3RjbwAAAAAAAAABAAAALAAAAGJ1ZHRhAAAAWm1l
+dGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAA
+AB1kYXRhAAAAAQAAAABMYXZmNTguMjkuMTAw
+">
+  Your browser does not support the video tag.
+</video>
+</div>
+</div>
+<p>And if we plot the speed with respect to the input signal:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.plot(u, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.plot(velocity, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'input: u'</span>, <span class="st">'output: v'</span>], loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Frequency response'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="comments" class="level3">
+<h3 class="anchored" data-anchor-id="comments">Comments</h3>
+<p>Given an LTI system with transfer function: <span class="math inline">\(G(s) = C(sI - A)^{-1}B\)</span></p>
+<p>and an input signal: <span class="math inline">\(u(t)=Asin(\omega t)\)</span></p>
+<p>Assuming that the system is <strong>asymptotically stable</strong>, it is possible to verify that:</p>
+<p><span class="math display">\[y(t)=A|G(j\omega)|sin(\omega t + \angle G(j\omega) ) \]</span></p>
+<ul>
+<li>The complex function <span class="math inline">\(G(j\omega)\)</span> is called frequency response (or harmonic response) of the system</li>
+</ul>
+<p><strong>If we know magnitude and phase of <span class="math inline">\(G(j\omega)\)</span>, as <span class="math inline">\(\omega\)</span> varies, then effectively we know how the system behaves for all sinusoidal inputs with different driving frequencies.</strong> - It is possible to experimentally determine <span class="math inline">\(G(j\omega)\)</span> which means that we can also reconstruct the transfer function - <span class="math inline">\(G(j\omega)\)</span> can be represented graphically through Magnitude and Phase diagrams (each one is a Real Function of the real variable <span class="math inline">\(\omega\)</span>): <span class="math display">\[G(j\omega)=|G(j\omega)|e^{j\angle G(j\omega)}\]</span> - This makes it possible to analyse the gain and the phase shift across the full frequency spectrum</p>
+<ul>
+<li>Finally, as a side observation, note that if we have a sinusoidal input <span class="math inline">\(sin(\omega_0 t)\)</span>, the output can be zero only if <span class="math inline">\(G(j\omega_0)=0\)</span>. This happens if the T.F. <span class="math inline">\(G(s)\)</span> has a pair of imaginary zeros in <span class="math inline">\(j\omega_0\)</span>.</li>
+</ul>
+<p><strong>Note:</strong> - The time of the transient before the output of the system converges towards $y(t)=A|G(j)|sin(t + G(j) ) $ depends on dynamics of the system and can be evaluated using the settling time <span class="math inline">\(t_s\)</span>.</p>
+<hr>
+</section>
+</section>
+<section id="complex-numbers-and-their-representation-through-magnitude-and-phase" class="level2">
+<h2 class="anchored" data-anchor-id="complex-numbers-and-their-representation-through-magnitude-and-phase">Complex numbers and their representation through magnitude and phase</h2>
+<p>Complex Numbers are a very popular and frequently used aspect of Mathematics. Composed of a real part and an imaginary part, they are written in the form <span class="math inline">\(\mathit{\mathbf{x + iy}}\)</span>.</p>
+<ul>
+<li><p><span class="math inline">\(\mathit{\mathbf{x}}\)</span> denotes the real part and <span class="math inline">\(\mathit{\mathbf{iy}}\)</span> denotes the imaginary part.</p></li>
+<li><p>Complex numbers can be represented on an <strong>Argand Diagram</strong>.</p></li>
+<li><p>An <strong>Argand Diagram</strong> is similar to the <strong>Cartesian Coordinate System</strong> except that the Real axis and Imaginary axis replace the <span class="math inline">\(\mathit{\mathbf{X}}\)</span> and <span class="math inline">\(\mathit{\mathbf{Y}}\)</span> axis respectively which you would usually expect see on the Cartesian system. For example:</p></li>
+</ul>
+
+
+<img src="img/27.complex-numbers.png" alt="27.complex-numbers.png" style="width: 350px;">
+
+
+<p>The complex number <span class="math inline">\(\mathit{\mathbf{z = x + iy}}\)</span> can hence be also represented as: <span class="math display">\[\large \mathit{\mathbf{|z|e^{j\angle z}}}\]</span></p>
+<ul>
+<li>The Modulus of the Complex Number gives the straight line distance from the origin to the point: <span class="math inline">\(\mathit{\mathbf{|z|=\sqrt{x^2+y^2}}}\)</span></li>
+<li>The Argument gives the angle between the line representing the complex number and the positive real axis: <span class="math inline">\(\angle z = arctan \frac{y}{x}\)</span></li>
+</ul>
+
+
+<img src="img/28.complex_magnitude-argument.png" alt="28.complex_magnitude-argument" style="width: 450px;">
+
+
+<ul>
+<li>Sinusoids can be represented as complex numbers called <em>phasors</em>.</li>
+<li>The magnitude of the complex number is the amplitude of the sinusoid,</li>
+<li>The angle of the complex number is the phase angle of the sinusoid.</li>
+</ul>
+<p>Thus:</p>
+<p><span class="math display">\[
+M_1 cos(\omega t + \phi_1)
+\]</span></p>
+<p>Can be represented as:</p>
+<p><span class="math display">\[
+M_1\angle \phi_1
+\]</span></p>
+<p>where the frequency <span class="math inline">\(\omega\)</span> is implicit.</p>
+<hr>
+</section>
+<section id="frequency-response-and-bode-plots" class="level2">
+<h2 class="anchored" data-anchor-id="frequency-response-and-bode-plots">Frequency Response and Bode Plots</h2>
+<p>The objective is that of analysing the gain and the phase shift across the full frequency spectrum.</p>
+<p>Let’s now suppose that we have one simple system:</p>
+
+
+<img src="img/29.simple-system.png" alt="29.simple-system" style="width: 450px;">
+
+
+<p>When we have <span class="math inline">\(u(t)=\sin(0.5t)\)</span>, the output of this system is:</p>
+<p><span class="math display">\[y(t)=2\sin(0.5t)+\int \sin(0.5t)dt = 2\sin(0.5t) - \frac{1}{0.5}\cos(0.5t)\]</span></p>
+<p>Since (Trigonometry Identity): &gt; <span class="math inline">\(a \sin x + b \cos x = \sqrt{a^2+b^2}\sin(x+\phi)\)</span>, where <span class="math inline">\(\phi=\tan^{-1}\frac{b}{a}\)</span></p>
+<p>We can then write: <span class="math display">\[y(t)=2\sin(0.5t)+\int \sin(0.5t)dt = 2\sin(0.5t) - 2\cos(0.5t) = \sqrt{8} \sin(0.5t + \tan^{-1}(-1)) \approx 2.83 \sin(0.5t-0.785)\]</span></p>
+<p>This gives the output for one frequency <span class="math inline">\(\omega\)</span>.</p>
+<p>More often though we are going to be interested in a range of frenquecies, and to represent the gain and phase shift across the frequency spectrum we can use <strong>Bode Plots</strong> - They plot frequency response information to be displayed graphically on two diagrams: gain and phase (plotted against frequency on a logarithmic horizontal axis)</p>
+<p><strong>Note</strong> - To plot the gain on a Bode diagram we do not plot the gain directly - We first convert the gain into Power, and then we represent the gain in dB (a logarithmic unit) - To convert the amplitude to decibel: <span class="math inline">\(20\log_{10}\frac{A}{A_0}\)</span> - This comes from quantifying loss in audio levels through telephone circuits - units of measurement that could cover a large range of audio power differences. Since the ear responds to sound pressure logarithmically using a log scale corresponds to the way humans perceive sound. - <span class="math inline">\(1 \text{TU} = 10\log_{10} \Delta \text{Power Loss}\)</span> - <span class="math inline">\(1 \text{TU}\)</span> was the smallest power attenuation detectable by the average listener - <span class="math inline">\(1 \text{TU}\)</span> was later renamed after Alexander Bell as decibel (1/10 bel): <span class="math inline">\(1 TU = \frac{1}{10}\text{bel} = 1 \text{dB}\)</span> - Since <span class="math inline">\(\text{Power} \propto \text{Amplitude}^2\)</span> we can write the equation with respect to amplitude: - <span class="math inline">\(1 \text{dB} = 10\log_{10} \text{Amplitude}^2 = 20\log_{10} \text{Amplitude}\)</span> (<em>properties of logarithms</em>)</p>
+<p>In our case: - <span class="math inline">\(y(t) = 2.83 \sin(0.5t-0.785)\)</span> - Gain: <span class="math inline">\(20 \log_{10}(2.83) \approx 9 \text{dB}\)</span> - Phase: <span class="math inline">\(-0.785 \text{rad} = -45 \text{deg}\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(<span class="fl">0.5</span>, <span class="dv">20</span><span class="op">*</span>np.log10(<span class="fl">2.83</span>), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xlabel(<span class="st">'Frequency (rad/s)'</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylabel(<span class="st">'Gain (dB)'</span>)<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].grid()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(<span class="fl">0.5</span>, np.degrees(<span class="op">-</span><span class="fl">0.785</span>), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">'Frequency (rad/s)'</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylabel(<span class="st">'Phase (deg)'</span>)<span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>This is the frequency response for a single sine wave.</li>
+<li>We are interested in plotting the gain and phase across the entire frequency spectrum</li>
+</ul>
+<p>We can manually calculate the frequency response for all possible values of <span class="math inline">\(\omega\)</span>:</p>
+<p><span class="math display">\[
+y_t = \sqrt{2^2+\frac{1}{w}^2} sin(wt + \tan^{-1} \big(\frac{-1/w}{2}\big) )
+\]</span></p>
+<p>And we can plot for a finite number of values of <span class="math inline">\(\omega\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">100</span>) <span class="co"># logspace sets the exponents</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>gain, phase <span class="op">=</span> [], []</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> w <span class="kw">in</span> ws:</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># y_t = np.sqrt(2**2+1/w**2) * sin(w*t + np.atan2(-1/w, 2))</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    gain.append(np.sqrt(<span class="dv">2</span><span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (<span class="dv">1</span><span class="op">/</span>w)<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    phase.append(np.arctan2(<span class="op">-</span><span class="dv">1</span><span class="op">/</span>w, <span class="dv">2</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Gain diagram</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(ws, <span class="dv">20</span><span class="op">*</span>np.log10(gain), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(<span class="fl">0.5</span>, <span class="dv">20</span><span class="op">*</span>np.log10(<span class="fl">2.83</span>), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">'red'</span>)    </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].grid(<span class="st">'log'</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xlabel(<span class="st">'Frequency (rad/s)'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylabel(<span class="st">'Gain (dB)'</span>)<span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].text(<span class="dv">10</span><span class="op">**</span><span class="dv">3</span>, <span class="dv">20</span><span class="op">*</span>np.log10(<span class="dv">2</span>), <span class="st">'6dB'</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Phase diagram</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(ws, np.degrees(phase), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(<span class="fl">0.5</span>, np.degrees(<span class="op">-</span><span class="fl">0.785</span>), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">'red'</span>)    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].grid(<span class="st">'log'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">'Frequency (rad/s)'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylabel(<span class="st">'Phase (deg)'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>For this simple example, solving the response to the sine wave input is quite straightforward. But what about a more general case?</li>
+<li>We can obtain the result using directly the transfer function.</li>
+</ul>
+The system we had was:
+
+
+<img src="img/29.simple-system.png" alt="29.simple-system" style="width: 450px;">
+
+
+<p>This can be written as:</p>
+<p><span class="math display">\[G(s)= \bigg (2 + \frac{1}{s} \bigg ) = \frac{2s+1}{s}\]</span></p>
+<p>which means:</p>
+<p><span class="math display">\[y(t) = \frac{2s+1}{s} u(t) \]</span></p>
+<p>Recall that: <span class="math inline">\(s=\sigma + j\omega\)</span> (complex variable)</p>
+<ul>
+<li><p>When we calculate the frequency response we are interested in the state state response, once all the transients have died out (or in other words, when <span class="math inline">\(\sigma=0\)</span>).</p></li>
+<li><p>So for steady state: <span class="math inline">\(s=j\omega\)</span></p></li>
+</ul>
+<p>We can then calculate <strong>steady state gains and phases</strong> directly substituting in the transfer functions <span class="math inline">\(s=j\omega\)</span>:</p>
+<p><span class="math display">\[\frac{2s+1}{s} \big |_{s=j\omega} \rightarrow \frac{2j\omega+1}{j\omega} = 2-\frac{1}{\omega}j\]</span></p>
+<p>We can then plot these real and imaginary components on the Real-Imaginary axis, and we can calculate gain and phase geometrically from these plots.</p>
+<p>And for <span class="math inline">\(\omega=0.5\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># THIS IS OUR SPECIFIC FREQUENCY OF INTEREST</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_imre(w, display_text<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    plt.plot([<span class="op">-</span><span class="dv">3</span>, <span class="dv">6</span>], [<span class="dv">0</span>, <span class="dv">0</span>], color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>) <span class="co"># this plots the real axis</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    plt.plot([<span class="dv">0</span>, <span class="dv">2</span>], [<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span><span class="op">/</span>w], color<span class="op">=</span><span class="st">'red'</span>)                 <span class="co"># THIS PLOTS OUR VECTOR</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    plt.plot(<span class="dv">0</span>, <span class="dv">0</span>, marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">'black'</span>)<span class="op">;</span> <span class="co"># Make it prettier: plot the black dot</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    plt.plot(<span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span><span class="op">/</span>w, marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">'red'</span>)<span class="op">;</span> <span class="co"># Make it prettier: plot the red dot</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> display_text: plt.text(<span class="dv">2</span><span class="op">+</span><span class="fl">0.1</span>, <span class="op">-</span><span class="dv">1</span><span class="op">/</span>w<span class="op">+</span><span class="fl">0.1</span>, <span class="st">'2-</span><span class="sc">{:.1f}</span><span class="st">j'</span>.<span class="bu">format</span>(<span class="dv">1</span><span class="op">/</span>w), size<span class="op">=</span><span class="dv">16</span>) <span class="co"># add a text</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plot_imre(w)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Real'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Imaginary'</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.axis([<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>])</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The length of the line is the <strong>Gain</strong> of the system: <span class="math inline">\(l=\sqrt{real^2+imag^2}\)</span></li>
+<li>The angle between the line and the positive real line is the <strong>Phase</strong>: <span class="math inline">\(\angle=\text{atan2(imag, real)}\)</span></li>
+</ul>
+<p>And if we speed across the frequencies, from <span class="math inline">\(0\)</span> to <span class="math inline">\(\inf\)</span>, we can obtain a visual understanding of what the gain and phase are doing for this system: - <span class="math inline">\(w \rightarrow 0\)</span>, <span class="math inline">\(\Rightarrow\)</span>, <span class="math inline">\(imag \rightarrow \inf\)</span> - <span class="math inline">\(w \rightarrow \inf\)</span>, <span class="math inline">\(\Rightarrow\)</span>, <span class="math inline">\(imag \rightarrow 0\)</span></p>
+<p>And we can plot a few examples:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> np.logspace(<span class="fl">0.001</span>, <span class="dv">10</span>, <span class="dv">100</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="dv">1</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> w <span class="kw">in</span> ws:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    plot_imre(w)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Real'</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Imaginary'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.axis([<span class="op">-</span><span class="dv">3</span>, <span class="dv">6</span>, <span class="op">-</span><span class="dv">120</span>, <span class="dv">10</span>])</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># add a note on the plot to show the direction of w</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>plt.arrow(<span class="dv">5</span>, <span class="op">-</span><span class="dv">40</span>, <span class="dv">0</span>, <span class="dv">30</span>, head_width<span class="op">=</span><span class="fl">0.4</span>, head_length<span class="op">=</span><span class="dv">10</span>, length_includes_head<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'k'</span>, linestyle<span class="op">=</span><span class="st">':'</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>plt.arrow(<span class="dv">5</span>, <span class="op">-</span><span class="dv">70</span>, <span class="dv">0</span>, <span class="op">-</span><span class="dv">30</span>, head_width<span class="op">=</span><span class="fl">0.4</span>, head_length<span class="op">=</span><span class="dv">10</span>, length_includes_head<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'k'</span>, linestyle<span class="op">=</span><span class="st">':'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">4.5</span>, <span class="op">-</span><span class="dv">8</span>, <span class="st">'$Imag\; to\; 0$ for $\omega=\infty$'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">4.5</span>, <span class="op">-</span><span class="dv">110</span>, <span class="st">'$Imag\; to\; \infty$ for $\omega=0$'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The real part never changes.</p>
+<p>For this system:</p>
+<p><strong>Gain</strong> - As <span class="math inline">\(\omega\)</span> decreases, the Gain increases (<span class="math inline">\(\inf\)</span> for <span class="math inline">\(\omega=0\)</span>) - As <span class="math inline">\(\omega\)</span> increases, the Gain decreases (2 for <span class="math inline">\(\omega=\inf\)</span>)</p>
+<p><strong>Phase</strong></p>
+<ul>
+<li>As <span class="math inline">\(\omega\)</span> decreases, the Phase increases (<span class="math inline">\(-90^o\)</span> for <span class="math inline">\(\omega=0\)</span>)</li>
+<li>As <span class="math inline">\(\omega\)</span> increases, the Phase decreases (0 for <span class="math inline">\(\omega=\inf\)</span>)</li>
+</ul>
+<hr>
+<section id="lets-be-more-formal" class="level3">
+<h3 class="anchored" data-anchor-id="lets-be-more-formal">Let’s be more formal</h3>
+<ul>
+<li>The transfer functions of linear systems are polynomial fractions in <span class="math inline">\(s\)</span></li>
+<li>It is always possible to factor polynomials in terms of their roots (zeros and poles)</li>
+<li>Each polynomial is the product of first-order or second-order (potentially with multiplicity <span class="math inline">\(&gt;\)</span> 1)</li>
+<li>To build the frequency response of the system is useful to have simple rules to represent each term</li>
+<li>We can leverage the properties of the logarithms: the logarithm of a product is equal to a sum of logarithms:
+<ul>
+<li>$ (AB) = (A)+(B) $</li>
+<li>$ (A/B) = (A)-(B)$</li>
+<li>$ (y^x) = x(y)$</li>
+</ul></li>
+</ul>
+</section>
+<section id="magnitude-and-phase" class="level3">
+<h3 class="anchored" data-anchor-id="magnitude-and-phase">Magnitude and Phase</h3>
+<p><span class="math display">\[\large G(s) = \frac{(s-z_1)(s-z_2)...}{(s-p_1)(s-p_2)...}\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[\large G(jw) = \frac{|j\omega-z_1|e^{j\angle j\omega -z_1} |j\omega-z_2|e^{j\angle j\omega -z_2} ...}{|j\omega-p_1|e^{j\angle j\omega -p_1} |j\omega-p_2|e^{j\angle j\omega -p_2} ...} \]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[\large G(jw) = \frac{|j\omega-z_1||j\omega-z_2|...e^{j(\angle j\omega -z_1 + \angle j\omega -z_2 + ...)}}{|j\omega-p_1||j\omega-p_2|...e^{j(\angle j\omega -p_1 + \angle j\omega -p_2 + ...)}} \]</span></p>
+<p>and:</p>
+<p><span class="math display">\[\large |G(jw)| = \frac{|j\omega-z_1||j\omega-z_2|...}{|j\omega-p_1||j\omega-p_2|...}\]</span></p>
+<p><span class="math display">\[\large \angle  G(jw)| = +\angle (j\omega -z_1)+\angle (j\omega -z_2)+ ... -\angle (j\omega -p_1)-\angle (j\omega -p_2) - ...\]</span></p>
+<hr>
+</section>
+<section id="bode-amplitude-plot" class="level3">
+<h3 class="anchored" data-anchor-id="bode-amplitude-plot">Bode Amplitude Plot</h3>
+<ul>
+<li><p>In the amplitude plot, it is convenient to report the value of the magnitude in <em>decibel</em> or <em>dB</em>.</p></li>
+<li><p>By convention, the dB value of a positive quantity <span class="math inline">\(x\)</span> is: <span class="math inline">\(20\log_{10}(x)\)</span>.</p></li>
+<li><p>This means: <span class="math inline">\(|G(j\omega)|_{dB}=20log|G(j\omega)|\)</span></p></li>
+<li><p>Note that when:</p>
+<ul>
+<li><span class="math inline">\(|G(j\omega)|_{dB} &gt; 0 \rightarrow |G(j\omega)| &gt; 1\)</span></li>
+<li><span class="math inline">\(|G(j\omega)|_{dB} &lt; 0 \rightarrow |G(j\omega)| &lt; 1\)</span></li>
+<li><span class="math inline">\(|G(j\omega)|_{dB} = 0 \rightarrow |G(j\omega)| = 1\)</span></li>
+</ul></li>
+</ul>
+<p>When we use dB things become simpler:</p>
+<p><span class="math inline">\(\large |G(jw)| = \frac{|j\omega-z_1||j\omega-z_2|...}{|j\omega-p_1||j\omega-p_2|...}\)</span> <span class="math inline">\(\Rightarrow\)</span></p>
+<p><span class="math display">\[\large |G(j\omega)|_{dB}=20\log|G(j\omega)| = 20\log(|j\omega-z_1|) + 20\log(|j\omega-z_2|) + ... \\
+               \large - 20\log(|j\omega-p_1|) - 20\log(|j\omega-p_2|) ...\]</span></p>
+<ul>
+<li>It is convenient to use a logarithmic scale for the <span class="math inline">\(w\)</span>-axis.</li>
+<li>Logarithmic scales are useful when plotting functions that vary over many orders of magnitude.</li>
+<li>One term we will use in our discussion of frequency response plots is “decade”. A decade change in frequency is a factor of ten. So, for example, 1 kHz is a decade above 100 Hz and a decade below 10 kHz.</li>
+</ul>
+</section>
+<section id="sketching-bode-plots" class="level3">
+<h3 class="anchored" data-anchor-id="sketching-bode-plots">Sketching Bode Plots</h3>
+<ul>
+<li>Being able to quickly draw Bode plots is important
+<ul>
+<li>They provide an intuitive understanding how poles and zeros affect the frequency response</li>
+<li>Make it possible to estimate the transfer function looking at the frequency response (e.g.&nbsp;estimate of the transfer function from the output of a frequency sweep that we are providing to the system)</li>
+</ul></li>
+</ul>
+<p><strong>Recall</strong></p>
+<ul>
+<li><p>Given a transfer function <span class="math inline">\(G(s)\)</span> we can obtain the (steady state) frequency response setting <span class="math inline">\(s=j\omega \rightarrow G(j\omega)\)</span></p></li>
+<li><p>Remember also that $G(j) = + j $</p></li>
+<li><p>If we plot it on the Real-Imag diagram:</p></li>
+</ul>
+
+
+<img src="img/37.H_jw_text.png" alt="37.H_jw" style="width: 350px;">
+
+
+<ul>
+<li><p>Gain: <span class="math inline">\(\sqrt{\text{real}^2 + \text{img}^2} = |G(j\omega)|\)</span></p></li>
+<li><p>Phase: <span class="math inline">\(atan2(\text{img}, \text{real}) = arg(G(j\omega)) = \angle G(j\omega)\)</span></p></li>
+<li><p>The sign of the phase is determined based on which side of the real line it appears</p></li>
+</ul>
+
+
+<img src="img/38.H_jw_multiple_points-1.png" alt="38.H_jw" style="width: 350px;">
+
+
+</section>
+</section>
+<section id="representing-the-simplest-transfer-function-on-a-bode-plot" class="level2">
+<h2 class="anchored" data-anchor-id="representing-the-simplest-transfer-function-on-a-bode-plot">Representing the simplest transfer function on a Bode Plot</h2>
+<ul>
+<li><span class="math inline">\(G(s) = K\)</span></li>
+<li>where <span class="math inline">\(K \in R\)</span> can be positive of negative</li>
+</ul>
+<p>We apply the definition - Gain = <span class="math inline">\(|G(j\omega)| = |K| = \text{positive K}\)</span> - Phase = <span class="math inline">\(\text{atan2}(img, real)= \text{atan2}(0, K)\)</span><br>
+- The img part is zero in our case</p>
+<p>If we plot this on the real-img axis, all values would lie on the real axis (imaginary component is zero)</p>
+
+
+<img src="img/39.H_jw_K-1.png" alt="39.H_jw_K.png" style="width: 450px;">
+
+
+<ul>
+<li>The gain is always <span class="math inline">\(K\)</span> (distance from the origin)</li>
+<li><span class="math inline">\(K\)</span> can be positive or negative,
+<ul>
+<li>For <span class="math inline">\(K &gt; 0\)</span>, Phase = <span class="math inline">\(0\)</span>,</li>
+<li>For <span class="math inline">\(K &lt; 0\)</span>, Phase = <span class="math inline">\(180^o=-180^o\)</span>, but traditionally use <span class="math inline">\(-180^o\)</span>
+<ul>
+<li>if we use <span class="math inline">\(\text{atan2}\)</span> we already keep track of the sign.</li>
+</ul></li>
+</ul></li>
+</ul>
+<section id="represent-on-a-bode-plot" class="level3">
+<h3 class="anchored" data-anchor-id="represent-on-a-bode-plot">Represent on a Bode Plot</h3>
+<p><strong>Gain</strong> - We need to remember to convert the gain to dB: <span class="math inline">\(|H(j\omega)| = 20\log_{10}|K|\)</span> - Then it is just a constant for all frequencies, so it is a straight line</p>
+<p><strong>Phase</strong> - Constant for all frequencies - <span class="math inline">\(K&gt;0\)</span>, Phase = <span class="math inline">\(0^o\)</span> - <span class="math inline">\(K&lt;0\)</span>, Phase = <span class="math inline">\(-180^o\)</span></p>
+
+
+<img src="img/40.Bode_H_jw_K-1.png" alt="40.Bode_H_jw_K" style="width: 750px;">
+
+
+<p><strong>What is happening in time?</strong></p>
+<p>The system that we are considering is:</p>
+
+
+<img src="img/41.sinwt.png" alt="41.sinwt" style="width: 550px;">
+
+
+<ul>
+<li>Input is <span class="math inline">\(\sin(\omega t)\)</span></li>
+<li>Output is <span class="math inline">\(K\sin(\omega t)\)</span>, which is a sinusoid with the same frequency, but scaled by <span class="math inline">\(K\)</span> (and shifted in phase if <span class="math inline">\(K&lt;0\)</span> by -180 deg).</li>
+</ul>
+
+
+<img src="img/42.sinwt_shift.png" alt="42.sinwt_shift" style="width: 450px;">
+
+
+<hr>
+</section>
+</section>
+<section id="bode-plot-of-the-integrator" class="level2">
+<h2 class="anchored" data-anchor-id="bode-plot-of-the-integrator">Bode Plot of the Integrator</h2>
+<ul>
+<li>Consider a system that has a single pole at the origin.</li>
+<li>The steady-state frequency-response is determined by letting <span class="math inline">\(s \rightarrow j\omega\)</span>:</li>
+</ul>
+<p><span class="math display">\[G(s) = \frac{1}{s} \Rightarrow G(j\omega)=\frac{1}{j\omega} = -\frac{1}{w}j\]</span></p>
+<table class="table">
+<colgroup>
+<col style="width: 8%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Side note</strong> <span class="math display">\[
+j=\sqrt{-1}\]</span> Therefore: <span class="math display">\[
+\frac{1}{j} = \frac{1}{\sqrt{-1}}\frac{\sqrt{-1}}{\sqrt{-1}} = \frac{\sqrt{-1}}{-1} = -\sqrt{-1}=-j
+\]</span></td>
+</tr>
+</tbody>
+</table>
+<p>Given <span class="math inline">\(G(j\omega)= -\frac{1}{w}j\)</span></p>
+<ul>
+<li><p>Real component is 0</p></li>
+<li><p>Imaginary component is <span class="math inline">\(-\frac{1}{w}\)</span></p></li>
+<li><p>Gain = <span class="math inline">\(|G(j\omega)| = \big | -\frac{1}{w}j \big | = \frac{1}{\omega}\)</span>:</p></li>
+<li><p>Phase = <span class="math inline">\(\arg G(j\omega) = \arg \big(-\frac{1}{w}, 0 \big) = -90^o\)</span></p></li>
+</ul>
+<p>We can see this graphically on the real-img axis:</p>
+
+
+<img src="img/43.H_jw_integrator_bode-1.png" alt="43.H_jw_integrator_bode" style="width: 350px;">
+
+
+Another way to look at this is through a block diagram
+
+
+<img src="img/44.H_jw_integrator_time_one_s.png" alt="44.H_jw_integrator_time" style="width: 550px;">
+
+
+<ul>
+<li>And if we plot it, we see that the resulting signal has a -90 deg phase shift:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">30</span>, <span class="dv">50</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>plt.plot(t, np.sin(w<span class="op">*</span>t), color <span class="op">=</span> <span class="st">'green'</span>, label<span class="op">=</span><span class="st">'sin(wt)'</span>, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plt.plot(t, <span class="op">-</span><span class="dv">1</span><span class="op">/</span>w<span class="op">*</span>np.cos(w<span class="op">*</span>t), color <span class="op">=</span> <span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'-1/w cos(wt)'</span>, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>rc(<span class="st">'font'</span>, <span class="op">**</span>{<span class="st">'size'</span>:<span class="dv">22</span>})</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="st">"lower right"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">1.4</span>,<span class="fl">0.7</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let’s se what the Bode plot looks like:</p>
+<ul>
+<li><p>Gain = <span class="math inline">\(\large |G(j\omega)| = \big | -\frac{1}{w}j \big | = \frac{1}{\omega}\)</span>:</p>
+<ul>
+<li>when <span class="math inline">\(\omega = 1 \; \text{rad/s}\)</span>, then gain = 1, <span class="math inline">\(\rightarrow 20\log_{10}1=0 \text{dB}\)</span></li>
+<li>when <span class="math inline">\(\omega = 10 \; \text{rad/s}\)</span>, then gain = 1/10, <span class="math inline">\(\rightarrow 20\log_{10}1=-20 \text{dB}\)</span></li>
+<li><span class="math inline">\(|G(j\omega)|_{dB}=20\log\big|\frac{1}{j\omega}\big| = -20\log(\omega)\)</span></li>
+<li>Given that we are using a logarithmic scale on both axis, this corresponds to a straight line with a -20dB slope every “decade”.</li>
+</ul></li>
+<li><p>Phase = <span class="math inline">\(\arg \big(-\frac{1}{w}, 0 \big) = -90^o\)</span> at all frequencies</p></li>
+</ul>
+<p>We can plot it</p>
+
+
+<img src="img/integrator-bode.png" alt="integrator-bode" style="width: 550px;">
+
+
+<p>We can also use the <a href="https://web.math.princeton.edu/~cwrowley/python-control/index.html">Python Control Systems</a> Library for this.</p>
+<blockquote class="blockquote">
+<p>The Python Control Systems Library is a Python module that implements basic operations for analysis and design of feedback control systems.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># integrator: 1/s = 1/(s+0)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">1</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">0</span>]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.1</span>, <span class="dv">100</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="what-about-a-zero" class="level3">
+<h3 class="anchored" data-anchor-id="what-about-a-zero">What about a zero?</h3>
+<ul>
+<li><p><span class="math inline">\(G(s)=s\)</span></p></li>
+<li><p>It is easy to calculate this from what we know already.</p></li>
+<li><p>For example we can use the property of logarithms to say: <span class="math inline">\(G(s)=s = \frac{1}{1/s} \Rightarrow 1 - \frac{1}{s}\)</span></p></li>
+<li><p>So the gain of a zero is simply the negative of the gain of a pole (reflection about the real axis)</p></li>
+<li><p>And the phase of a zero is +90 deg</p></li>
+</ul>
+
+
+<img src="img/zero-bode.png" alt="zero-bode" style="width: 550px;">
+
+
+<hr>
+</section>
+</section>
+<section id="frequency-response-of-simple-poles-and-zeros" class="level2">
+<h2 class="anchored" data-anchor-id="frequency-response-of-simple-poles-and-zeros">Frequency Response of Simple Poles and Zeros</h2>
+<section id="transfer-function-with-a-single-real-pole" class="level3">
+<h3 class="anchored" data-anchor-id="transfer-function-with-a-single-real-pole">Transfer function with a single real pole</h3>
+<ul>
+<li>Given a transfer function G(S), re-write the transfer function in the Bode form: <span class="math display">\[
+\frac{1}{1+\frac{s}{w_0}}
+\]</span>
+<ul>
+<li>ex.
+<ul>
+<li><span class="math inline">\(\large G(s)=\frac{1}{s+1} \Rightarrow \frac{1}{1+\frac{s}{w_0}}\)</span></li>
+<li>we call <span class="math inline">\(w_0\)</span> “break frequency” or “corner frequency”</li>
+</ul></li>
+<li>Sometime you also see it written as:
+<ul>
+<li><span class="math inline">\(\large G(s)=\frac{w_0}{s+w_0} = \frac{1}{1+\tau s}\)</span></li>
+<li>where <span class="math inline">\(\tau = \frac{1}{w_0}\)</span> is called <em>Time constant</em></li>
+</ul></li>
+<li>All these representations are equivalent</li>
+</ul></li>
+<li>To be clear:
+<ul>
+<li>A real pole has an effect on the frequency response</li>
+</ul></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/44.1.real-pole-1.png" alt="45.H_jw_real_pole_bode_0" style="width: 350px;">
+</td><td>
+<img src="img/44.2.real-pole-2.png" alt="45.H_jw_real_pole_bode_0" style="width: 350px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Now, given a transfer function with a single real pole:</p>
+<p><span class="math display">\[
+\large G(s)= \frac{1}{1+\frac{s}{w_0}} \hspace{0.2cm}  \large \xrightarrow{Set\; s=j\omega} \hspace{0.2cm} \large\frac{1}{1+\frac{j\omega}{w_0}}
+\]</span></p>
+<p>We are trying to separate the real part and the imaginary part:</p>
+<p><span class="math display">\[\large\frac{1}{1+\frac{j\omega}{w_0}} = \frac{1}{1+j\frac{\omega}{w_0}} \frac{1-j\frac{\omega}{w_0}}{1-j\frac{\omega}{w_0}} = \frac{1-j\frac{\omega}{w_0}}{1+\frac{\omega^2}{w_0^2}}\]</span></p>
+<p><em>Note: <span class="math inline">\(1-j\frac{\omega}{w_0}\)</span> is the complex conjugate of <span class="math inline">\(1+j\frac{\omega}{w_0}\)</span></em></p>
+<ul>
+<li><p>Real part = <span class="math inline">\(\large \frac{1}{1+\frac{\omega^2}{\omega_0^2}}\)</span></p></li>
+<li><p>Imaginary part = <span class="math inline">\(\large \frac{-\frac{\omega}{\omega_0}}{1+\frac{\omega^2}{\omega_0^2}}\)</span></p></li>
+</ul>
+<p>And now we can solve for the gain and phase as we did before:</p>
+<ul>
+<li><p>Gain: <span class="math display">\[ 20\log_{10}\big | H(j\omega) \big | = \sqrt{ real^2 + img^2 } = \sqrt{ \frac{1}{1+\frac{\omega^2}{\omega_0^2}} } \xrightarrow{in \; \text{dB}} -20\log_{10}\bigg( \sqrt{1+\frac{\omega^2}{\omega_0^2}} \bigg)\]</span></p></li>
+<li><p>Phase: <span class="math display">\[\arctan\frac{\text{img}}{\text{real}}=\arctan\frac{-w}{w_0}\]</span></p></li>
+</ul>
+<p>And now we can plot them:</p>
+<ul>
+<li>case 1: <span class="math inline">\(w \ll w_0 \rightarrow \frac{\omega^2}{\omega_0^2} \rightarrow 0\)</span>,
+<ul>
+<li>Gain: <span class="math inline">\(-20\log_{10} 1 = 0\; \text{dB}\)</span></li>
+<li>Phase: <span class="math inline">\(\arctan(0) = 0\; \text{degrees}\)</span></li>
+</ul></li>
+</ul>
+
+
+<img src="img/45.H_jw_real_pole_bode_0.png" alt="45.H_jw_real_pole_bode_0" style="width: 550px;">
+
+
+<ul>
+<li>case 2: <span class="math inline">\(w = w_0 \rightarrow \frac{\omega^2}{\omega_0^2} = 1\)</span>,
+<ul>
+<li>Gain: <span class="math inline">\(-20\log_{10}\sqrt{2} = -3 \; \text{dB}\)</span></li>
+<li>Phase: <span class="math inline">\(\arctan(-1) = -45\; \text{degrees}\)</span></li>
+</ul></li>
+</ul>
+
+
+<img src="img/46.H_jw_real_pole_bode_1_1.png" alt="46.H_jw_real_pole_bode_1.png" style="width: 550px;">
+
+
+<ul>
+<li>case 3: <span class="math inline">\(w \gg w_0\)</span>,
+<ul>
+<li>The term <span class="math inline">\(\frac{\omega^2}{\omega_o^2}\)</span> dominates the gain equation</li>
+<li>Gain: <span class="math inline">\(-20\log_{10}\frac{\omega}{\omega_o}\)</span>
+<ul>
+<li>Every time <span class="math inline">\(\omega\)</span> gets 10 times bigger, there is a drop in gain of -20 dB</li>
+<li><span class="math inline">\(-20 \; \text{dB}/\text{decade}\)</span> slope and intercepts 0 at <span class="math inline">\(\omega_0\)</span></li>
+</ul></li>
+<li>Phase: <span class="math inline">\(\arctan(-\frac{\omega}{\omega_o})=\arctan(-\inf) = -90\; \text{degrees}\)</span></li>
+</ul></li>
+</ul>
+
+
+<img src="img/47.H_jw_real_pole_bode_2.png" alt="47.H_jw_real_pole_bode_2.png" style="width: 550px;">
+
+
+<ul>
+<li>This is called the asymptotic Bode plot, which is an approximation of the actual plot.</li>
+</ul>
+<p><strong>What does the actual Bode plot look like?</strong></p>
+
+
+<img src="img/48.H_jw_real_pole_bode_actual.png" alt="48.H_jw_real_pole_bode_actual.png" style="width: 550px;">
+
+
+<p>And for this reason, sometimes we use a different approximation of the phase:</p>
+
+
+<img src="img/49.H_jw_real_pole_bode_2_v2.png" alt="48.H_jw_real_pole_bode_actual.png" style="width: 550px;">
+
+
+</section>
+<section id="transfer-function-with-a-single-real-zero" class="level3">
+<h3 class="anchored" data-anchor-id="transfer-function-with-a-single-real-zero">Transfer function with a single real zero</h3>
+<ul>
+<li><p><span class="math inline">\(G(s) = s + z\)</span></p></li>
+<li><p>It is easy from what we know already</p></li>
+<li><p>One way to do it is to reshape it as: <span class="math display">\[G(s) = s + z = \frac{1}{\frac{1}{s+z}} = \frac{1}{\frac{1}{1+\frac{s}{w_0}}} = 1 + \frac{s}{w_0}\]</span></p></li>
+<li><p>And now we can simply use the property of the logarithm:</p>
+<ul>
+<li><em>real zero</em> is <em>- real pole</em> when plotted on a log-log Bode plot.</li>
+</ul></li>
+<li><p>Gain slops up at 20 dB/decade (at <span class="math inline">\(w_0\)</span>)</p></li>
+<li><p>Phase goes from 0 to 90 degrees.</p></li>
+</ul>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">Summary</h3>
+<ul>
+<li>Write the transfer function as: <span class="math inline">\(\frac{1}{1+\frac{s}{w_0}}\)</span> (pole) or as <span class="math inline">\(1 + \frac{s}{w_0}\)</span> (zero)</li>
+<li>Find the break frequency <span class="math inline">\(w_0\)</span> on the log-log Bode plot</li>
+<li>Gain: find and draw the two asymptotes (0 dB until <span class="math inline">\(w_0\)</span>, then -20dB/decade (pole) or 20dB/decade (zero))</li>
+<li>Phase: draw the two asymptotes (0 until <span class="math inline">\(w_0\)</span>, then -90 deg (pole), 90 deg (zero)
+<ul>
+<li>Optional: use the better approximation</li>
+</ul></li>
+</ul>
+<p><strong>One more comment:</strong></p>
+<ul>
+<li>If you have a <span class="math inline">\(G(s)=\frac{1}{s+4}\)</span> you can always refactor it to the form we would like: <span class="math display">\[G(s)=\frac{1}{s+4} = \frac{1}{4}\frac{1}{1+\frac{s}{4}}\]</span></li>
+<li><span class="math inline">\(\frac{1}{4}\)</span> is the gain, and the break frequency <span class="math inline">\(w_0=4\)</span> rad/s</li>
+</ul>
+<hr>
+</section>
+<section id="transfer-function-with-a-pair-of-complex-poles-zeros" class="level3">
+<h3 class="anchored" data-anchor-id="transfer-function-with-a-pair-of-complex-poles-zeros">Transfer function with a pair of complex poles / zeros</h3>
+<p>Let’s now consider a transfer function of the form:</p>
+<p><span class="math display">\[H(s) = \frac{\omega_o^2}{s^2+2\xi\omega_o s+\omega_o^2}\]</span></p>
+<p>The roots of the denominator (the poles) are:</p>
+<p><span class="math display">\[s=-\xi\omega_o \pm \omega_o\sqrt{\xi^2-1}\]</span></p>
+<ul>
+<li><span class="math inline">\(w_o\)</span> is the break frequency</li>
+<li><span class="math inline">\(\xi\)</span> dumping ratio</li>
+<li>if <span class="math inline">\(\xi &gt; 1\)</span>, the second-order response has two simple real poles and we know how to deal with that already.</li>
+<li>if <span class="math inline">\(0&lt;\xi &lt; 1\)</span>, we have stable complex-conjugatee pole pairs.</li>
+</ul>
+<p>First, like we did before, we want to manipulate the form to bring it to the Bode form:</p>
+<p><span class="math display">\[H(s) = \frac{1}{\frac{s^2}{\omega_o^2}+2\xi\frac{\omega_o}{\omega_o^2} s+ \frac{\omega_o^2}{\omega_o^2}} = \frac{1}{\frac{s^2}{\omega_o^2}+2\frac{\xi}{\omega_o} s+ 1} \]</span></p>
+<p>Second, we substitute <span class="math inline">\(s=j\omega\)</span> and solve for the real and img parts:</p>
+<p><span class="math display">\[H(j\omega) = \frac{1}{-\frac{\omega^2}{\omega_o^2}+2j\xi\frac{\omega}{\omega_o} + 1}\]</span></p>
+<ul>
+<li><p>Real = <span class="math inline">\(\frac{ 1 - \big(\frac{w}{w_0}\big)^2}{ \bigg[1 - \big(\frac{w}{w_0}\big)^2 \bigg]^2 + \bigg[2\xi \frac{w}{w_0} \bigg]^2}\)</span></p></li>
+<li><p>Imaginary = <span class="math inline">\(\frac{- 2\xi \frac{w}{w_0}}{ \bigg[1 - \big(\frac{w}{w_0}\big)^2 \bigg]^2 + \bigg[2\xi \frac{w}{w_0} \bigg]^2}j\)</span></p></li>
+</ul>
+<p>We can use these to estimate the Gain and Phase.</p>
+<ul>
+<li>Case 1: <span class="math inline">\(w \ll w_0\)</span>,
+<ul>
+<li><span class="math inline">\(\frac{w}{w_0}\)</span> is very small <span class="math inline">\(\Rightarrow\)</span> Real = 1, Img = 0</li>
+<li><span class="math inline">\(|H(j\omega)|_{dB} = 20\log(1) = 0\)</span> dB</li>
+<li><span class="math inline">\(\arg H(j\omega) = \arctan\frac{0}{1} = 0\)</span> deg</li>
+</ul></li>
+</ul>
+
+
+<img src="img/50.H_jw_complex_pole_bode_1.png" alt="50.H_jw_complex_pole_bode" style="width: 550px;">
+
+
+<ul>
+<li>Case 2: <span class="math inline">\(w \gg w_0\)</span>,
+<ul>
+<li><span class="math inline">\(1 - \big( \frac{w}{w_0} \big)^2 \approx - \big( \frac{w}{w_0} \big)^2\)</span> <span class="math inline">\(\Rightarrow\)</span> Real = <span class="math inline">\(-\big( \frac{w}{w_0} \big)^{-2}\)</span>, Img = <span class="math inline">\(-2\xi \big( \frac{w}{w_0} \big)^{-3}\)</span></li>
+<li><span class="math inline">\(|H(j\omega)|_{dB} = 20\log\big( \frac{w}{w_0} \big)^{-2} = -40\log(\frac{w}{w_0})\)</span> dB
+<ul>
+<li>Note that the real component dominates (there is a square) over the imaginary component</li>
+<li>-40 dB/decade drop in gain</li>
+</ul></li>
+<li><span class="math inline">\(\arg H(j\omega) = \arctan2 \big( -2\xi \big( \frac{w}{w_0} \big)^{-3}, -\big( \frac{w}{w_0} \big)^{-2} \big) = -180\)</span> deg
+<ul>
+<li>This is because both real and imaginary components are negative and the imaginary component goes to zero faster than the real component.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+
+<img src="img/51.H_jw_complex_pole_bode_w_gg_w0_1.png" alt="51.H_jw_complex_pole_bode_w_gg_w0.png" style="width: 550px;">
+
+
+<p>-Case 3: <span class="math inline">\(w = w_0\)</span>, - <span class="math inline">\(\frac{w}{w_0} = 1\)</span>, Real = 0, Img = <span class="math inline">\(-\frac{1}{2\xi}\)</span> - <span class="math inline">\(|H(j\omega)|_{dB} = 20\log_{10}(\frac{1}{2\xi})\)</span> dB = <span class="math inline">\(-20\log_{10}(2\xi)\)</span> dB - Strongly depends on the parameter <span class="math inline">\(\xi\)</span>, the <em>damping ratio</em>. - When <span class="math inline">\(\xi=0.5 \rightarrow -20\log_{10}(1)=0\)</span>dB (no peak) - When <span class="math inline">\(\xi &gt; 0.5\)</span> then the peak goes slightly down at <span class="math inline">\(w_0\)</span> - When <span class="math inline">\(\xi &lt; 0.5\)</span> peak of magnitude <span class="math inline">\(-20\log_{10}(2\xi)\)</span> - When <span class="math inline">\(\xi = 0\)</span> (no dumping) peak goes to <span class="math inline">\(\inf\)</span> - -40 dB/decade drop in gain - <span class="math inline">\(\arg H(j\omega) = \arctan(\inf) = -90\)</span> deg (remember the quadrant) - The slope of the line however changes as a function of <span class="math inline">\(\xi\)</span></p>
+<p>In case <span class="math inline">\(\xi = 0.3\)</span>:</p>
+
+
+<img src="img/52.H_jw_complex_pole_bode_w_eq_w0_1.png" alt="52.H_jw_complex_pole_bode_w_eq_w0.png" style="width: 550px;">
+
+
+<strong>How does the actual plot look like?</strong>
+
+
+<img src="img/52.H_jw_complex_pole_bode_w_eq_w0_actual_1.png" alt="52.H_jw_complex_pole_bode_w_eq_w0_actual.png" style="width: 550px;">
+
+
+<p>Remember: - This is still an approximation!</p>
+<p>To do a better approximation of the phase, sometime we identify <span class="math inline">\(w_0^- = \frac{w_0}{5^\xi}, w_0^+ = w_05^\xi\)</span> and we connect them with a straight line.</p>
+<p>Here is a more accurate representation of the Bode plots for a pair of complex poles and how their response changes with <span class="math inline">\(\xi\)</span>.</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/34.complex-poles-amplitude-corrected.png" alt="34.complex-poles-amplitude-corrected" style="width: 450px;">
+</td>
+<td>
+<img src="img/36.phase-complex-roots.png" alt="36.phase-complex-roots" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><strong>Transfer function with a pair of complex zeros</strong> - The frequency response of complex zeros can be obtained from what we know already - Reflection of the response of a pole about the horizontal axis.</p>
+</section>
+<section id="final-comments" class="level3">
+<h3 class="anchored" data-anchor-id="final-comments">Final comments</h3>
+<ul>
+<li>Drawing Body plots is easy once we understand the key rules</li>
+<li>Makes it possible to understand how adding poles/zeros changes the frequency response of the system</li>
+<li>Really useful when desigining controllers or filters</li>
+</ul>
+<hr>
+</section>
+<section id="ok-really-the-final-comment---bode-plot-of-a-delay" class="level3">
+<h3 class="anchored" data-anchor-id="ok-really-the-final-comment---bode-plot-of-a-delay">OK, really the final comment - Bode plot of a delay</h3>
+<p>The transfer function of a delay is <span class="math inline">\(G(s)=e^{-s\tau}\)</span>.</p>
+<p>The frequency response <span class="math inline">\(G(j\omega)=1 e^{-j\omega\tau}\)</span> is already a phasor!</p>
+<p><span class="math display">\[|e^{-j\omega\tau}| = 1\]</span> <span class="math display">\[\angle e^{-j\omega\tau} = -\omega \tau\]</span></p>
+<ul>
+<li>A delay <span class="math inline">\(\tau\)</span> introduces a phase shift proportional to the delay and to the frequency.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<section id="exercise-1" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1">Exercise 1</h3>
+<p>Draw the Bode plot of the system:</p>
+<p><span class="math display">\[
+G(s) = \frac{10^3(s+0.1)}{s(s+1)^2}
+\]</span></p>
+<ul>
+<li>zeros: <span class="math inline">\((s+0.1)=0 \Rightarrow s=-0.1\)</span></li>
+<li>poles: <span class="math inline">\(s(s+1)^2=0 \Rightarrow s=0, s=-1\)</span> (with multiplicity 2)</li>
+</ul>
+<p>Write the frequency response, setting <span class="math inline">\(s=j\omega\)</span> as:</p>
+<p><span class="math display">\[
+G(j \omega) = \frac{10^3 0.1 \big (1+\frac{j\omega}{0.1} \big )}{j \omega( 1 + j \omega )^2}
+\]</span></p>
+<ul>
+<li>Given that we have a pole at the origin we know that the plot starts with a slope of <span class="math inline">\(-20 \text{dB/decade}\)</span>, and passing through <span class="math inline">\(w=1 \text{rad/s}\)</span></li>
+<li>Constant Gain: <span class="math inline">\(K=0.1 \cdot 10^3 \Rightarrow 20\log_{10}(10^2)=40\)</span></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-1-2-pole-origin.png" alt="ex-1-2-pole-origin" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<ul>
+<li>Zero in <span class="math inline">\(s=0.1\)</span></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-1-3-zeros.png" alt="ex-1-3-zeros" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<ul>
+<li>Poles in <span class="math inline">\(s=-1\)</span> with multiplicity 2</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-1-4-double-pole.png" alt="ex-1-4-double-pole" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<ul>
+<li>Summing all contribution together:</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-1-5-final.png" alt="ex-1-5-final" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<ul>
+<li>And we can refine our plot a bit:</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-1-5-final-exact.png" alt="ex-1-5-final-exact" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<p>And finally we can ask the Python Control library to plot it for us:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">10</span><span class="op">**</span><span class="dv">3</span>, <span class="dv">10</span><span class="op">**</span><span class="dv">3</span><span class="op">*</span><span class="fl">0.1</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.001</span>, <span class="dv">1000</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="exercise-2" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2">Exercise 2</h3>
+<p>Draw the Bode plot of the system:</p>
+<p><span class="math display">\[
+G(s) = \frac{10(s+1)}{(s+0.1)(s-1)}
+\]</span></p>
+<ul>
+<li>zeros: <span class="math inline">\((s+0.1)=0 \Rightarrow s=-1\)</span></li>
+<li>poles: <span class="math inline">\((s+0.1)(s-1)=0 \Rightarrow s=0.1, s=1\)</span></li>
+</ul>
+<p>Write the frequency response, setting <span class="math inline">\(s=j\omega\)</span> as:</p>
+<p><span class="math display">\[
+G(j \omega) = \frac{10 \big (1+\frac{j\omega}{1} \big ) \cdot 10 \cdot -1}{ \big (1+\frac{j\omega}{0.1} \big ) \big (1+\frac{j\omega}{-1} \big )}
+\]</span></p>
+<ul>
+<li>Constant Gain: <span class="math inline">\(K=-1 \cdot 10 \cdot 10 \Rightarrow 20\log_{10}(10^2)=40\)</span></li>
+<li>We do not have any poles/zeros at the origin, the diagram starts constant.</li>
+</ul>
+
+<!--table style='margin: 0 auto' rules=none>
+<tr>
+<td> <img src="img/ex-2-1-gain.png" alt="ex-2-1-gain" style="width: 450px;"/> </td>
+</table-->
+<ul>
+<li>A pole in <span class="math inline">\(s=-0.1\)</span>, a pole in <span class="math inline">\(s=1\)</span> and a zero in <span class="math inline">\(s=-1\)</span></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-2-1-pole-in-01.png" alt="ex-2-1-pole-in-01" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<ul>
+<li>Summing all contribution together:</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/ex-2-1-final.png" alt="ex-2-1-final" style="width: 650px;">
+</td>
+
+</tr></tbody></table>
+<p>Let’s verify that it is correct:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="op">-</span><span class="fl">0.9</span>, <span class="op">-</span><span class="fl">0.1</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.001</span>, <span class="dv">1000</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="final-notes-on-bode-plots" class="level2">
+<h2 class="anchored" data-anchor-id="final-notes-on-bode-plots">Final notes on Bode Plots</h2>
+<ul>
+<li>The <strong>frequency response</strong> interpretation of a Bode Plot only holds for stable (or marginally stable) systems</li>
+<li>If we apply a sinusoidal input to an unstable system, then the output is not sinuisoidal</li>
+<li>Under additional technical hypotesis we can still recover some of the results discussed before, but we will not tackle this here</li>
+<li>Note that we can still draw Bode plots for unstable systems</li>
+</ul>
+<p>Other important properties of the frequency response are: - the resonant peak <span class="math inline">\(M_r\)</span>, the largest value of the frequency response, - and the peak frequency <span class="math inline">\(\omega_{mr}\)</span>, the frequency where the maximum occurs, - Bandwidth</p>
+<section id="bandwidth" class="level3">
+<h3 class="anchored" data-anchor-id="bandwidth">Bandwidth</h3>
+<ul>
+<li><p>Definitions may very with application</p></li>
+<li><p>For us: <strong>Bandwidth (B) is the range of frequencies for which gain is significant</strong></p></li>
+<li><p>We need to define what <em>significant</em> means:</p>
+<ul>
+<li>typically, gain greater than 1/sqrt(2) or a -3 dB on the Bode Plot, <strong>relative to low frequency gain</strong></li>
+<li>i.e.&nbsp;3dB drop off w.r.t. low frequency (or could be absolute)</li>
+<li>sometimes also gain greater than 0 dB line is used.</li>
+</ul></li>
+<li><p>Often the bandwidth of interest is for the closed-loop system, but there might be little difference</p></li>
+<li><p>Bandwidth is an indication of the speed of response of the system: higher bandwidth implies faster transient response (i.e.&nbsp;can track higher frequencies)</p></li>
+</ul>
+<p>Finding the –3 dB bandwidth of an arbitrary system can be a difficult problem in general. Consider, for example, the standard recipe for computing bandwidth: - Derive the input-output transfer function - Set <span class="math inline">\(s = j\omega\)</span>; - Find the magnitude of the resulting expression; - Set the magnitude = <span class="math inline">\(1/\sqrt{2}\)</span> of the “midband” value (or half of the power); and - Solve for <span class="math inline">\(\omega_b\)</span></p>
+<p>Given a transfer function:</p>
+<p><span class="math display">\[
+G(s) = \frac{N(s)}{D(s)}
+\]</span></p>
+<p>we obtain the frequence response as:</p>
+<p><span class="math display">\[
+G(j\omega) = \frac{N(j\omega)}{D(j\omega)}
+\]</span></p>
+<p>If we take magnitude-squared of the frequency response (power):</p>
+<p><span class="math display">\[
+|G(j\omega)|^2 = \bigg | \frac{N(j\omega)}{D(j\omega)} \bigg |^2
+\]</span></p>
+<p>we can calculate the <span class="math inline">\(-3 \text{dB}\)</span> frequency as the frequency which results in half of the power:</p>
+<p><span class="math display">\[
+|G(j\omega_b)|^2 = \frac{1}{2}\big | G(j0) \bigg |^2
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[
+\bigg | \frac{N(j\omega_b)}{D(j\omega_b)} \bigg |^2 = \frac{1}{2}\bigg | \frac{N(j0)}{D(j0)} \bigg |^2
+\]</span></p>
+<p>and we can now solve for <span class="math inline">\(\omega_b\)</span> to find the bandwidth.</p>
+<ul>
+<li>If the dominant pole approximation holds, the Bandwidth is approximated by the frequency of the dominant pole</li>
+<li>We can read the bandwidth visually inspecting the Bode plot.</li>
+</ul>
+<section id="definition-1-gain-greater-than--3db" class="level4">
+<h4 class="anchored" data-anchor-id="definition-1-gain-greater-than--3db">Definition 1: Gain greater than -3dB</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="op">-</span><span class="fl">0.9</span>, <span class="op">-</span><span class="fl">0.1</span>]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.001</span>, <span class="dv">1000</span>))<span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>],<span class="st">'r--'</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">13.5</span>, <span class="fl">13.5</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">15</span>, <span class="dv">2</span>, <span class="st">"-3 dB line"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>-3 dB Bandwidth (range of freq. for which gain &gt; -3dB): <span class="math inline">\(13\)</span> rad/s</p>
+</section>
+<section id="definition-2-gain-greater-than-0-db" class="level4">
+<h4 class="anchored" data-anchor-id="definition-2-gain-greater-than-0-db">Definition 2: Gain greater than 0 dB</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="op">-</span><span class="fl">0.9</span>, <span class="op">-</span><span class="fl">0.1</span>]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.001</span>, <span class="dv">1000</span>))<span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'r--'</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">10</span>, <span class="dv">10</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">11</span>, <span class="dv">2</span>, <span class="st">"0 dB line"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>0 dB Bandwidth (range of freq. for which gain &gt; 0): <span class="math inline">\(10\)</span> rad/s</p>
+<ul>
+<li>Not too much difference</li>
+</ul>
+</section>
+<section id="definition-3--3db-relative-to-steady-state" class="level4">
+<h4 class="anchored" data-anchor-id="definition-3--3db-relative-to-steady-state">Definition 3: -3dB relative to steady state</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="dv">1</span>, <span class="op">-</span><span class="fl">0.9</span>, <span class="op">-</span><span class="fl">0.1</span>]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.001</span>, <span class="dv">1000</span>))<span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">40</span><span class="op">-</span><span class="dv">3</span>, <span class="dv">40</span><span class="op">-</span><span class="dv">3</span>],<span class="st">'r--'</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.1</span>, <span class="fl">0.1</span>],plt.ylim(),<span class="st">'r--'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>-3dB Bandwidth relative to low frequency, is <span class="math inline">\(B=[0, 0.1] rad/s\)</span></p>
+</section>
+<section id="a-different-example" class="level4">
+<h4 class="anchored" data-anchor-id="a-different-example">A different example</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> [<span class="fl">2.5</span>, <span class="dv">0</span>]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> [<span class="fl">4e-5</span>, <span class="fl">0.6</span>, <span class="dv">2554</span>, <span class="dv">250000</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf(num, den), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">100000</span>))<span class="op">;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">60</span>, <span class="op">-</span><span class="dv">60</span>],<span class="st">'r--'</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">100</span>, <span class="dv">100</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">3000</span>, <span class="dv">3000</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">150</span>, <span class="op">-</span><span class="dv">57</span>, <span class="st">"Significant gain"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p>The bandwidth <span class="math inline">\(B=[100, 3000]\)</span> rad/s</p></li>
+<li><p>Range of frequency where the gain is significant</p></li>
+<li><p>Usually easy to visually identify it</p></li>
+<li><p>Given a bandwidth <span class="math inline">\(B=[0, \omega_b]\)</span></p></li>
+<li><p>If the slope of the Gain diagram is -20 dB/decade beyond frequency <span class="math inline">\(\omega_b\)</span>, then the system is behaving like a first-order system, with a pole in <span class="math inline">\(\omega_b\)</span>.</p></li>
+<li><p>This means that the system transient response is characterised by a time constant <span class="math inline">\(\tau = \frac{1}{\omega_b}\)</span></p></li>
+<li><p>The system is hence the faster, the larger its bandwidth is</p></li>
+<li><p>The bandwidth is hence a good indicator of the velocity of the system</p></li>
+</ul>
+</section>
+</section>
+<section id="bandwidth-and-system-response" class="level3">
+<h3 class="anchored" data-anchor-id="bandwidth-and-system-response">Bandwidth and system response</h3>
+<ul>
+<li>For first order systems the relationship between bandwidth and settling time is <span class="math display">\[T_s \approx \frac{1}{w_b}\]</span></li>
+<li>Settling time is inversely proportional to the bandiwdth:
+<ul>
+<li>For first order systems the settling time <span class="math inline">\(T_s\)</span> is proportional to the time constant <span class="math inline">\(\tau\)</span>,</li>
+<li>The bandwidth <span class="math inline">\(w_b = \frac{1}{\tau}\)</span></li>
+</ul></li>
+<li>Broadly speaking we can say (even for systems of order greater than 1) that the larger the bandwidth, the faster is the response (the shorter is the system settling time)</li>
+</ul>
+</section>
+<section id="bandwidth-in-feedback-systems" class="level3">
+<h3 class="anchored" data-anchor-id="bandwidth-in-feedback-systems">Bandwidth in feedback systems</h3>
+<p>Given the system:</p>
+
+
+<img src="img/bandiwdth-feedback-loop.png" alt="bandiwdth-feedback-loop" style="width: 550px;">
+
+
+<p><span class="math display">\[
+Y(s) = \frac{GR}{1+GR} = G_{c} U(s)
+\]</span></p>
+<ul>
+<li>For a closed-loop system it is normal to expect no offset for step targets, in steady-state</li>
+<li>This means <span class="math inline">\(G_{c}(0) = 1\)</span> or <span class="math inline">\(0 \text{dB}\)</span></li>
+<li>In this case, <span class="math inline">\(B\)</span> is when the gain drops <span class="math inline">\(-3 \text{dB}\)</span></li>
+</ul>
+<p>For example:</p>
+<ul>
+<li>Given a system</li>
+</ul>
+<p><span class="math display">\[ G(s) = \frac{2}{s+4} \]</span></p>
+<ul>
+<li>and a compensator</li>
+</ul>
+<p><span class="math display">\[ R(s) = 2\frac{s+2}{s} \]</span></p>
+<p>The closed loop system is:</p>
+<p><span class="math display">\[
+G_{c} = \frac{GR}{1+GR}
+\]</span></p>
+<p>and is Bode plot is:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(control.tf([<span class="dv">4</span>, <span class="dv">8</span>],[<span class="dv">1</span>, <span class="dv">8</span>, <span class="dv">8</span>]), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">10</span>))<span class="op">;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>],<span class="st">'r--'</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.8</span>, <span class="fl">1.8</span>],plt.ylim(),<span class="st">'r--'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Bandwidth is about <span class="math inline">\(2 \text{rad/s}\)</span></li>
+</ul>
+<p>In feedbak systems, with high loop gain, the bandwidth of the closed loop system <span class="math inline">\(G_c\)</span> can be approximated by the knowledge of the loop gain function <span class="math inline">\(GR\)</span>:</p>
+<p><span class="math display">\[
+G_c = \frac{RG}{1+RG} \approx
+\begin{cases}
+1 \;\; \text{if} \;\; |RG| \gg 1 \newline
+RG \;\; \text{if} \;\; |RG| \ll 1
+\end{cases}
+\]</span></p>
+
+
+<img src="img/close-loop-bandwidth.png" alt="close-loop-bandwidth" style="width: 550px;">
+
+
+</section>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example</h3>
+<p><span class="math display">\[
+G(s) = \frac{1000}{(s+1)^3(s+10)}
+\]</span></p>
+<p><span class="math display">\[
+G_c(s) = \frac{G(s)}{1+G(s)}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode(control.tf([<span class="dv">1000</span>],[<span class="dv">1</span>, <span class="dv">13</span>, <span class="dv">33</span>, <span class="dv">31</span>, <span class="dv">10</span>]), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>))<span class="op">;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>mag_cc, phase_cc, omega_cc <span class="op">=</span> control.bode(control.tf([<span class="dv">1000</span>],[<span class="dv">1</span>, <span class="dv">13</span>, <span class="dv">33</span>, <span class="dv">31</span>, <span class="dv">10</span><span class="op">+</span><span class="dv">1000</span>]), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>))<span class="op">;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">1</span>, <span class="dv">40</span>, <span class="st">'$G(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">40</span><span class="op">-</span><span class="dv">3</span>, <span class="dv">40</span><span class="op">-</span><span class="dv">3</span>],<span class="st">'b--'</span>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.5</span>, <span class="fl">0.5</span>],plt.ylim(),<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.5</span>, <span class="op">-</span><span class="dv">100</span>, <span class="st">'$\omega_b$'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>],<span class="st">'r--'</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">5</span>, <span class="dv">5</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="dv">3</span>, <span class="st">'$G_c(s)$'</span>, color<span class="op">=</span><span class="st">'orange'</span>)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">5</span>, <span class="op">-</span><span class="dv">100</span>, <span class="st">'$\omega_</span><span class="sc">{bc}</span><span class="st">$'</span>, color<span class="op">=</span><span class="st">'blue'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_Intro_to_freq_response_and_bode_plots_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

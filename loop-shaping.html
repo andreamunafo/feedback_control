@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Controller design: Loop analysis and shaping</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Controller design: Loop analysis and shaping">
+<meta property="og:description" content="Bolzern, Chapter 12.">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Controller design: Loop analysis and shaping">
+<meta name="twitter:description" content="Bolzern, Chapter 12.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Controller design: Loop analysis and shaping</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link active">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#feedback-goals" id="toc-feedback-goals" class="nav-link" data-scroll-target="#feedback-goals">Feedback Goals</a></li>
+  </ul></li>
+  <li><a href="#feedback-design-via-loop-shaping" id="toc-feedback-design-via-loop-shaping" class="nav-link" data-scroll-target="#feedback-design-via-loop-shaping">Feedback Design via Loop Shaping</a>
+  <ul class="collapse">
+  <li><a href="#sensitivity-and-complementary-sensitivity-functions-recap" id="toc-sensitivity-and-complementary-sensitivity-functions-recap" class="nav-link" data-scroll-target="#sensitivity-and-complementary-sensitivity-functions-recap">Sensitivity and Complementary Sensitivity Functions (Recap)</a></li>
+  </ul></li>
+  <li><a href="#design-considerations-suitable-shape" id="toc-design-considerations-suitable-shape" class="nav-link" data-scroll-target="#design-considerations-suitable-shape">Design Considerations: suitable shape</a>
+  <ul class="collapse">
+  <li><a href="#loop-shaping" id="toc-loop-shaping" class="nav-link" data-scroll-target="#loop-shaping">Loop shaping</a></li>
+  <li><a href="#a-simple-example-for-cruise-control" id="toc-a-simple-example-for-cruise-control" class="nav-link" data-scroll-target="#a-simple-example-for-cruise-control">A simple example for cruise control</a></li>
+  <li><a href="#sensitivity-and-robustness" id="toc-sensitivity-and-robustness" class="nav-link" data-scroll-target="#sensitivity-and-robustness">Sensitivity and Robustness</a></li>
+  <li><a href="#analysis-more-comments" id="toc-analysis-more-comments" class="nav-link" data-scroll-target="#analysis-more-comments">Analysis: More Comments</a></li>
+  </ul></li>
+  <li><a href="#closed-loop-stability---case-1" id="toc-closed-loop-stability---case-1" class="nav-link" data-scroll-target="#closed-loop-stability---case-1">Closed loop stability - Case 1</a></li>
+  <li><a href="#closed-loop-stability---case-2" id="toc-closed-loop-stability---case-2" class="nav-link" data-scroll-target="#closed-loop-stability---case-2">Closed loop stability - Case 2</a></li>
+  <li><a href="#tracking-errors" id="toc-tracking-errors" class="nav-link" data-scroll-target="#tracking-errors">Tracking errors</a>
+  <ul class="collapse">
+  <li><a href="#sidenote" id="toc-sidenote" class="nav-link" data-scroll-target="#sidenote">Sidenote:</a></li>
+  <li><a href="#steady-state-errors-for-systems-of-type-0-1-2" id="toc-steady-state-errors-for-systems-of-type-0-1-2" class="nav-link" data-scroll-target="#steady-state-errors-for-systems-of-type-0-1-2">Steady state errors for systems of type 0, 1, 2</a></li>
+  <li><a href="#comments" id="toc-comments" class="nav-link" data-scroll-target="#comments">Comments</a></li>
+  </ul></li>
+  <li><a href="#closed-loop-transient-the-relationship-between-loop-function-harmonic-response-and-closed-loop" id="toc-closed-loop-transient-the-relationship-between-loop-function-harmonic-response-and-closed-loop" class="nav-link" data-scroll-target="#closed-loop-transient-the-relationship-between-loop-function-harmonic-response-and-closed-loop">Closed Loop Transient: the relationship between loop function harmonic response and closed loop</a>
+  <ul class="collapse">
+  <li><a href="#mid-frequency-approximation-of-h-and-phase-margin" id="toc-mid-frequency-approximation-of-h-and-phase-margin" class="nav-link" data-scroll-target="#mid-frequency-approximation-of-h-and-phase-margin">Mid-Frequency approximation of H and phase margin</a></li>
+  <li><a href="#loop-analysis-discussions-and-conclusions" id="toc-loop-analysis-discussions-and-conclusions" class="nav-link" data-scroll-target="#loop-analysis-discussions-and-conclusions">Loop analysis: discussions and conclusions</a></li>
+  </ul></li>
+  <li><a href="#example-car-driving-uphill" id="toc-example-car-driving-uphill" class="nav-link" data-scroll-target="#example-car-driving-uphill">Example: Car Driving Uphill</a></li>
+  <li><a href="#loop-shaping-some-more-discussions" id="toc-loop-shaping-some-more-discussions" class="nav-link" data-scroll-target="#loop-shaping-some-more-discussions">Loop shaping: some more discussions</a></li>
+  <li><a href="#disturbance-rejections-load-variations" id="toc-disturbance-rejections-load-variations" class="nav-link" data-scroll-target="#disturbance-rejections-load-variations">Disturbance rejections: load variations</a></li>
+  <li><a href="#noise-rejections-measurement-noise" id="toc-noise-rejections-measurement-noise" class="nav-link" data-scroll-target="#noise-rejections-measurement-noise">Noise rejections: measurement noise</a>
+  <ul class="collapse">
+  <li><a href="#control-sensitivity" id="toc-control-sensitivity" class="nav-link" data-scroll-target="#control-sensitivity">Control Sensitivity</a></li>
+  </ul></li>
+  <li><a href="#control-sensitity-consequences" id="toc-control-sensitity-consequences" class="nav-link" data-scroll-target="#control-sensitity-consequences">Control Sensitity: Consequences</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a>
+  <ul class="collapse">
+  <li><a href="#discussions" id="toc-discussions" class="nav-link" data-scroll-target="#discussions">Discussions</a></li>
+  <li><a href="#computer-aided-control-system-design" id="toc-computer-aided-control-system-design" class="nav-link" data-scroll-target="#computer-aided-control-system-design">Computer Aided Control System Design</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Controller design: Loop analysis and shaping</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p><em>Bolzern, Chapter 12.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<section id="feedback-goals" class="level3">
+<h3 class="anchored" data-anchor-id="feedback-goals">Feedback Goals</h3>
+<ul>
+<li>Stability of the closed loop system</li>
+<li>Performance while tracking inputs
+<ul>
+<li>tracking error, typically specified in terms of steady state error to specific inputs:
+<ul>
+<li>e.g., error to step inputs less than <span class="math inline">\(5\%\)</span></li>
+</ul></li>
+<li>behaviour of the transient, typically specified in terms of bandwidth, rise time, settling time, damping ratio, overshoot (these are requirements for the transfer function between <span class="math inline">\(Y\)</span> and <span class="math inline">\(Y_{ref}\)</span>).</li>
+</ul></li>
+<li>Robustness to noise measurement and disturbances</li>
+</ul>
+<p>We can design the behavior of the closed loop system focusing on the open loop transfer function.</p>
+<p>Observation: &gt; This approach was also used in studying stability using the Nyquist criterion: we plotted the Nyquist plot for the open loop transfer function to determine the stability of the closed loop system.</p>
+</section>
+</section>
+<section id="feedback-design-via-loop-shaping" class="level2">
+<h2 class="anchored" data-anchor-id="feedback-design-via-loop-shaping">Feedback Design via Loop Shaping</h2>
+<ul>
+<li><p>One advantage of the Nyquist stability theorem is that it is based on the loop transfer function <span class="math inline">\(L = GR\)</span>, which is the product of the transfer functions of the process and the controller.</p></li>
+<li><p>Easy to see how the controller influences the loop transfer function.</p></li>
+<li><p>For example, to make an unstable system stable we simply have to bend the Nyquist curve away from the critical point.</p></li>
+<li><p>This idea is the basis of several different design methods collectively called <strong>loop shaping</strong>: Choose a compensator that gives a loop transfer function with a desired shape.</p></li>
+<li><p>Example: Determine a loop transfer function that gives a closed loop system with the desired properties and to compute the controller as <span class="math inline">\(R = L/G\)</span> or change the gain of the process transfer function to obtain the desired bandwidth, and then add poles and zeros until the desired shape is obtained.</p></li>
+</ul>
+<p>Let’s consider our usual closed loop system:</p>
+
+
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+
+
+<ul>
+<li><span class="math inline">\(d\)</span>: disturbance</li>
+<li><span class="math inline">\(n\)</span>: noise</li>
+</ul>
+<p>We want to design <span class="math inline">\(R(s)\)</span>: - Disturbance is rejected - Noise is attenuated - Stable and high performance of <span class="math inline">\(G(s)\)</span> - Robustness in case our model of <span class="math inline">\(G(s)\)</span> is different than reality</p>
+<p>We will look at the loop transfer function <span class="math inline">\(L(s) = G(s)R(s)\)</span> - From a design perspective, the use of loop analysis tools is very powerful - If we can specify the desired performance in terms of properties of <span class="math inline">\(L(s)\)</span>, we can directly see the impact of changes in the controller R(s) (since we know the plant <span class="math inline">\(G(s)\)</span>).</p>
+<p>This is much easier, for example, than trying to reason directly about the tracking response of the closed loop system - the close loop transfer function is much more complex and given by <span class="math inline">\(H = GR/(1+GR)\)</span>.</p>
+<p><strong>Note - Designing a controller:</strong> designing the controller <span class="math inline">\(R\)</span> means choosing <em>poles</em>, <em>zeros</em> and the <em>static gain</em> of the controller.</p>
+<p><strong>Reference</strong> - A good reference in general and for the loop shaping specifically is “Feedback Systems: An Introduction for Scientists and Engineers” available <a href="http://www.cds.caltech.edu/~murray/books/AM08/pdf/am08-complete_22Feb09.pdf">here</a> freely to download (See Chapter 10 for details on Loop Shaping)</p>
+<hr>
+<section id="sensitivity-and-complementary-sensitivity-functions-recap" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-and-complementary-sensitivity-functions-recap">Sensitivity and Complementary Sensitivity Functions (Recap)</h3>
+<p>(we talked about this in <code>08_Main_types_of_loops_and_transfer_functions</code> - please refer to that for more details)</p>
+<p>Doing simple algebric manipulation we can express the output <span class="math inline">\(y\)</span> as a function of all the inputs:</p>
+<p><span class="math display">\[
+Y(s) = D(s) + GR(Y_{ref}-Y+N) \Rightarrow (I+GR) Y(s) = GR \cdot Y_{ref}(s) + D(s) + GR\cdot N(s)
+\]</span></p>
+<p><span class="math display">\[
+Y(s) = \frac{GR}{1+GR}Y_{ref}(s) + \frac{1}{1+GR}D(s) + \frac{GR}{1+GR}N(s)
+\]</span></p>
+<p>We want to design <span class="math inline">\(R\)</span> so that all transfer functions have good properties - tracking (at freq. where this is important) - disturbance rejection (at freq. where this is important) - noise attenuation (at freq. where this is important)</p>
+<p>And we can explict the equation above as a set of transfer functions:</p>
+<p><span class="math display">\[
+E(s) = \frac{1}{1+GR}Y_{ref}(s), \hspace{2cm} Y(s) = \frac{1}{1+GR}D(s)
+\]</span></p>
+<p><span class="math display">\[
+Y(s) = \frac{GR}{1+GR}Y_{ref}(s), \hspace{2cm} Y(s) = \frac{GR}{1+GR}N(s)
+\]</span></p>
+<p><span class="math display">\[
+U(s) = \frac{R}{1+GR}Y_{ref}(s) \hspace{2cm} \hspace{4cm}
+\]</span></p>
+<p>We called:</p>
+<ul>
+<li>Sensitivity Function: <span class="math inline">\(S = \frac{1}{1+GR}\)</span></li>
+<li>Complementary Sensitivity Function: <span class="math inline">\(T = \frac{GR}{1+GR}\)</span></li>
+</ul>
+<p>We can re-write these functions in terms of the loop transfer function <span class="math inline">\(L\)</span>:</p>
+<ul>
+<li>Sensitivity Function: <span class="math inline">\(S = \frac{1}{1+L}\)</span></li>
+<li>Complementary Sensitivity Function: <span class="math inline">\(T = \frac{L}{1+L}\)</span></li>
+</ul>
+<p>and we also know that <span class="math inline">\(S+T=I\)</span> for all frequencies</p>
+</section>
+</section>
+<section id="design-considerations-suitable-shape" class="level2">
+<h2 class="anchored" data-anchor-id="design-considerations-suitable-shape">Design Considerations: suitable shape</h2>
+<p>Let’s first discuss a suitable shape for the <strong>loop transfer function</strong> that gives good performance and good stability margins. - Remember that the objective is that of designing a suitable <span class="math inline">\(R\)</span>.</p>
+<p>Let’s re-write the previous equation expliciting the error term: <span class="math inline">\(\epsilon=y_{ref} - y +n\)</span></p>
+<p><span class="math display">\[
+\epsilon = S Y_{ref}(s) - S D(s) - T N(s)
+\]</span></p>
+<ul>
+<li>we are not interested in the value of <span class="math inline">\(y\)</span> so much (we want <span class="math inline">\(y \rightarrow y_{ref}\)</span>)</li>
+<li>we want <span class="math inline">\(\epsilon = 0\)</span> for any disturbance, noise and reference that are reasonable for my system</li>
+</ul>
+<p><strong>Goals:</strong> - Good reference tracking for a sufficently slow change in reference hence for slow frequencies (e.g., think of a cruise control) - With want <span class="math inline">\(|S|\)</span> small at low frequency - This is also true for low freq. disturbances</p>
+<ul>
+<li>Noise is generally high frequency
+<ul>
+<li>We need <span class="math inline">\(|T|\)</span> small at high frequency</li>
+</ul></li>
+<li>Since <span class="math inline">\(S+T=I\)</span> they cannot be “small” all the time, and we need to have a good compromise leveraging the complementary behaviour that we often have between low frequency signals (references and disturbances) and high frequency signals (noise):</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loop-shaping-splut-mag.png" alt="sensitivity-and-complementary-with-freq" style="width: 700px">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Cross-over frequency <span class="math inline">\(w_c\)</span>:
+<ul>
+<li>Where the <span class="math inline">\(S\)</span> begins to be large, and where the <span class="math inline">\(T\)</span> begins to be small</li>
+<li><span class="math inline">\(w_c\)</span> makes it possible to choose where I think noise dominate vs disturbance dominate</li>
+<li>Note that <span class="math inline">\(T\)</span> should be close to 1 in low frequency for <span class="math inline">\(y=y_{ref}\)</span>.</li>
+</ul></li>
+</ul>
+<p>Given that we now know how we would like <span class="math inline">\(S\)</span> and <span class="math inline">\(T\)</span> to look like, we can also start defining how <span class="math inline">\(L\)</span> should look like.</p>
+<ul>
+<li><span class="math inline">\(L(s)\)</span> includes the controller <span class="math inline">\(R(s)\)</span> that I can design to give me a good <span class="math inline">\(L\)</span>.</li>
+</ul>
+<hr>
+<ul>
+<li><span class="math inline">\(L(s)=G(s)R(s)\)</span></li>
+<li><span class="math inline">\(S(s)=\frac{1}{1+L(s)}\)</span></li>
+<li><span class="math inline">\(T(s)=\frac{L}{1+L(s)}\)</span></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loop-shapinig-L-mag.png" alt="loop-shapinig-L-mag" style="width: 700px">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>I would like to design my controller <span class="math inline">\(R(s)\)</span> so that the <span class="math inline">\(L\)</span> loop transfer function looks like an integrator</li>
+<li>Note that moving <span class="math inline">\(L\)</span> to the right or to the left means choosing the correct gain <span class="math inline">\(K\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+L(s)=\frac{K}{s}
+\]</span></p>
+<ul>
+<li><p>Higher <span class="math inline">\(K\)</span> means higher frequency reference tracking and disturbance rejection</p></li>
+<li><p>Smaller <span class="math inline">\(K\)</span> means lower bandwidth performance (e.g., noisy sensors at lower frequencies)</p></li>
+<li><p>Note that where the <span class="math inline">\(L(s)=\frac{K}{s}\)</span> crosses the <span class="math inline">\(0\)</span> dB line is where we are dividing between low and high frequency</p></li>
+</ul>
+<hr>
+<ul>
+<li><p>Good performance requires that the loop transfer function is large for frequencies where we desire good tracking of reference signals and good attenuation of low-frequency load disturbances.</p></li>
+<li><p>Since <span class="math inline">\(S = 1/(1 + L)\)</span>: for frequencies where <span class="math inline">\(|L| &gt; 100\)</span> disturbances will be attenuated by approximately a factor of 100 or more and the tracking error is less than <span class="math inline">\(1\%\)</span>.</p>
+<ul>
+<li>Remember that <span class="math display">\[
+  E(s) = \frac{1}{1+GR}Y_{ref}(s)
+  \]</span></li>
+</ul></li>
+<li><p>The transfer function from measurement noise to control action is <span class="math inline">\(C_S = R/(1 + L)\)</span>. To avoid injecting too much measurement noise, which can create undesirable control actions, the controller transfer function <span class="math inline">\(R\)</span> should have low gain at high frequencies (<em>high-frequency roll-off</em>).</p></li>
+<li><p>Given these constraints, the loop transfer function <span class="math inline">\(L=GR\)</span> should thus have roughly the shape:</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loopshaping-desired-shape.png" alt="loopshaping-desired-shape" style="width: 750px">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><p>It has unit gain at the gain crossover frequency (<span class="math inline">\(|L(i\omega_{gc})| = 1\)</span>), large gain for lower frequencies, and small gain for higher frequencies.</p></li>
+<li><p>The crossover frequency <span class="math inline">\(\omega_{gc}\)</span> determines the attenuation of load disturbances, bandwidth, and response time of the closed loop system.</p></li>
+<li><p>The slope <span class="math inline">\(n_{gc}\)</span> of the gain curve of <span class="math inline">\(L(s)\)</span> at the gain crossover frequency <span class="math inline">\(\omega_{gc}\)</span> determines the robustness of the closed loop systems.</p></li>
+<li><p>Good robustness requires good stability margins, which imposes requirements on the loop transfer function around the gain crossover frequency <span class="math inline">\(\omega_{gc}\)</span>.</p></li>
+<li><p>Desirable to transition from high loop gain <span class="math inline">\(|L(i\omega))|\)</span> at low frequencies to low loop gain quickly</p></li>
+<li><p>Robustness requirements impose restrictions on how fast the gain can decrease.</p>
+<ul>
+<li>It is possible to verify that, for a minimum-phase system (a system in which poles and zeros will not lie on the right side of the s-plane): $ n_{gc} + $, where <span class="math inline">\(\varphi_m\)</span> is the phase margin in degrees.</li>
+<li>A steeper slope thus gives a smaller phase margin.</li>
+<li>Time delays and poles and zeros in the right half-plane impose further restrictions</li>
+</ul></li>
+<li><p>At low frequencies, a large magnitude of <span class="math inline">\(L\)</span> provides good load disturbance rejection and reference tracking</p></li>
+<li><p>At high frequencies a small loop gain avoids injecting too much measurement noise.</p></li>
+</ul>
+<section id="loop-shaping" class="level3">
+<h3 class="anchored" data-anchor-id="loop-shaping">Loop shaping</h3>
+<ul>
+<li>Is a trial-and-error procedure</li>
+<li>We typically start with a Bode plot of the process transfer function <span class="math inline">\(G\)</span></li>
+<li>Choosing the gain crossover frequency <span class="math inline">\(\omega_{gc}\)</span> is a major design decision: a compromise between attenuation of load disturbances and injection of measurement noise</li>
+<li>Finally shape the loop transfer function by changing the controller gain and adding poles and zeros to the controller transfer function</li>
+<li>The controller gain at low frequencies can be increased by so-called <em>lag compensation,</em> and the behavior around the crossover frequency can be changed by so-called <em>lead compensation.</em></li>
+</ul>
+</section>
+<section id="a-simple-example-for-cruise-control" class="level3">
+<h3 class="anchored" data-anchor-id="a-simple-example-for-cruise-control">A simple example for cruise control</h3>
+<p>Model of the car:</p>
+<p><span class="math display">\[
+\dot{x} = -x + u\\
+y = x
+\]</span></p>
+<p>with transfer function</p>
+<p><span class="math display">\[
+\frac{Y(s)}{U(s)} = G(s) = \frac{1}{s+1}
+\]</span></p>
+<ul>
+<li>We would like to have <span class="math inline">\(L(s)=G(s)R(s) = \frac{K}{s}\)</span></li>
+<li>We know that <span class="math inline">\(G(s) = \frac{1}{s+1}\)</span></li>
+</ul>
+<p><span class="math display">\[
+\frac{1}{s+1}R(s) = \frac{K}{s} \Rightarrow R(s)=\frac{K(s+1)}{s}
+\]</span></p>
+<ul>
+<li>This solves the problem</li>
+</ul>
+<table class="table">
+<colgroup>
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">- Is there any problem with this approach? - We are inverting the plant <span class="math inline">\(G(s)\)</span> to solve for the controller - Inverting the plant with a RHP pole (or zero) would imply a RHP zero (or pole): we are making the overall system unobservable exactly where our system is unstable (critical cancellation: the system is internally unstable and we would not even be able to tell measuring the output) - What happens if the real system is not exactly equal to my model <span class="math inline">\(G(s)\)</span>? - Feedback helps, but we will need to make this more robust</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">s + 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">``` ::: :::</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">::: {.cell} ``` {.python .cell-code} # L(s) desiredLoop = 10/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"># Controller R = desiredLoop/car_tf print(R) ```</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">::: {.cell-output .cell-output-stdout} ```</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10 s + 10</td>
+</tr>
+</tbody>
+</table>
+<pre><code>s</code></pre>
+<pre><code>:::
+:::
+
+
+We can then create our system:
+
+::: {.cell}
+``` {.python .cell-code}
+sysLoop = control.series(R, car_tf) # Loop T.F.
+sysCL = control.feedback(sysLoop, 1, -1) # Close loop T.F.</code></pre>
+<p>:::</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>t, y <span class="op">=</span> control.step_response(sysCL, T<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t_ol, y_ol <span class="op">=</span> control.step_response(car_tf, T<span class="op">=</span><span class="dv">7</span>) <span class="co"># open loop - no control here</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.plot(t, y, color<span class="op">=</span><span class="st">'b'</span>, label<span class="op">=</span><span class="st">'sysCL'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.plot(t_ol, y_ol, color<span class="op">=</span><span class="st">'g'</span>, label<span class="op">=</span><span class="st">'sysOL'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.legend.Legend&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-6-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let’s see what happens if we had a slight mismatch between the car and our model</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>realCar_tf <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">0.5</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(realCar_tf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1
+-------
+s + 0.5
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sysLoop <span class="op">=</span> control.series(R, realCar_tf) <span class="co"># Loop T.F.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sysCL <span class="op">=</span> control.feedback(sysLoop, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>) <span class="co"># Close loop T.F.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>t, y <span class="op">=</span> control.step_response(sysCL, T<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>t_ol, y_ol <span class="op">=</span> control.step_response(car_tf, T<span class="op">=</span><span class="dv">7</span>) <span class="co"># open loop - no control here</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.plot(t, y, color<span class="op">=</span><span class="st">'b'</span>, label<span class="op">=</span><span class="st">'sysCL'</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.plot(t_ol, y_ol, color<span class="op">=</span><span class="st">'g'</span>, label<span class="op">=</span><span class="st">'sysOL'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.legend.Legend&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let’s see what the Loop Transfer Function looks like as a Bode Plot</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sysLoop <span class="op">=</span> control.series(R, car_tf)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(sysLoop, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylim(<span class="dv">0</span>, <span class="op">-</span><span class="dv">100</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Which is an integrator,</p>
+<p>and the desired one:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(desiredLoop, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>And as expected, they are exactly the same.</p>
+</section>
+<section id="sensitivity-and-robustness" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-and-robustness">Sensitivity and Robustness</h3>
+<ul>
+<li>We know that the sensitivity gives an indication of robustness</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loopshaping-desired-shape.png" alt="loopshaping-desired-shape" style="width: 750px">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>We saw this with Nyquist plots already.
+<ul>
+<li>I would like my <span class="math inline">\(L(s)\)</span> as far away as possible from the -1 point</li>
+<li>The distance from -1 is the stability margin we have (gain and phase)</li>
+<li>Since <span class="math inline">\(S=\frac{1}{1+L}\)</span>, the closer <span class="math inline">\(L\)</span> is to -1, and hence the less robust it is, the bigger <span class="math inline">\(S\)</span> is (at that frequency).</li>
+</ul></li>
+</ul>
+<p><em>Nominal sensitivity peak</em> <span class="math display">\[
+M_s = \max_{0 \leq \omega \leq \infty} | S(j\omega) | = \max_{0 \leq \omega \leq \infty} \Big| \frac{1}{1+G(j\omega)R(j\omega)} \Big|
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(M_s\)</span> gives us an indication of how far <span class="math inline">\(L\)</span> is from -1</p></li>
+<li><p>We want <span class="math inline">\(S\)</span> to have a small peak so that we can accept:</p>
+<ul>
+<li>larger uncertainty in our model</li>
+<li>time delays (e.g., slower than expected computation, or response)</li>
+<li>RHP zeros of P</li>
+</ul></li>
+<li><p>time delays and RHP zeros of P limits how small the sensitiviy peak can be: fundamental lack of robustness of the system</p></li>
+<li><p>in this case we need to have a smaller bandwidth (less performance): this would level off the sensitivity function sooner</p></li>
+</ul>
+<p>Intuitively - if I have a time delay of 1s, I cannot control something that moves at 500Hz - A RHP zeros acts similarly to a time delay (for ex. look at the step response)</p>
+</section>
+<section id="analysis-more-comments" class="level3">
+<h3 class="anchored" data-anchor-id="analysis-more-comments">Analysis: More Comments</h3>
+<ul>
+<li><p>We want to understand the properties of the closed loop system <span class="math inline">\(H\)</span> analysing the Bode plot of <span class="math inline">\(L\)</span></p></li>
+<li><p>From now on, we will assume that <span class="math inline">\(L\)</span> is BIBO stable (we will accept to have up to 2 poles at the origin).</p></li>
+<li><p>What happens if <span class="math inline">\(G\)</span> is unstable? We design a first regulator to stabilise it and a second one that meets performance requirements</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loop-shaping-if-G-not-stable.png" alt="loop-shaping-if-G-not-stable" style="width: 750px">
+</td>
+</tr>
+
+</tbody></table>
+<p>Let’s go back to our system once more:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+H(s) = \frac{G(s)R(s)}{1+G(s)R(s)} = \frac{L(s)}{1+L(s)}
+\]</span></p>
+<ul>
+<li>The “+” sign at the denominstator depends on the summation node in the feedback loop</li>
+<li>However, <span class="math inline">\(L(s)\)</span> has magnitude and <em>phase</em>: when the phase is &lt; -180 there is a sign change, this is equivalent to summing reference input and measured output</li>
+<li>The feedback loop can only sustain the change in sign if the <span class="math inline">\(L(s)\)</span> &lt; 1 (see also Nyquist).</li>
+</ul>
+</section>
+</section>
+<section id="closed-loop-stability---case-1" class="level2">
+<h2 class="anchored" data-anchor-id="closed-loop-stability---case-1">Closed loop stability - Case 1</h2>
+<ul>
+<li><p><span class="math inline">\(L(j\omega)\)</span></p></li>
+<li><p>Given <span class="math inline">\(\omega_{gc} : |L(j\omega_{gc})|=1\)</span></p></li>
+<li><p><span class="math inline">\(|L(j\omega)| &gt; 1\)</span>, for $&lt; <em>{gc} $, and <span class="math inline">\(|L(j\omega)| &lt; 1\)</span>, for $&gt; </em>{gc} $,</p></li>
+<li><p>if <span class="math inline">\(\angle L(j\omega_{gc}) &gt; -180\)</span>, then <span class="math inline">\(H=\frac{L(s)}{1+L(s)}\)</span> is BIBO stable</p></li>
+<li><p><em>When the magnitude plot crosses 0dB then phase must be &gt; -180<span class="math inline">\(^o\)</span></em></p></li>
+<li><p>We are revisiting the phase margin: how much can the phase change before the system becomes unstable.</p></li>
+<li><p>Note that, the phase margin is a robustness metric with respect to fixed delays: delay <span class="math inline">\(\tau\)</span>, means phase shift: <span class="math inline">\(\omega\tau\)</span>.</p></li>
+</ul>
+</section>
+<section id="closed-loop-stability---case-2" class="level2">
+<h2 class="anchored" data-anchor-id="closed-loop-stability---case-2">Closed loop stability - Case 2</h2>
+<ul>
+<li><p><span class="math inline">\(L(j\omega)\)</span></p></li>
+<li><p>Given <span class="math inline">\(\omega_{gc} : \angle L(j\omega)|=-180^o\)</span></p></li>
+<li><p><span class="math inline">\(\angle L(j\omega) &gt; -180\)</span>, for $&lt; <em>{gc} $, and <span class="math inline">\(\angle L(j\omega) &lt; -180\)</span>, for $&gt; </em>{gc} $,</p></li>
+<li><p>if <span class="math inline">\(|L(j\omega)| &lt; 1\)</span>, then <span class="math inline">\(H=\frac{L(s)}{1+L(s)}\)</span> is BIBO stable</p></li>
+<li><p><em>When the phase plot crosses -180<span class="math inline">\(^o\)</span> then the magnitude must be &lt; 1 (0dB)</em></p></li>
+<li><p>We are revisiting the gain margin: how much can the gain can change before the system becomes unstable.</p></li>
+<li><p>Note that, the gain margin is a robustness metric with respect to uncertainties in the static gain of the loop transfer function <span class="math inline">\(L\)</span>.</p></li>
+</ul>
+</section>
+<section id="tracking-errors" class="level2">
+<h2 class="anchored" data-anchor-id="tracking-errors">Tracking errors</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/loop-shaping-tracking-errors.png" alt="loop-shaping-tracking-errors" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+E(s) = \frac{1}{1+RG}Y_{ref}(s) = \frac{1}{1+L}Y_{ref}(s)
+\]</span></p>
+<ul>
+<li><p>We are interested in understanding how the error evolves over time, and when <span class="math inline">\(t \rightarrow \infty\)</span></p></li>
+<li><p>With varying input signals. Typically, step, ramp, parabolic input, etc <span class="math display">\[u(t)=1(t); \hspace{0.5cm} u(t)=t ; \hspace{0.5cm} u(t)=\frac{t^2}{2} \]</span></p>
+<p>whose transfer functions are: <span class="math display">\[U(s) = \frac{1}{s} \hspace{0.5cm} U(s) = \frac{1}{s^2} ; \hspace{0.5cm} U(s) = \frac{1}{s^3} \]</span></p></li>
+</ul>
+<p>Or in the frequency domain:</p>
+<p><span class="math display">\[
+E(j\omega) = \frac{1}{1+L(j\omega)}Y_{ref}(j\omega)
+\]</span></p>
+<ul>
+<li><p>Analysing the behaviour of <span class="math inline">\(e\)</span> for <span class="math inline">\(t \rightarrow \infty\)</span>, means analysing <span class="math inline">\(E(j\omega)\)</span> for $ $.</p></li>
+<li><p><span class="math inline">\(L(j\omega)\)</span> should be as large as possible for low frequencies (as long as closed loop stability is maintained).</p></li>
+</ul>
+<section id="sidenote" class="level3">
+<h3 class="anchored" data-anchor-id="sidenote">Sidenote:</h3>
+<blockquote class="blockquote">
+<p>Remember that a system if of type 0 (1, 2, …) when its loop function <span class="math inline">\(L(s)\)</span> has 0 (1, 2, …) poles at the origin.</p>
+</blockquote>
+<ul>
+<li>Systems of type 1 or 2: <span class="math inline">\(L(j\omega) \rightarrow \infty\)</span> when <span class="math inline">\(\omega \rightarrow 0\)</span>
+<ul>
+<li>Remember that a system has type <span class="math inline">\(n\)</span> if its loop transfer function <span class="math inline">\(L(s)\)</span> has <span class="math inline">\(n\)</span> poles at the origin.</li>
+</ul></li>
+<li>If the process <span class="math inline">\(G\)</span> does not satisfy our requirements, we can act on the controller <span class="math inline">\(R\)</span></li>
+<li>Note: to analyse the steady state of a system we must have closed loop stability, or we do not even have steady state!</li>
+</ul>
+</section>
+<section id="steady-state-errors-for-systems-of-type-0-1-2" class="level3">
+<h3 class="anchored" data-anchor-id="steady-state-errors-for-systems-of-type-0-1-2">Steady state errors for systems of type 0, 1, 2</h3>
+<p><span class="math display">\[
+e_{\inf} = \lim_{s\rightarrow0} sE(s) = \lim sG_e(s)Y_{ref}(s) = \lim_{s\rightarrow0} s\frac{1}{1+L(s)}Y_{ref}(s)
+\]</span></p>
+<p>where <span class="math inline">\(G_e(s)\)</span> is the transfer function between the input <span class="math inline">\(y_{ref}\)</span> and the error <span class="math inline">\(E(s)\)</span>.</p>
+<ul>
+<li><p>If <span class="math inline">\(y_{ref}(t)=1(t)\)</span> (step input) <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(Y_{ref}(s) = \frac{1}{s}\)</span>, and the system <span class="math inline">\(L(s)\)</span> is of type 0, then <span class="math inline">\(\lim_{s\rightarrow0} L(s) = K\)</span>, (static gain) and the error (in this case called position error) is finite. If the system is of type 1 or 2, <span class="math inline">\(\lim_{s\rightarrow0} L(s) = \inf\)</span> and the error is 0.</p></li>
+<li><p>If <span class="math inline">\(y_{ref}(t)=ramp(t)\)</span> (ramp input) <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(Y_{ref}(s) = \frac{1}{s^2}\)</span>, and the system <span class="math inline">\(L(s)\)</span> is of type 0, then <span class="math inline">\(\lim_{s\rightarrow0} sL(s) = 0\)</span>, and the error (in this case called velocity error) is infinite. If the system is of type 1, <span class="math inline">\(\lim_{s\rightarrow0} sL(s) = \frac{1}{k}\)</span> and the error is finite. If the system is of type 2, <span class="math inline">\(\lim_{s\rightarrow0} sL(s) = \inf\)</span> and the error is 0.</p></li>
+</ul>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th>Type 0</th>
+<th>Type 1</th>
+<th>Type 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>step</td>
+<td><span class="math inline">\(\frac{1}{1+k}\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+</tr>
+<tr class="even">
+<td>ramp</td>
+<td><span class="math inline">\(\inf\)</span></td>
+<td><span class="math inline">\(\frac{1}{k}\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+</tr>
+<tr class="odd">
+<td>parabolic</td>
+<td><span class="math inline">\(\inf\)</span></td>
+<td><span class="math inline">\(\inf\)</span></td>
+<td><span class="math inline">\(\frac{1}{k}\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comments" class="level3">
+<h3 class="anchored" data-anchor-id="comments">Comments</h3>
+<ul>
+<li>The Loop function <span class="math inline">\(L(s)\)</span> must have high <span class="math inline">\(|L|\)</span> at low frequency (for type 1 and 2 <span class="math inline">\(|L| = \inf\)</span> at low freq.)</li>
+<li>If the plant does not respect desired conditions to obtain desired tracking performance we need to act on <span class="math inline">\(R\)</span> to obtain those conditions</li>
+<li>Thanks to the feedback we can have zero error even when we do not fully know the plant.</li>
+<li>Pre-requisite: to do steady state analysis we need to have closed loop stability. If the system is unstable, there is no steady state.</li>
+</ul>
+</section>
+</section>
+<section id="closed-loop-transient-the-relationship-between-loop-function-harmonic-response-and-closed-loop" class="level2">
+<h2 class="anchored" data-anchor-id="closed-loop-transient-the-relationship-between-loop-function-harmonic-response-and-closed-loop">Closed Loop Transient: the relationship between loop function harmonic response and closed loop</h2>
+<ul>
+<li>What is the relationship between the harmonic response of the loop transfer function <span class="math inline">\(L(j\omega)\)</span> and the closed loop <span class="math inline">\(H(j\omega)\)</span></li>
+</ul>
+<p><span class="math display">\[
+|H(j\omega)| = \frac{|L(j\omega)|}{|1+L(j\omega)|} = \frac{|L(j\omega)|}{\sqrt{1+|L(j\omega)|^2}}
+\]</span></p>
+<ul>
+<li><p>when <span class="math inline">\(\omega \rightarrow 0\)</span>, to guarantee low tracking errors: <span class="math inline">\(|L(j\omega)| &gt;&gt; 1 \Rightarrow |H(j\omega)| \approx \frac{|L(j\omega)|}{|L(j\omega)|} = 1\)</span></p></li>
+<li><p>when <span class="math inline">\(\omega \rightarrow \infty\)</span>, <span class="math inline">\(|L(j\omega)| &lt;&lt; 1 \Rightarrow |H(j\omega)| \approx \frac{|L(j\omega)|}{1} = |L(j\omega)|\)</span>, because <span class="math inline">\(L\)</span> is a causal system and must have more poles than zeros.</p></li>
+</ul>
+<p>Let’s consider again (see <code>06_Intro_to_freq_response_and_bode_plots</code>):</p>
+<p><span class="math display">\[
+L(s) = \frac{1000}{(s+1)^3(s+10)}
+\]</span></p>
+<p><span class="math display">\[
+H(s) = \frac{L(s)}{1+L(s)}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Open Loop T.F. L(s)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(control.tf([<span class="dv">1000</span>],[<span class="dv">1</span>, <span class="dv">13</span>, <span class="dv">33</span>, <span class="dv">31</span>, <span class="dv">10</span>]), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Close Loop T.F. H(s)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>mag_cc, phase_cc, omega_cc <span class="op">=</span> control.bode(control.tf([<span class="dv">1000</span>],[<span class="dv">1</span>, <span class="dv">13</span>, <span class="dv">33</span>, <span class="dv">31</span>, <span class="dv">10</span><span class="op">+</span><span class="dv">1000</span>]), dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Plot additional information on the Bode Plots</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">40</span><span class="op">-</span><span class="dv">3</span>, <span class="dv">40</span><span class="op">-</span><span class="dv">3</span>],<span class="st">'b--'</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.5</span>, <span class="fl">0.5</span>],plt.ylim(),<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">1</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.5</span>, <span class="op">-</span><span class="dv">100</span>, <span class="st">'$\omega_b$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>],<span class="st">'r--'</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">5</span>, <span class="dv">5</span>],plt.ylim(),<span class="st">'r--'</span>)</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="dv">5</span>, <span class="st">'$H(s)$'</span>, color<span class="op">=</span><span class="st">'orange'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">5</span>, <span class="op">-</span><span class="dv">100</span>, <span class="st">'$\omega_</span><span class="sc">{bc}</span><span class="st">$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> ([ax1.title, ax1.xaxis.label, ax1.yaxis.label] <span class="op">+</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>             ax1.get_xticklabels() <span class="op">+</span> ax1.get_yticklabels()):</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    item.set_fontsize(<span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="mid-frequency-approximation-of-h-and-phase-margin" class="level3">
+<h3 class="anchored" data-anchor-id="mid-frequency-approximation-of-h-and-phase-margin">Mid-Frequency approximation of H and phase margin</h3>
+<ul>
+<li><p>From the discussions above, we have that: <span class="math inline">\(|L(j\omega)| \approx 1\)</span> in the mid-frequency range, and we call <em>gain crossover frequency <span class="math inline">\(\omega_{gc}\)</span></em> where <span class="math inline">\(L(j\omega)\)</span> crosses 0dB.</p></li>
+<li><p>Assuming a dominant pole approximation, we expect <span class="math inline">\(H\)</span> to behave similarly to a first-order or a second-order system.</p>
+<ul>
+<li>This can be <strong>empirically</strong> determined from the phase margin
+<ul>
+<li><span class="math inline">\(\phi_m &gt; 75^o \Rightarrow\)</span> first order (single real pole)</li>
+<li><span class="math inline">\(\phi_m \le 75^o \Rightarrow\)</span> second order (two complex conjugate poles)</li>
+</ul></li>
+<li>Empirically means that must be verified through simulation/experiments but it is useful to kick off the analysis</li>
+</ul></li>
+</ul>
+</section>
+<section id="loop-analysis-discussions-and-conclusions" class="level3">
+<h3 class="anchored" data-anchor-id="loop-analysis-discussions-and-conclusions">Loop analysis: discussions and conclusions</h3>
+<ul>
+<li>The closed loop system <span class="math inline">\(H\)</span> has normally a low-pass filter-like behaviour</li>
+<li><span class="math inline">\(H\)</span> can typically be approximated by a single real pole when <span class="math inline">\(\varphi_m &gt; 75^o\)</span> (first-order system), or with two complex conjugate poles otherwise</li>
+<li>The break frequency (for both first and second order systems) approximate the 0dB cut-off frequency of <span class="math inline">\(L\)</span> (also called <em>critical frequency</em>)</li>
+<li>And this also approximate the system bandwidth</li>
+</ul>
+<section id="relationship-between-dumping-ratio-and-phase-margin" class="level4">
+<h4 class="anchored" data-anchor-id="relationship-between-dumping-ratio-and-phase-margin">Relationship between dumping ratio and phase margin</h4>
+<ul>
+<li><p>The usage of the break frequency (or critical frequency) <span class="math inline">\(\omega_c\)</span> as an approximation of the location of the dominant pole does not allow to conclude about whether they are real or complex.</p></li>
+<li><p>This is important because the dynamic behaviour depends on this (e.g., oscillatory vs non-osciallatory behaviour)</p></li>
+<li><p>We can find the following approximation that relates the system damping ratio to the phase margin (in degrees): <span class="math display">\[\xi \approx \frac{\varphi_m}{100}\]</span></p></li>
+<li><p>This holds for <span class="math inline">\(0 &lt; \varphi_m \le 75^o\)</span></p></li>
+</ul>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>##### Sidenote - how to almost get the expression above</td>
+</tr>
+<tr class="even">
+<td>We can assume that <span class="math inline">\(w_c\)</span> is a good approximation of the natural frequency of the dominant poles (which are also assumed complex conjugate for now).</td>
+</tr>
+<tr class="odd">
+<td>We can then calculate: <span class="math display">\[
+|H(j\omega_c)| = \frac{|L(j\omega_c|)}{|1+L(j\omega_c)|}
+\]</span></td>
+</tr>
+<tr class="even">
+<td>Since <span class="math inline">\(|L(j\omega_c)|=1\)</span> (<span class="math inline">\(\omega_c\)</span> is the frequency at which this happens, then: <span class="math inline">\(L(j\omega_c)|= e^{j\phi_c}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[
+|H(j\omega_c)| = \frac{|L(j\omega_c|)}{|1+L(j\omega_c)|} = \frac{1}{|1+e^{j\phi_c}|} = \frac{1}{\sqrt{(1+cos\phi_c)^2+sin^2\phi_c}} = \frac{1}{\sqrt{2(1+cos\phi_c)}} =  \frac{1}{\sqrt{2(1-cos\varphi_m)}} = \frac{1}{2\sin(\varphi_m/2)}
+\]</span></td>
+</tr>
+<tr class="even">
+<td>where we used that <span class="math inline">\(\varphi_m = 180 - |\phi_c|\)</span></td>
+</tr>
+<tr class="odd">
+<td>- Since in <code>06_Intro_to_freq_response_and_bode_plots</code> we calculated that, for the resonant peak of a pair of complex conjugate poles is: <span class="math inline">\(|H(j\omega)|=|\frac{1}{2\xi}|\)</span>, we can conclude:</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[
+\frac{1}{2\sin(\varphi_m/2)} = \frac{1}{|2\xi|} \Rightarrow \xi = \sin(\varphi_m/2)
+\]</span></td>
+</tr>
+<tr class="odd">
+<td>Comments: - We have done multiple assumptions and approximations (<span class="math inline">\(\omega_c = \omega_n\)</span>, second order system, no zeros) which might not be always valid - The above expression is hence only an approximation.</td>
+</tr>
+<tr class="even">
+<td>For this reason it is in general it is preferred to use the following approximation (in degrees):</td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[
+\xi = \frac{\varphi_m}{2} = \frac{\varphi_m}{2} \frac{\pi}{180} \approx \frac{\varphi_m}{100}
+\]</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><em>Approximating <span class="math inline">\(H\)</span> as discussed makes it possible to calculate the transient behaviour of <span class="math inline">\(H\)</span> based on the phase margin <span class="math inline">\(\varphi_m\)</span> and its gain crossover frequency</em></li>
+</ul>
+</section>
+<section id="example-from-phase-margins-to-closed-loop-transient-behaviour" class="level4">
+<h4 class="anchored" data-anchor-id="example-from-phase-margins-to-closed-loop-transient-behaviour">Example: from phase margins to closed loop transient behaviour</h4>
+<ul>
+<li><p>Requirement: maximum overshoot <span class="math inline">\(S \le 15\%\)</span></p></li>
+<li><p>We know (see <code>05_System_response</code>) that the maximum overshoot is: <span class="math display">\[
+\large
+S = 100e^{-\frac{\xi\pi}{\sqrt{1-\xi^2}}}
+\]</span></p>
+<p>we can then solve for <span class="math inline">\(\xi\)</span>: <span class="math display">\[
+\frac{S}{100} = e^{-\frac{\xi\pi}{\sqrt{1-\xi^2}}}
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+\ln{\frac{S}{100}} = {-\frac{\xi\pi}{\sqrt{1-\xi^2}}}
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+\ln{\frac{S}{100}}\cdot\sqrt{1-\xi^2} = {-\xi\pi}
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+  \Big(\ln{\frac{S}{100}}\Big)^2 \Big({1-\xi^2}\Big) = {\xi^2\pi^2}
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+  \Big(\ln{\frac{S}{100}}\Big)^2 = {\xi^2\pi^2} + \Big(\ln{\frac{S}{100}}\Big)^2 \xi^2
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+  \xi \ge \sqrt{ \frac{\Big(\ln{\frac{S}{100}}\Big)^2}{\Big(\ln{\frac{S}{100}}\Big)^2+\pi^2}}  \approx 0.5
+\]</span></p>
+<p>and finally:</p>
+<p><span class="math display">\[\varphi_m \approx 100\xi \ge 50^o\]</span></p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="example-car-driving-uphill" class="level2">
+<h2 class="anchored" data-anchor-id="example-car-driving-uphill">Example: Car Driving Uphill</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/9.car-uphill.png" alt="9.car-uphill.png" style="width: 350px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>See also <code>02_Intro_to_control_theory</code> and <code>04_Block_Diagrams</code> (Section “Example: Car driving uphill”)</p>
+<p><span class="math display">\[
+G(s) = \frac{\gamma}{m}\frac{1}{s+\beta/m} = \frac{10}{s+0.1}
+\]</span></p>
+<ul>
+<li><p>Assuming disturbance <span class="math inline">\(\theta=0\)</span></p></li>
+<li><p>Design Requirements:</p>
+<ul>
+<li>Zero tracking error to step inputs</li>
+<li><span class="math inline">\(5\%\)</span> tracking error to ramp inputs</li>
+<li>No overshoot</li>
+<li>Settling time (95%) to step inputs <span class="math inline">\(&lt; 15s\)</span></li>
+</ul></li>
+</ul>
+<p>Let’s see how to translate these requirements into requirements for the loop transfer function and how to design a controller <span class="math inline">\(R\)</span> such that <span class="math inline">\(L=RG\)</span> meets all requirements</p>
+<ul>
+<li>Zero tracking error to step inputs <span class="math inline">\(\Rightarrow\)</span> system type 1, we need <span class="math inline">\(R\)</span> with a pole at the origin</li>
+<li><span class="math inline">\(5\%\)</span> tracking error to ramp inputs: <span class="math display">\[
+  E(s) = \frac{1}{1+\frac{10}{s+0.1}\frac{K}{s}} \frac{1}{s^2}
+  \]</span></li>
+</ul>
+<p>And using the final value theorem:</p>
+<p><span class="math display">\[E_{ss} = \lim \limits_{s\rightarrow0} s\frac{U(s)}{1+G(s)} = s \frac{1}{1+\frac{10}{s+0.1}\frac{K}{s}} \frac{1}{s^2}\]</span></p>
+<p>We obtain: <span class="math inline">\(K&gt;0.2\)</span> (or <span class="math inline">\(&gt; -14 dB\)</span>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat answers<span class="op">/</span>solution_loop_shaping<span class="op">-</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lim s-&gt;0 s*(1/s * (s(s+0.1))/(s^2+0.1s+10k)) &lt;= 0.05
+
+0.1/0.5 &lt;= K</code></pre>
+</div>
+</div>
+<ul>
+<li><p>No overshoot <span class="math inline">\(\Rightarrow\)</span> real pole (<span class="math inline">\(\varphi_m \ge 75^o\)</span>)</p></li>
+<li><p>Settling time (95%) to step inputs <span class="math inline">\(&lt; 15s\)</span>:</p>
+<ul>
+<li>Since <span class="math inline">\(t_s = -\tau \ln0.05\)</span> <span class="math inline">\(\Rightarrow\)</span> Pole Break Frequency <span class="math inline">\(\omega &gt; 0.2\)</span> rad/s</li>
+</ul></li>
+</ul>
+<p>Let’s use the Python Control Library to try out some controllers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> control.tf([<span class="dv">10</span>],[<span class="dv">1</span>, <span class="fl">0.1</span>])</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(G))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Controller</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">1</span> <span class="co"># K&gt;0.2 is our constraint</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> control.tf([K],[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'R: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(R))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Closed loop system</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> R<span class="op">*</span>G<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>R<span class="op">*</span>G)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'H: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(H))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>NameError: name 'control' is not defined</code></pre>
+</div>
+</div>
+<p>We can now plot the Bode plots.</p>
+<ul>
+<li>We plot both <span class="math inline">\(L\)</span> and <span class="math inline">\(H\)</span>, but we are only interested in understanding how to shape <span class="math inline">\(L\)</span> so that <span class="math inline">\(H\)</span> behaves as we want</li>
+<li>In plot <span class="math inline">\(H\)</span> is used as a reference.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Close Loop H</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>mag_cc, phase_cc, omega_cc <span class="op">=</span> control.bode(H, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Add more information on the plot</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="dv">5</span>, <span class="st">'$H(s)$'</span>, color<span class="op">=</span><span class="st">'orange'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.plot(plt.xlim(),[40-3, 40-3],'b--')</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Break frequency: w&gt;=0.2 rad/s</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.2</span>], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.2</span>, <span class="fl">0.2</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">40</span>, <span class="st">'Constraint on break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">14</span>, <span class="op">-</span><span class="dv">14</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">11</span>, <span class="op">-</span><span class="dv">25</span>, <span class="st">'Constraint on LF gain'</span>, color<span class="op">=</span><span class="st">'red'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, <span class="fl">3.16</span>], [<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="op">-</span><span class="dv">135</span>, <span class="st">'Constraint on Phase Margin'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>[gm, pm, sm, wpc, wgc, wms] <span class="op">=</span> control.stability_margins(R<span class="op">*</span>G)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin: '</span>, gm)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Phase Margin (deg): </span><span class="sc">{}</span><span class="st"> (at f=</span><span class="sc">{}</span><span class="st">)'</span>.<span class="bu">format</span>(pm, wgc))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># gm (float or array_like) – Gain margi</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pm (float or array_like) – Phase margin</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sm (float or array_like) – Stability margin, the minimum distance from the Nyquist plot to -1</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># wpc (float or array_like) – Phase crossover frequency (where phase crosses -180 degrees), which is associated with the gain margin.</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># wgc (float or array_like) – Gain crossover frequency (where gain crosses 1), which is associated with the phase margin.</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># wms (float or array_like) – Stability margin frequency (where Nyquist plot is closest to -1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gain Margin:  inf
+Phase Margin (deg): 1.8117006141631293 (at f=3.161487189599213)</code></pre>
+</div>
+</div>
+<p><strong>Phase margin is not enough</strong></p>
+<p>Let’s see what the step response would be:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>[t, yout] <span class="op">=</span> control.step_response(H, T<span class="op">=</span><span class="dv">100</span>)<span class="op">;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t, yout, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'step response'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Text(0, 0.5, 'step response')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-16-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The system overshoots, and oscillates.</li>
+<li>We need to increase the phase at the frequence where <span class="math inline">\(|L|=0 dB\)</span></li>
+</ul>
+<p>For example:</p>
+<p><span class="math display">\[
+R(s) = \frac{s+0.5}{s}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> control.tf([<span class="dv">10</span>],[<span class="dv">1</span>, <span class="fl">0.1</span>])</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(G))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Controller</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="fl">0.5</span>],[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'R: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(R))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Closed loop system</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> R<span class="op">*</span>G<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>R<span class="op">*</span>G)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'H: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(H))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G: 
+  10
+-------
+s + 0.1
+
+R: 
+s + 0.5
+-------
+   s
+
+H: 
+     10 s^3 + 6 s^2 + 0.5 s
+---------------------------------
+s^4 + 10.2 s^3 + 6.01 s^2 + 0.5 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Close Loop H</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>mag_cc, phase_cc, omega_cc <span class="op">=</span> control.bode(H, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="dv">5</span>, <span class="st">'$H(s)$'</span>, color<span class="op">=</span><span class="st">'orange'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Break frequency: w&gt;=0.2 rad/s</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.2</span>], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.2</span>, <span class="fl">0.2</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">40</span>, <span class="st">'Constraint on break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">14</span>, <span class="op">-</span><span class="dv">14</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">11</span>, <span class="op">-</span><span class="dv">25</span>, <span class="st">'Constraint on LF gain'</span>, color<span class="op">=</span><span class="st">'red'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, <span class="fl">3.16</span>], [<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="op">-</span><span class="dv">135</span>, <span class="st">'Constraint on Phase Margin'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>And now we have improved substantially the phase margin:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>[gm, pm, sm, wpc, wgc, wms] <span class="op">=</span> control.stability_margins(R<span class="op">*</span>G)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin: '</span>, gm)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Phase Margin (deg): </span><span class="sc">{}</span><span class="st"> (at f=</span><span class="sc">{}</span><span class="st">)'</span>.<span class="bu">format</span>(pm, wgc))</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># gm (float or array_like) – Gain margin</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pm (float or array_like) – Phase margin</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sm (float or array_like) – Stability margin, the minimum distance from the Nyquist plot to -1</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># wpc (float or array_like) – Phase crossover frequency (where phase crosses -180 degrees), which is associated with the gain margin.</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># wgc (float or array_like) – Gain crossover frequency (where gain crosses 1), which is associated with the phase margin.</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># wms (float or array_like) – Stability margin frequency (where Nyquist plot is closest to -1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gain Margin:  inf
+Phase Margin (deg): 87.71326345329157 (at f=10.011962990448804)</code></pre>
+</div>
+</div>
+<p>Let’s verify what the step response is now:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>[t, yout] <span class="op">=</span> control.step_response(H, T<span class="op">=</span><span class="dv">30</span>)<span class="op">;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t, yout, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(), [<span class="dv">1</span><span class="op">+</span><span class="fl">0.05</span>, <span class="dv">1</span><span class="op">+</span><span class="fl">0.05</span>], <span class="st">'r--'</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(), [<span class="dv">1</span><span class="op">-</span><span class="fl">0.05</span>, <span class="dv">1</span><span class="op">-</span><span class="fl">0.05</span>], <span class="st">'r--'</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'step response'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Text(0, 0.5, 'step response')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-20-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="loop-shaping-some-more-discussions" class="level2">
+<h2 class="anchored" data-anchor-id="loop-shaping-some-more-discussions">Loop shaping: some more discussions</h2>
+<ul>
+<li>The “barriers” on the Bode plots are there to help us shape the desired harmonic response of the loop function</li>
+<li>We need to translate design requirements into requirements on the Bode plot of the loop funtion</li>
+<li>Represent these requirements as admissible/non-admissible regions</li>
+<li>The controller is designed so that the loop function always stays within the admissible regions</li>
+</ul>
+</section>
+<section id="disturbance-rejections-load-variations" class="level2">
+<h2 class="anchored" data-anchor-id="disturbance-rejections-load-variations">Disturbance rejections: load variations</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<!--td> <img src="img/disturbances-1.png" alt="disturbances-1" style="width: 550px;"/> </td-->
+<td>
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+Y(s) = \frac{1}{1+RG}
+\]</span></p>
+<p><span class="math display">\[
+D(s) = \frac{1}{1+L}D(s)
+\]</span></p>
+<p>Sensitivity function: <span class="math display">\[
+S = \frac{1}{1+L(s)}
+\]</span></p>
+<ul>
+<li>Describes how feedback influences the disturbances</li>
+<li>If <span class="math inline">\(|L|=|RG|\)</span> is large at frequencies where the power of the disturbance is concentrated, then <span class="math inline">\(|S|\)</span> is small and the effect of the disturbance on the output is attenuated</li>
+<li>Lower values of <span class="math inline">\(|S|\)</span> means higher attenuation of the external disturbance.</li>
+<li>Typically, plant disturbances are low frequency, and one would like <span class="math inline">\(|L|=|RG|\)</span> to be large at low frequency</li>
+</ul>
+<p>Complementary Sensitivity function: <span class="math display">\[
+T = \frac{L(s)}{1+L(s)}
+\]</span></p>
+<ul>
+<li><p>Maps the noise input <span class="math inline">\(n\)</span> to the output <span class="math inline">\(y\)</span></p></li>
+<li><p>Noise rejection defines high frequency specifications</p></li>
+<li><p><span class="math inline">\(S+T=1\)</span></p></li>
+<li><p>Note that <span class="math inline">\(T\)</span> is also the transfer function from <span class="math inline">\(y_{ref}\)</span> to <span class="math inline">\(y\)</span>.</p></li>
+<li><p>If <span class="math inline">\(|L|=|RG|\)</span> is small at frequencies where the noise <span class="math inline">\(n\)</span> is concentrated then <span class="math inline">\(|T|\)</span> will be small and the effect of the noise on the output is minimised.</p></li>
+<li><p>Measurement noise tend to occur at high frequency and this means that typically we would like <span class="math inline">\(|L|=|RG|\)</span> to be small at high frequency</p></li>
+<li><p>This constraint does not conflict with the low-frequency constraints for the disturbance <span class="math inline">\(d\)</span> and the reference <span class="math inline">\(y_{ref}\)</span>.</p></li>
+</ul>
+<p>Let’s see what happens a bit more:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> control.tf([<span class="dv">10</span>],[<span class="dv">1</span>, <span class="fl">0.1</span>])</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(G))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Controller</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="fl">0.5</span>],[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'R: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(R))</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Closed loop system</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> R<span class="op">*</span>G<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>R<span class="op">*</span>G)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'H: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(H))</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensitivity</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>R<span class="op">*</span>G)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'S: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(S))</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Complementary Sensitivity</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> R<span class="op">*</span>G<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>R<span class="op">*</span>G)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'T: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G: 
+  10
+-------
+s + 0.1
+
+R: 
+s + 0.5
+-------
+   s
+
+H: 
+     10 s^3 + 6 s^2 + 0.5 s
+---------------------------------
+s^4 + 10.2 s^3 + 6.01 s^2 + 0.5 s
+
+S: 
+  s^2 + 0.1 s
+----------------
+s^2 + 10.1 s + 5
+
+T: 
+     10 s^3 + 6 s^2 + 0.5 s
+---------------------------------
+s^4 + 10.2 s^3 + 6.01 s^2 + 0.5 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensitivy function S</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>mag_s, phase_s, omega_s <span class="op">=</span> control.bode(S, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Complementary Sensitivity T (which also corresponds to the closed loop H)</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>mag_t, phase_t, omega_t <span class="op">=</span> control.bode(T, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co">### Add more information on the plots</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="dv">5</span>, <span class="st">'$T(s) = H(s)$'</span>, color<span class="op">=</span><span class="st">'green'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">60</span>, <span class="st">'$S(s)$'</span>, color<span class="op">=</span><span class="st">'orange'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">10</span>], [<span class="dv">0</span>],<span class="st">'r.'</span>, markersize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">10</span>, <span class="dv">10</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">10</span>, <span class="dv">10</span>, <span class="st">'Break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p>It is not possible to reject load disturbances for frequencies where <span class="math inline">\(H\)</span> is small, i.e., high frequency. But this is OK, since usually load disturbances are at low frequencies.</p></li>
+<li><p>Or if we look at the sensitivity function <span class="math inline">\(S\)</span>, it is not possible to reject load disturbances for frequencies higher than the break frequency</p></li>
+<li><p>These observations translate into low frequency constraints in the Bode plot of the loop transfer function: we need <span class="math inline">\(L\)</span> large at low frequency to obtain a small <span class="math inline">\(S\)</span>.</p></li>
+</ul>
+<p><span class="math display">\[
+|S(j\omega)| \le \epsilon, \hspace{0.5cm} \text{when} \hspace{0.5cm} \omega \in [0, \omega_n]
+\]</span></p>
+<p><span class="math display">\[
+\Downarrow
+\]</span></p>
+<p><span class="math display">\[
+|1+L(j\omega)| \ge \frac{1}{\epsilon}, \hspace{0.5cm} \approx |L(j\omega)| \ge \frac{1}{\epsilon}
+\]</span></p>
+<ul>
+<li>This means that rejecting load distubances translates into a new constraint at low frequency in the Bode plot of the loop transfer function</li>
+</ul>
+<p>For instance, using our previous example:</p>
+<ul>
+<li>Requirement: attenuation of load disturbances by at least 20dB up until 0.06 rad/s</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">### Add more information on the plot</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Break frequency: w&gt;=0.2 rad/s</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.2</span>], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.2</span>, <span class="fl">0.2</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">40</span>, <span class="st">'Constraint on break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="dv">10</span>],[<span class="op">-</span><span class="dv">14</span>, <span class="op">-</span><span class="dv">14</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">1</span>, <span class="op">-</span><span class="dv">25</span>, <span class="st">'Constraint on LF gain'</span>, color<span class="op">=</span><span class="st">'red'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.06</span>], [<span class="dv">20</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.06</span>, <span class="fl">0.06</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.005</span>, <span class="op">-</span><span class="dv">3</span>, <span class="st">'Constraint on LF</span><span class="ch">\n</span><span class="st">disturbances'</span>, color<span class="op">=</span><span class="st">'green'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, <span class="fl">3.16</span>], [<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="op">-</span><span class="dv">135</span>, <span class="st">'Constraint on Phase Margin'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="noise-rejections-measurement-noise" class="level2">
+<h2 class="anchored" data-anchor-id="noise-rejections-measurement-noise">Noise rejections: measurement noise</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<!--td> <img src="img/disturbances-1.png" alt="disturbances-1" style="width: 550px;"/> </td-->
+<td>
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+Y(s) = \frac{RG}{1+RG}N(s) = \frac{L(s)}{1+L(s)}N(s)
+\]</span></p>
+<p>Complementary Sensitivity function: <span class="math display">\[
+T = \frac{L(s)}{1+L(s)}
+\]</span></p>
+<ul>
+<li><p>Maps the noise input <span class="math inline">\(n\)</span> to the output <span class="math inline">\(y\)</span></p></li>
+<li><p>Noise rejection defines high frequency specifications</p></li>
+<li><p><span class="math inline">\(S+T=1\)</span></p></li>
+<li><p>Note that <span class="math inline">\(T\)</span> is also the transfer function from <span class="math inline">\(y_{ref}\)</span> to <span class="math inline">\(y\)</span>.</p></li>
+<li><p>If <span class="math inline">\(|L|=|RG|\)</span> is small at frequencies where the noise <span class="math inline">\(n\)</span> is concentrated then <span class="math inline">\(|T|\)</span> will be small and the effect of the noise on the output is minimised.</p></li>
+<li><p>Measurement noise tend to occur at high frequency and this means that typically we would like <span class="math inline">\(|L|=|RG|\)</span> to be small at high frequency</p></li>
+<li><p>This constraint does not conflict with the low-frequency constraints for the disturbance <span class="math inline">\(d\)</span> and the reference <span class="math inline">\(y_{ref}\)</span>.</p></li>
+<li><p>We need the complementary sensitivity function <span class="math inline">\(\approx 1\)</span> at low frequency (steady state) to meet control requirements</p></li>
+<li><p>Noise rejection must then be: <span class="math inline">\(H(j\omega) \ll 1\)</span> for <span class="math inline">\(\omega \gg ...\)</span></p></li>
+<li><p><strong>Note: since noise rejection happens at high frequency, it is not possible to have low tracking errors if sensors are noisy in the LF regime</strong></p></li>
+</ul>
+<p><span class="math display">\[
+|H(j\omega)| \le \epsilon, \hspace{0.5cm} \text{when} \hspace{0.5cm} \omega \in [\omega_n, \infty]
+\]</span></p>
+<p><span class="math display">\[
+\Downarrow
+\]</span></p>
+<p><span class="math display">\[
+|H(j\omega)|=\frac{L(j\omega)}{1+L(j\omega)} \le \epsilon, \hspace{0.5cm} \approx |L(j\omega)| \le {\epsilon}
+\]</span></p>
+<ul>
+<li>This means that rejecting measurement noise translates into a new constraint at high frequency in the Bode plot of the loop transfer function <span class="math inline">\(L(j\omega)\)</span>.</li>
+</ul>
+<p>Let’s see what happens in our previous example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#### Add more information on the plots</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># bandwidth</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Break frequency: w&gt;=0.2 rad/s</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.2</span>], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.2</span>, <span class="fl">0.2</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">40</span>, <span class="st">'Constraint on break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="dv">10</span>],[<span class="op">-</span><span class="dv">14</span>, <span class="op">-</span><span class="dv">14</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">1</span>, <span class="op">-</span><span class="dv">25</span>, <span class="st">'Constraint on LF gain'</span>, color<span class="op">=</span><span class="st">'red'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.06</span>], [<span class="dv">20</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.06</span>, <span class="fl">0.06</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.005</span>, <span class="op">-</span><span class="dv">3</span>, <span class="st">'Constraint on LF</span><span class="ch">\n</span><span class="st">disturbances'</span>, color<span class="op">=</span><span class="st">'green'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'m--'</span>)<span class="op">;</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, <span class="dv">2</span>], [<span class="dv">0</span>, <span class="dv">80</span>],<span class="st">'m--'</span>)<span class="op">;</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="dv">40</span>, <span class="st">'Constraint on HF</span><span class="ch">\n</span><span class="st">noise'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, <span class="fl">3.16</span>], [<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="op">-</span><span class="dv">135</span>, <span class="st">'Constraint on Phase Margin'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Our controller does not meet noise rejection requirements for <span class="math inline">\(\omega \; in \; [2, 10]\)</span> rad/s</li>
+</ul>
+<section id="control-sensitivity" class="level3">
+<h3 class="anchored" data-anchor-id="control-sensitivity">Control Sensitivity</h3>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<!--td> <img src="img/disturbances-1.png" alt="disturbances-1" style="width: 550px;"/> </td-->
+<td>
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+U(s) = \frac{R}{1+GR}Y_{ref}(s) = \frac{R}{1+L}Y_{ref} = Q(s)Y_{ref}
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+Q(s)=\frac{R(s)}{1+L(s)}
+\]</span></p>
+<ul>
+<li>Makes it possible to analyse the control output <span class="math inline">\(u\)</span> as a function of the reference signal <span class="math inline">\(y_{ref}\)</span> (or of the measurement noise <span class="math inline">\(n\)</span>)</li>
+<li>Can be used to include in the control design constraints due to limits on actuators</li>
+</ul>
+<p>As usual, let’s plot the Bode plots of the control sensitivity function <span class="math inline">\(Q(s)\)</span>:</p>
+<p><span class="math display">\[
+|Q(j\omega)|=\frac{|R(j\omega)|}{|1+L(j\omega)|}
+\]</span></p>
+<ul>
+<li>Since we would like <span class="math inline">\(L\)</span> large at low frequency:
+<ul>
+<li>for <span class="math inline">\(\omega \rightarrow 0 \Rightarrow |Q(j\omega)| \approx \frac{1}{|G(j\omega)|}\)</span></li>
+</ul></li>
+<li>Since we would like <span class="math inline">\(L\)</span> small at high frequency
+<ul>
+<li>for <span class="math inline">\(\omega \rightarrow \infty \Rightarrow |Q(j\omega)| \approx {R(j\omega)}\)</span></li>
+</ul></li>
+<li>for <span class="math inline">\(\omega = \omega_{c} \Rightarrow |L(j\omega)| = 1 \Rightarrow |R(j\omega)| = \frac{1}{|G(j\omega)|}\)</span></li>
+</ul>
+</section>
+</section>
+<section id="control-sensitity-consequences" class="level2">
+<h2 class="anchored" data-anchor-id="control-sensitity-consequences">Control Sensitity: Consequences</h2>
+<ul>
+<li><span class="math inline">\(|G(j\omega)| \ll 1\)</span>, when <span class="math inline">\(\omega \ge \omega_{bp}\)</span>
+<ul>
+<li>Low-pass behaviour of the plant</li>
+</ul></li>
+</ul>
+<p>Considering the <span class="math inline">\(0\)</span> dB bandwidth (<span class="math inline">\(\omega_{bp}\)</span>), then:</p>
+<ul>
+<li>if <span class="math inline">\(\omega_c &gt; \omega_{bp}\)</span>, <span class="math inline">\(\Rightarrow |L(j\omega)| &gt; 1\)</span>, for <span class="math inline">\(\omega \in (\omega_{bp}, \omega_{c})\)</span>
+<ul>
+<li><span class="math inline">\(|L(j\omega)|\)</span> has a larger bandwidth than the plant.</li>
+</ul></li>
+<li><span class="math inline">\(\Rightarrow\)</span> <span class="math inline">\(|Q(j\omega)| \approx \frac{1}{|G(j\omega)|} \gg 1\)</span>, for <span class="math inline">\(\omega \in (\omega_{bp}, \omega_{c})\)</span></li>
+</ul>
+<p><strong>Take away points:</strong><br>
+- Enlarging the bandwidth of the plant might lead to high control values, which might not be acceptable! - Never extend the bandwidth too much</p>
+<p>To avoid extending the bandiwidth too much we have more <em>high frequency</em> constraints (for both the Loop transfer Function and the Controller):</p>
+<p><span class="math display">\[
+|L(j\omega)| &lt; \epsilon_u, \hspace{0.5cm} \text{for} \hspace{0.5cm} \omega \ge \omega_u
+\]</span></p>
+<p><span class="math display">\[
+|R(j\omega)| &lt; \epsilon_{ru}, \hspace{0.5cm} \text{for} \hspace{0.5cm} \omega \ge \omega_{ru}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop Transfer Function L=GR</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>mag_ol, phase_ol, omega_ol <span class="op">=</span> control.bode_plot(R<span class="op">*</span>G, dB<span class="op">=</span><span class="va">True</span>, omega_limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), linewidth<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co">### Add more information on the plot</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.4</span>, <span class="dv">40</span>, <span class="st">'$L(s)$'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Break frequency: w&gt;=0.2 rad/s</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.2</span>], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.2</span>, <span class="fl">0.2</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.01</span>, <span class="op">-</span><span class="dv">40</span>, <span class="st">'Constraint on break </span><span class="ch">\n</span><span class="st">frequency'</span>, color<span class="op">=</span><span class="st">'blue'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">14</span>, <span class="op">-</span><span class="dv">14</span>],<span class="st">'r--'</span>)<span class="op">;</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">11</span>, <span class="op">-</span><span class="dv">25</span>, <span class="st">'Constraint on LF gain'</span>, color<span class="op">=</span><span class="st">'red'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.06</span>], [<span class="dv">20</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.06</span>, <span class="fl">0.06</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">20</span>],<span class="st">'g--'</span>)<span class="op">;</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.005</span>, <span class="op">-</span><span class="dv">3</span>, <span class="st">'Constraint on LF</span><span class="ch">\n</span><span class="st">disturbances'</span>, color<span class="op">=</span><span class="st">'green'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'m--'</span>)<span class="op">;</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, <span class="dv">2</span>], [<span class="dv">0</span>, <span class="dv">80</span>],<span class="st">'m--'</span>)<span class="op">;</span></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="dv">40</span>, <span class="st">'Constraint on HF</span><span class="ch">\n</span><span class="st">noise'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="dv">10</span>, <span class="dv">10</span>],<span class="st">'k--'</span>)<span class="op">;</span></span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>, <span class="dv">2</span>], [<span class="dv">10</span>, <span class="dv">80</span>],<span class="st">'k--'</span>)<span class="op">;</span></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="dv">20</span>, <span class="st">'HF Constraint for R(s)'</span>, color<span class="op">=</span><span class="st">'k'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>plt.plot([plt.xlim()[<span class="dv">0</span>], <span class="fl">0.5</span>], [<span class="dv">10</span>, <span class="dv">10</span>],<span class="st">'k--'</span>)<span class="op">;</span></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.5</span>, <span class="fl">0.5</span>], [<span class="op">-</span><span class="dv">60</span>, <span class="dv">10</span>],<span class="st">'k--'</span>)<span class="op">;</span></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">1</span>, <span class="op">-</span><span class="dv">60</span>, <span class="st">'LF Constraint for R(s)'</span>, color<span class="op">=</span><span class="st">'k'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, <span class="fl">3.16</span>], [<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.16</span>, plt.xlim()[<span class="dv">1</span>]], [<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="dv">75</span>], <span class="st">'m--'</span>)</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">4</span>, <span class="op">-</span><span class="dv">135</span>, <span class="st">'Constraint on Phase Margin'</span>, color<span class="op">=</span><span class="st">'m'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="13_Loop-shaping_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Designing a controller, it is not trivial, even in the simple example that we are considering.</li>
+</ul>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li><p>Nominal stability: <span class="math inline">\(L(0)&gt;0\)</span> and <span class="math inline">\(\varphi_m&gt;0\)</span>. No critical cancellations in <span class="math inline">\(R(s)G(s)\)</span></p></li>
+<li><p>Robust stability: phase and gain margin. Also, don’t exceed with <span class="math inline">\(\omega_c\)</span> or you will be very sensitive to delays - remember for a delay <span class="math inline">\(\tau\)</span>, the contribution to the phase is <span class="math inline">\(\omega_c\tau\)</span></p></li>
+<li><p>Tracking: Use <span class="math inline">\(\omega_c\)</span> based on the signals you would like to track (faster signals require higher <span class="math inline">\(\omega_c\)</span>). Use the phase margin to select the damping ratio that you need. More in general, requirements on settling time and overshoot can be translated into limits for <span class="math inline">\(\omega_c\)</span> and <span class="math inline">\(\varphi_m\)</span>.</p></li>
+<li><p>Reject disturbance: <span class="math inline">\(L(j\omega)| &gt;&gt; 1\)</span> at frequency important for the disturbance <span class="math inline">\(d\)</span>. Usually this implies a requirment on <span class="math inline">\(\omega_c\)</span>.</p></li>
+<li><p>Attenuate noise on measurements: Typically lives at high frequency, and hance this implies a requirment on <span class="math inline">\(\omega_c\)</span>.</p></li>
+<li><p>Limits on the control variable: we need to keep <span class="math inline">\(R(j\omega)\)</span> limited for <span class="math inline">\(\omega &gt; \omega_c\)</span>, or <span class="math inline">\(L(j\omega) &gt;&gt; |G(j\omega)\)</span>, for <span class="math inline">\(\omega &gt; \omega_c\)</span></p></li>
+<li><p>Causal regulators: need more poles than zeros. This is a requirement on the asymptotic behaviour of <span class="math inline">\(L(j\omega)\)</span> and <span class="math inline">\(G(j\omega)\)</span>. <span class="math inline">\(-k_L \le -k_G\)</span> (where <span class="math inline">\(k_L\)</span> is the slope of <span class="math inline">\(|L(j\omega)|\)</span> for <span class="math inline">\(\omega \rightarrow \inf\)</span>, and <span class="math inline">\(k_G\)</span> is the slope of <span class="math inline">\(|G(j\omega)|\)</span> for <span class="math inline">\(\omega \rightarrow \inf\)</span></p></li>
+</ul>
+<section id="discussions" class="level3">
+<h3 class="anchored" data-anchor-id="discussions">Discussions</h3>
+<ul>
+<li>Too strigent design requirements can make the controller design very difficult or even impossible</li>
+<li>The first thing to do is always to verify that requirements are feasible for our problem: sometime it is better to buy better sensors, rather than desiging a controller with requirements too strict</li>
+</ul>
+</section>
+<section id="computer-aided-control-system-design" class="level3">
+<h3 class="anchored" data-anchor-id="computer-aided-control-system-design">Computer Aided Control System Design</h3>
+<p>Numarically implement analytic rules that we have been discussing, and that can only be manually applied in simple cases.</p>
+<ul>
+<li>MATLAB + Simulink + SISOTool: Quite powerful. It is one of the most used.</li>
+<li>Python Control Library: More limited, but can still be effective. This is what we are using!</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

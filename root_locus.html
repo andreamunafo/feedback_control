@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Root Locus</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Root Locus">
+<meta property="og:description" content="For example:">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Root Locus">
+<meta name="twitter:description" content="For example:">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Root Locus</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link active">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#typical-design-scenario" id="toc-typical-design-scenario" class="nav-link active" data-scroll-target="#typical-design-scenario">Typical design scenario</a>
+  <ul class="collapse">
+  <li><a href="#interpreting-the-location-of-the-poles-in-the-s-plane" id="toc-interpreting-the-location-of-the-poles-in-the-s-plane" class="nav-link" data-scroll-target="#interpreting-the-location-of-the-poles-in-the-s-plane">Interpreting the location of the poles in the s-plane</a></li>
+  <li><a href="#a-note-on-the-damping-ratio" id="toc-a-note-on-the-damping-ratio" class="nav-link" data-scroll-target="#a-note-on-the-damping-ratio">A note on the damping ratio</a></li>
+  </ul></li>
+  <li><a href="#damping-ratio-natural-frequency-and-pole-location" id="toc-damping-ratio-natural-frequency-and-pole-location" class="nav-link" data-scroll-target="#damping-ratio-natural-frequency-and-pole-location">Damping ratio, natural frequency and pole location</a></li>
+  <li><a href="#a-simple-design-problem" id="toc-a-simple-design-problem" class="nav-link" data-scroll-target="#a-simple-design-problem">A simple design problem</a></li>
+  <li><a href="#sketching-the-rool-locus" id="toc-sketching-the-rool-locus" class="nav-link" data-scroll-target="#sketching-the-rool-locus">Sketching the Rool Locus</a>
+  <ul class="collapse">
+  <li><a href="#classic-set-up-of-the-root-locus-problem" id="toc-classic-set-up-of-the-root-locus-problem" class="nav-link" data-scroll-target="#classic-set-up-of-the-root-locus-problem">Classic Set up of the Root Locus Problem:</a>
+  <ul class="collapse">
+  <li><a href="#how-to-sketch-the-root-locus-drawing-rules" id="toc-how-to-sketch-the-root-locus-drawing-rules" class="nav-link" data-scroll-target="#how-to-sketch-the-root-locus-drawing-rules">How to sketch the Root Locus: Drawing Rules</a></li>
+  <li><a href="#rule-1" id="toc-rule-1" class="nav-link" data-scroll-target="#rule-1">RULE 1</a></li>
+  <li><a href="#rule-2" id="toc-rule-2" class="nav-link" data-scroll-target="#rule-2">RULE 2</a></li>
+  <li><a href="#rule-3" id="toc-rule-3" class="nav-link" data-scroll-target="#rule-3">RULE 3</a></li>
+  <li><a href="#rule-4" id="toc-rule-4" class="nav-link" data-scroll-target="#rule-4">RULE 4</a></li>
+  <li><a href="#using-the-first-4-rules---example" id="toc-using-the-first-4-rules---example" class="nav-link" data-scroll-target="#using-the-first-4-rules---example">Using the first 4 rules - example:</a></li>
+  <li><a href="#rule-5" id="toc-rule-5" class="nav-link" data-scroll-target="#rule-5">RULE 5</a></li>
+  <li><a href="#rule-6" id="toc-rule-6" class="nav-link" data-scroll-target="#rule-6">RULE 6</a></li>
+  <li><a href="#rule-7" id="toc-rule-7" class="nav-link" data-scroll-target="#rule-7">RULE 7</a></li>
+  <li><a href="#rule-8" id="toc-rule-8" class="nav-link" data-scroll-target="#rule-8">RULE 8</a></li>
+  <li><a href="#rule-9" id="toc-rule-9" class="nav-link" data-scroll-target="#rule-9">RULE 9</a></li>
+  <li><a href="#rule-10---negative-k" id="toc-rule-10---negative-k" class="nav-link" data-scroll-target="#rule-10---negative-k">RULE 10 - Negative K</a></li>
+  <li><a href="#a-few-more-comments" id="toc-a-few-more-comments" class="nav-link" data-scroll-target="#a-few-more-comments">A few more comments</a></li>
+  </ul></li>
+  <li><a href="#a-simple-control-problem" id="toc-a-simple-control-problem" class="nav-link" data-scroll-target="#a-simple-control-problem">A simple control problem</a>
+  <ul class="collapse">
+  <li><a href="#additional-properties" id="toc-additional-properties" class="nav-link" data-scroll-target="#additional-properties">Additional properties</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  </ul></li>
+  <li><a href="#yes-but-why-root-locus-development" id="toc-yes-but-why-root-locus-development" class="nav-link" data-scroll-target="#yes-but-why-root-locus-development">Yes, But Why? Root Locus Development</a>
+  <ul class="collapse">
+  <li><a href="#determine-the-angle-of-departure-from-the-complex-conjugate-open-loop-poles" id="toc-determine-the-angle-of-departure-from-the-complex-conjugate-open-loop-poles" class="nav-link" data-scroll-target="#determine-the-angle-of-departure-from-the-complex-conjugate-open-loop-poles">Determine the angle of departure from the complex-conjugate open-loop poles</a></li>
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example</a></li>
+  </ul></li>
+  <li><a href="#comments-on-the-root-locus-plot" id="toc-comments-on-the-root-locus-plot" class="nav-link" data-scroll-target="#comments-on-the-root-locus-plot">Comments on the Root Locus Plot</a>
+  <ul class="collapse">
+  <li><a href="#cancellations-of-poles-of-gs-with-zeros-of-rs" id="toc-cancellations-of-poles-of-gs-with-zeros-of-rs" class="nav-link" data-scroll-target="#cancellations-of-poles-of-gs-with-zeros-of-rs">Cancellations of Poles of G(s) with Zeros of R(s)</a></li>
+  </ul></li>
+  <li><a href="#further-comments" id="toc-further-comments" class="nav-link" data-scroll-target="#further-comments">Further comments</a>
+  <ul class="collapse">
+  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
+  </ul></li>
+  <li><a href="#solving-for-gain-in-a-root-locus-plot" id="toc-solving-for-gain-in-a-root-locus-plot" class="nav-link" data-scroll-target="#solving-for-gain-in-a-root-locus-plot">Solving for gain in a root locus plot</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Root Locus</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="typical-design-scenario" class="level2">
+<h2 class="anchored" data-anchor-id="typical-design-scenario">Typical design scenario</h2>
+<ul>
+<li>System with multiple known parameters, and one unknown or varying parameter (K)</li>
+<li>The unknown parameter makes it impossible to know if system is stable or if meets our design criteria</li>
+</ul>
+<p>For example:</p>
+<p><span class="math display">\[
+G(s) = \frac{s^2 +s + 1}{s^3 + 4s^2 + Ks+1}
+\]</span></p>
+<ul>
+<li>Changing <span class="math inline">\(K\)</span> changes the locations of the poles</li>
+<li>Poles are in fact values of <span class="math inline">\(s\)</span> s.t.: <span class="math inline">\(s^3 + 4s^2 + Ks+1=0\)</span></li>
+</ul>
+<p>As control engineers we have two questions at this point: - How to design a system that meets the requirements: - What value of <span class="math inline">\(K\)</span> should I choose to meet the requirements (i.e., that places the poles at the correct location in the <span class="math inline">\(s\)</span> plane) - What is the effect of variations on a control system that has been already designed: - How sensitive is the system to a value of <span class="math inline">\(K\)</span> that is slightly different than what we have estimated (or predicted).</p>
+<p>One way: pick a random value of <span class="math inline">\(K\)</span> and plot the poles in the <span class="math inline">\(s\)</span> plane.</p>
+<p>For example, if <span class="math inline">\(K=0\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>K<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>poles <span class="op">=</span> np.roots([<span class="dv">1</span>, <span class="dv">4</span>, K, <span class="dv">1</span>])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Poles for K=</span><span class="sc">{}</span><span class="st">: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(K, poles))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Poles for K=0: [-4.06064703+0.j         0.03032351+0.4953248j  0.03032351-0.4953248j]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles), np.imag(poles), marker<span class="op">=</span><span class="st">'x'</span>, markersize<span class="op">=</span><span class="dv">10</span>, linestyle<span class="op">=</span><span class="st">''</span>, linewidth<span class="op">=</span><span class="dv">3</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Real'</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Imag'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can do it for multiple values of K, calcolating the root of <span class="math inline">\(s^3 + 4s^2 + Ks+1=0\)</span>, for <span class="math inline">\(K \rightarrow \infty\)</span> (or until we get to a high enough value of <span class="math inline">\(K\)</span>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>poles <span class="op">=</span> []</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>K_range <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.5</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K <span class="kw">in</span> K_range:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    poles.append(np.roots([<span class="dv">1</span>, <span class="dv">4</span>, K, <span class="dv">1</span>]))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print('Poles for K={}: {}'.format(K, poles[-1]))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And plot it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles), np.imag(poles), marker<span class="op">=</span><span class="st">'x'</span>, markersize<span class="op">=</span><span class="dv">10</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'k'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Real'</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Imag'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Connecting all these points together is a drawing of how all these poles move through the <span class="math inline">\(s\)</span>-plane as we vary <span class="math inline">\(K\)</span>. This is what the Root Locus method does.</p>
+<section id="interpreting-the-location-of-the-poles-in-the-s-plane" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-location-of-the-poles-in-the-s-plane">Interpreting the location of the poles in the s-plane</h3>
+<ul>
+<li>The axis of the <span class="math inline">\(s\)</span>-plane are: Real component (<span class="math inline">\(\sigma\)</span>) along the x-axis, and Imag component (<span class="math inline">\(\omega\)</span>) on the y-axis.</li>
+<li>Each location of the <span class="math inline">\(s\)</span>-plane corresponds to a specific waveform in the time domain through equation: <span class="math inline">\(e^{st}\)</span></li>
+<li>If <span class="math inline">\(s\)</span> is real: this corresponds to exponential growth (<span class="math inline">\(s\)</span>&gt;0) or decay (<span class="math inline">\(s\)</span>&lt;0).
+<ul>
+<li>The further we are in the left half plane the faster the waveform decays</li>
+<li>The further we are in the right half plane the faster the waveform grows</li>
+</ul></li>
+<li>If <span class="math inline">\(s\)</span> is complex: this corresponds to a pure oscillatory motion (sinusoidal) in the time domain.
+<ul>
+<li>Always in pair (complex conjugate of each other). This is due to having to deal with real time.</li>
+<li>The further the are along the <span class="math inline">\(\omega\)</span> axis, the faster the oscillation</li>
+</ul></li>
+<li>If <span class="math inline">\(s\)</span> is a combination of real and imaginary values mix both exponential and sinusoidal motion.</li>
+</ul>
+<p>See also notebook <code>05_System_response</code>.</p>
+<p>When we anlayse a system: - Both poles and zeros are needed to characterise the forced response to an input - Only the poles are needed to dictate the unforced response of the system to a set of initial conditions - This links directly to the stability of the system</p>
+<p>Knowing the location of the poles in the <span class="math inline">\(s\)</span>-plane: - Determines the stability, - Determines if the response is oscillatory (and at what frequency), or exponential (and at what rate) - And more: for example makes it possible to determine the damping ratio <span class="math inline">\(\zeta=cos(\theta)\)</span>: two poles on the same <span class="math inline">\(\theta\)</span> line would have the same damping ratio</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-poles.png" alt="root_locus_poles.png" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+</section>
+<section id="a-note-on-the-damping-ratio" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-on-the-damping-ratio">A note on the damping ratio</h3>
+<ul>
+<li>Normalised unitless value (<span class="math inline">\(\zeta\)</span>)</li>
+<li><span class="math inline">\(\zeta=0\)</span>: no dumping. The pole is on the imaginary axis</li>
+<li><span class="math inline">\(\zeta=1\)</span>: perfectly dumped. The pole is exponential and hence on the real axis.</li>
+<li><span class="math inline">\(\zeta \in (0, 1)\)</span>: damped oscillations (the poles are somewhere in the s-plane).</li>
+<li><span class="math inline">\(\zeta&gt;1\)</span>: over dumped (still on the real axis).</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-lines-of-constant-damping-1.png" alt="root-locus-damping-ratio.png" style="width: 350px;">
+</td>
+</tr>
+
+</tbody></table>
+</section>
+</section>
+<section id="damping-ratio-natural-frequency-and-pole-location" class="level2">
+<h2 class="anchored" data-anchor-id="damping-ratio-natural-frequency-and-pole-location">Damping ratio, natural frequency and pole location</h2>
+<p>Let’s consider a second order system:</p>
+<p><span class="math display">\[
+\frac{\omega_n^2}{s^2+2\zeta\omega_n s+ \omega_n^2}
+\]</span></p>
+<p>The characteristic equation is:</p>
+<p><span class="math display">\[
+s^2+2\zeta\omega_n s+ \omega_n^2 = 0
+\]</span></p>
+<p>and when we solve it:</p>
+<p><span class="math display">\[
+s_{1,2} = \frac{-2\zeta\omega_n \pm \sqrt{4\zeta^2\omega_n^2-4\omega_n^2}}{2} = -\zeta\omega_n \pm \omega_n\sqrt{(\zeta^2-1)}
+\]</span></p>
+<ul>
+<li>if we assume <span class="math inline">\(\zeta &lt; 1\)</span>, we have complex roots</li>
+</ul>
+<p><span class="math display">\[
+s_{1,2} = -\zeta\omega_n \pm \omega_n\sqrt{(1-\zeta^2)}j
+\]</span></p>
+
+<pre><code>&lt;td&gt; &lt;img src="img/root-locus-damping-ratio-mit-cropped-scaling.png" alt="root-locus-damping-ratio-mit.png" style="width: 500px;"/&gt; &lt;/td&gt;</code></pre><table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-damping-ratio-mit-cropped.png" alt="root-locus-damping-ratio-mit.png" style="width: 500px;">
+</td>
+
+</tr>
+
+</tbody></table>
+<ul>
+<li><p>If we hold <span class="math inline">\(\zeta\)</span> constant, the poles scale with <span class="math inline">\(\omega_n\)</span></p></li>
+<li><p>What is the angle <span class="math inline">\(\theta\)</span> (sometime I will also call it <span class="math inline">\(\phi\)</span>)?</p></li>
+</ul>
+<p><span class="math display">\[
+\sqrt{\zeta^2\omega_n^2 + \omega_n^2(1-\zeta^2)} cos(\theta) = \omega_n \zeta
+\]</span></p>
+<p><span class="math display">\[ \Downarrow \]</span></p>
+<p><span class="math display">\[
+cos(\theta) = \frac{\omega_n \zeta}{\sqrt{\zeta^2\omega_n^2 + \omega_n^2(1-\zeta^2)} }
+\]</span></p>
+<p><span class="math display">\[ \Downarrow \]</span></p>
+<p><span class="math display">\[
+cos(\theta) = \frac{\omega_n \zeta}{\sqrt{\omega_n^2(\zeta^2 +1 -\zeta^2)} } = \frac{\omega_n \zeta}{\omega_n} = \zeta
+\]</span></p>
+<ul>
+<li>Remember that we assumed $&lt; 1 $</li>
+<li>When <span class="math inline">\(\zeta &gt; 1\)</span>, the two roots separate along the real axis: we have two first order real poles.</li>
+</ul>
+<p>Why are we interested in this?</p>
+<ul>
+<li>Requirements most of the time come in the form of:
+<ul>
+<li>Damping ratio (e.g.&nbsp;greater than some value)</li>
+<li>Natural frequency</li>
+<li>Time to half, time to rise, etc.</li>
+<li>Or any combination of these</li>
+</ul></li>
+</ul>
+<p>And these requirements translate into constraints on the position of the poles.</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root_locus-3.png" alt="root-locus-constraints" style="height: 250px;">
+</td>
+<td>
+<img src="img/root_locus-2.png" alt="root-locus-constraints" style="height: 250px;">
+</td>
+<td>
+<img src="img/root_locus-1.png" alt="root-locus-constraints" style="height: 250px;">
+</td>
+</tr>
+
+</tbody></table>
+</section>
+<section id="a-simple-design-problem" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-design-problem">A simple design problem</h2>
+<p>Suppose you need to design a spring-dumper-mass system:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-schematic_diagram.png" alt="root-locus-schematic_diagram.png" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>You are given the spring (<span class="math inline">\(k=1\)</span>) and the mass (<span class="math inline">\(m=1\)</span>)</li>
+<li>You can choose the damper that is needed to achieve the requirements
+<ul>
+<li>System shall have <span class="math inline">\(\xi \ge 0.75\)</span>.</li>
+</ul></li>
+</ul>
+<p>The transfer function of the system is:</p>
+<p><span class="math display">\[
+\frac{Z(s)}{F(s)} = \frac{1}{s^2+bs+1}
+\]</span></p>
+<p>The root locus method gives a method to verify how the poles move as we change the value of the parameter <span class="math inline">\(b\)</span> from 0 to infinity.</p>
+<p>Let’s use the Python again to see what the Root Locus looks like in this case:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>poles <span class="op">=</span> []</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>b_range <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.001</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> b <span class="kw">in</span> b_range:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    poles.append(np.roots([<span class="dv">1</span>, b, <span class="dv">1</span>]))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles), np.imag(poles), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">1</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'k'</span>, markeredgewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles[<span class="dv">0</span>]), np.imag(poles[<span class="dv">0</span>]), marker<span class="op">=</span><span class="st">'x'</span>, color<span class="op">=</span><span class="st">'g'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>, linestyle<span class="op">=</span><span class="st">''</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles[<span class="op">-</span><span class="dv">1</span>]), np.imag(poles[<span class="op">-</span><span class="dv">1</span>]), marker<span class="op">=</span><span class="st">'x'</span>, color<span class="op">=</span><span class="st">'r'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>, linestyle<span class="op">=</span><span class="st">''</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># desired damping lines</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> np.arccos(<span class="fl">0.75</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> <span class="fl">0.75</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>tan_theta <span class="op">=</span> np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>xi</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>tan_theta<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, tan_theta<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose b = 1.5</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>poles_desired <span class="op">=</span> np.roots([<span class="dv">1</span>, b, <span class="dv">1</span>])</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Desired poles (magenta):'</span>, poles_desired)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles_desired), np.imag(poles_desired), </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>         marker<span class="op">=</span><span class="st">'x'</span>, markersize<span class="op">=</span><span class="dv">10</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'m'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'real'</span>)<span class="op">;</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'imag'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Desired poles (magenta): [-0.75+0.66143783j -0.75-0.66143783j]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>We start from the imaginary axis (<span class="math inline">\(b=0\)</span>), as we would expect if we had no dumping: we expect oscillations</li>
+<li>As we increase the damping the poles move in the left half plane and towards the real axis, until for the critical dumaping value they hit the real axis, where they split and separate on the real line</li>
+<li>We can now plot the desired damping lines (<span class="math inline">\(\xi\ge0.75\)</span>)</li>
+</ul>
+<p>For example, if we choose <span class="math inline">\(b=1.5\)</span>, we have poles: [-0.75+0.66143783j -0.75-0.66143783j], which meet our requirements.</p>
+<p>However…what happens if one of the parameters changes? For example, the spring might be sensitive to temperature variation: - Hot: 0.9 K_nominal - Cold: 1.1 K_nominal</p>
+<p>And we can again use the Root Locus method, but this time using:</p>
+<p><span class="math display">\[
+\frac{Z(s)}{F(s)} = \frac{1}{s^2+1.5s+k}
+\]</span></p>
+<p>for <span class="math inline">\(K \in [0.9k, 1.1k]\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>poles <span class="op">=</span> []</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>k_range <span class="op">=</span> np.arange(<span class="fl">0.9</span>, <span class="fl">1.1</span>, <span class="fl">0.001</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> k_range:</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    poles.append(np.roots([<span class="dv">1</span>, <span class="fl">1.5</span>, k]))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles), np.imag(poles), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">1</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'k'</span>, markeredgewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles[<span class="dv">0</span>]), np.imag(poles[<span class="dv">0</span>]), marker<span class="op">=</span><span class="st">'.'</span>, color<span class="op">=</span><span class="st">'g'</span>, markeredgewidth<span class="op">=</span><span class="dv">5</span>, linestyle<span class="op">=</span><span class="st">''</span>, label<span class="op">=</span><span class="st">'Hot Spring'</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles[<span class="op">-</span><span class="dv">1</span>]), np.imag(poles[<span class="op">-</span><span class="dv">1</span>]), marker<span class="op">=</span><span class="st">'.'</span>, color<span class="op">=</span><span class="st">'r'</span>, markeredgewidth<span class="op">=</span><span class="dv">5</span>, linestyle<span class="op">=</span><span class="st">''</span>, label<span class="op">=</span><span class="st">'Cold Spring'</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># desired damping lines</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> np.arccos(<span class="fl">0.75</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> <span class="fl">0.75</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>tan_theta <span class="op">=</span> np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>xi</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="fl">0.5</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>tan_theta<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, tan_theta<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose b = 1.5</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>poles_desired <span class="op">=</span> np.roots([<span class="dv">1</span>, b, <span class="dv">1</span>])</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(poles_desired)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(poles_desired), np.imag(poles_desired), </span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>         marker<span class="op">=</span><span class="st">'x'</span>, markersize<span class="op">=</span><span class="dv">10</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'m'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'real'</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'imag'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[-0.75+0.66143783j -0.75-0.66143783j]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>When the spring is cold we do not meet our requirements!</li>
+<li>We might need to find a way to restrict the temperature variation, redesign our system or have a warning that performance might degrade depending on temperature. Depends on the application.</li>
+</ul>
+</section>
+<section id="sketching-the-rool-locus" class="level1">
+<h1>Sketching the Rool Locus</h1>
+<ul>
+<li><p>As control engineers, you might not use an exact sketch in practise (Matlab or the Python Control Library will help you!), but most often than not, you will use an approximate one!</p></li>
+<li><p>With practice you will be able to look at the open loop zeros and poles of the system and visualise how the closed loop RL looks like.</p></li>
+<li><p>Practise makes perfect!</p></li>
+</ul>
+<p>Let’s take an example:</p>
+<p><span class="math display">\[
+G(s) = \frac{1}{(s+1)(s-2)}
+\]</span></p>
+<p>The system is clearly unstable and we need to design a controller to make the closed loop system stable.</p>
+<p>One option might be that of using a proportional controller:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-system.png" alt="root-locus-system.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>If we plot how the poles change when <span class="math inline">\(K\)</span> changes however, we realise that one root is alwyas in the right half plane.</li>
+<li>Moreover, the root that starts at -1 also goes unstable.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>This problem cannot be solved with a proportional controller only</li>
+</ul>
+<p>Design question: - How do we place poles and zeros in the feedback path so that all poles are in the left half plane?</p>
+<ul>
+<li>Understanding how to place the poles/zeros come from experience drawing the Root Locus</li>
+</ul>
+<section id="classic-set-up-of-the-root-locus-problem" class="level2">
+<h2 class="anchored" data-anchor-id="classic-set-up-of-the-root-locus-problem">Classic Set up of the Root Locus Problem:</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-problem.png" alt="root-locus-problem.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Gain in the forward path</li>
+<li>Unity feedback</li>
+</ul>
+<p>The closed transfer function is:</p>
+<p><span class="math display">\[
+G_{cc} = \frac{KG(s)}{1+KG(s)}
+\]</span></p>
+<ul>
+<li><p>Given that we are interested in finding the poles of the closed loop system we only need: <span class="math inline">\(1+KG(s)=0\)</span></p></li>
+<li><p>This is the form of the characteristic equation that we need in order to apply the rules that we are going to discuss.</p></li>
+<li><p><strong>Note:</strong> Matlab might draw the root locus starting from a slightly different form, and considers the gain in the feedback path. Note that the denominator does not change (the closed loop system will behave differently to forced inputs but this is not important for our objectives when we plot the root locus). To have the Matlab representation the same, we need to multiply the input by <span class="math inline">\(K\)</span>.</p></li>
+<li><p>From a stability perspective there is no difference</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-matlab-equivalent.png" alt="root-locus-matlab-equivalent.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><strong>Note:</strong> Before we analysed</li>
+</ul>
+<p><span class="math display">\[
+G(s) = \frac{s^2 +s + 1}{s^3 + 4s^2 + Ks+1}
+\]</span></p>
+<p>which is not in the form that we would like.</p>
+<ul>
+<li>We can translate it back to the form we need.</li>
+<li>We are looking for the roots of the characteristic equation and how they mode as we change <span class="math inline">\(K\)</span>.</li>
+</ul>
+<p>Steps: - Write the characteristic equation: <span class="math inline">\(s^3 + 4s^2 + Ks+1=0\)</span> - Group all <span class="math inline">\(K\)</span> terms: <span class="math inline">\(s^3 + 4s^2 +1 + (Ks) =0\)</span> - Divide by the non-<span class="math inline">\(K\)</span> terms to obtain the form we need:</p>
+<p><span class="math display">\[
+s^3 + 4s^2 +1 + (Ks) = 0 \Rightarrow \frac{s^3 + 4s^2 +1}{s^3 + 4s^2 +1} + K\frac{s}{s^3 + 4s^2 +1} = 1 + K\frac{s}{s^3 + 4s^2 +1}
+\]</span></p>
+<ul>
+<li>Note that we are now considering a new <span class="math inline">\(G(s)=\frac{s}{s^3 + 4s^2 +1}\)</span></li>
+<li>We can use the Root Locus to analyse how any change in one of the parameters affect the results, not only the gain in the forward path. <em>It is really powerful!</em>.</li>
+</ul>
+<section id="how-to-sketch-the-root-locus-drawing-rules" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-sketch-the-root-locus-drawing-rules">How to sketch the Root Locus: Drawing Rules</h3>
+<ul>
+<li>We use 10 drawing rules</li>
+</ul>
+<p>Start from: <span class="math display">\[
+1+KG(s)=0 \Rightarrow 1+K\frac{Q(s)}{P(s)} = 0
+\]</span></p>
+<ul>
+<li>We have re-written <span class="math inline">\(G(s)\)</span> as a ratio of two polynomials</li>
+<li>Always start from this form.</li>
+</ul>
+</section>
+<section id="rule-1" class="level3">
+<h3 class="anchored" data-anchor-id="rule-1">RULE 1</h3>
+<blockquote class="blockquote">
+<p>There are <span class="math inline">\(n\)</span> lines (loci) in the Root Locus, where <span class="math inline">\(n\)</span> the maximum between the degree of the denominator and of the numerator. - We have as many lines as the number of poles or zeros (whichever is greater)</p>
+</blockquote>
+<ul>
+<li>e.g.&nbsp;3 poles and 2 zeros: 3 lines</li>
+</ul>
+</section>
+<section id="rule-2" class="level3">
+<h3 class="anchored" data-anchor-id="rule-2">RULE 2</h3>
+<blockquote class="blockquote">
+<p>As <span class="math inline">\(K\)</span> increases from 0 to <span class="math inline">\(\infty\)</span>, the roots move from the poles of <span class="math inline">\(G(s)\)</span> to the zeros of <span class="math inline">\(G(s)\)</span>.</p>
+</blockquote>
+<p>Let’s unpick this rule a bit and start from: <span class="math display">\[
+1+K\frac{Q(s)}{P(s)} = 0 \Rightarrow P(s)+KQ(s)=0
+\]</span></p>
+<ul>
+<li>Poles are when <span class="math inline">\(P(s)=0\)</span></li>
+<li>Zeros are when <span class="math inline">\(Q(s)=0\)</span></li>
+</ul>
+<p>When <span class="math inline">\(K=0\)</span>, the <span class="math inline">\(P(s)+KQ(s)=0\)</span> we are left with <span class="math inline">\(P(s)=0\)</span>. So the poles of the closed loop system start at the poles of <span class="math inline">\(G(s)\)</span>.</p>
+<p>When <span class="math inline">\(K\rightarrow\infty\)</span>, we put more importance to <span class="math inline">\(Q(s)\)</span>, which dominates our characteristic equation: the root locus ends at the zeros of <span class="math inline">\(G(s)\)</span>.</p>
+<ul>
+<li><p>Rule 2 says: As <span class="math inline">\(K\)</span> increases, the closed loop poles move from the open loop poles to the open loop zeros.</p></li>
+<li><p>What happens when we have a different number of poles and zeros?</p></li>
+<li><p><strong>case 1</strong>: If <span class="math inline">\(\text{order}(Q(s))=\text{order}(P(s))\)</span>: each have a pair, and the roots travel from one pole to a zero</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="dv">4</span>],[<span class="dv">1</span>, <span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><strong>case 2:</strong> If <span class="math inline">\(\text{order}(P(s))&gt;\text{order}(Q(s))\)</span>, the lines from the extra poles would go to infinity.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>],[<span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">8</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><strong>case 3:</strong> If <span class="math inline">\(\text{order}(Q(s))&gt;\text{order}(P(s))\)</span>, the extra lines come from infinity.</li>
+</ul>
+<p>For example: <span class="math display">\[
+G(s) = \frac{s^2-s}{s-3}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [rlist, klist] = control.root_locus(control.tf([1, -1, 0], [1, -3]))  </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For some reason python control lib does not plot it..</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The figure below is done with Matlab:</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;&gt; rlocus(tf([1, -1, 0], [1, -3]))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<!--table style='margin: 0 auto' rules=none-->
+
+
+<img src="img/root-locus-image-3.png" alt="root-locus-image-3.png" style="width: 500px;">
+
+
+
+<!--/table-->
+</section>
+<section id="rule-3" class="level3">
+<h3 class="anchored" data-anchor-id="rule-3">RULE 3</h3>
+<blockquote class="blockquote">
+<p>When roots are complex they occur in conjugate pairs (we saw this already multiple times! - it is due to having real systems) and they move in pairs. - The Root Locus is symmetric around the real line</p>
+</blockquote>
+</section>
+<section id="rule-4" class="level3">
+<h3 class="anchored" data-anchor-id="rule-4">RULE 4</h3>
+<blockquote class="blockquote">
+<p>At no time will the same root cross over its path (no loop): no value of <span class="math inline">\(s\)</span> will correspond to more than one value of <span class="math inline">\(K\)</span>.</p>
+</blockquote>
+<ul>
+<li>Note that paths of two different roots are allowed to intersect.</li>
+</ul>
+<p>For example if we have poles in <span class="math inline">\(s=0\)</span> and <span class="math inline">\(s=1\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="using-the-first-4-rules---example" class="level3">
+<h3 class="anchored" data-anchor-id="using-the-first-4-rules---example">Using the first 4 rules - example:</h3>
+<p><span class="math display">\[
+G(s) = \frac{s}{(s-3)(s+2-2j)(s+2+2j)}
+\]</span></p>
+<ul>
+<li>We have 3 poles, so we have 3 lines</li>
+<li>3 poles, and 1 zeros: 2 lines go to infinity</li>
+<li>The two complex conjugate roots move in pairs (mirrored about the real axis).</li>
+<li>Each root will not have a path that creates loop</li>
+</ul>
+<p>Let’s now plot the Root Locus with the Python Control Library</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="dv">0</span>],[<span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">4</span>, <span class="op">-</span><span class="dv">24</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can check our roots:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>np.roots([<span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">4</span>, <span class="op">-</span><span class="dv">24</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([-2.+2.j, -2.-2.j,  3.+0.j])</code></pre>
+</div>
+</div>
+</section>
+<section id="rule-5" class="level3">
+<h3 class="anchored" data-anchor-id="rule-5">RULE 5</h3>
+<blockquote class="blockquote">
+<p>The portion of the real axis to the left of an odd number of open loop poles and zeros (critical frequencies) are part of the loci.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="op">+</span><span class="dv">2</span>],[<span class="dv">1</span>, <span class="dv">1</span>]))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Note that if we swap the location of the pole and zero, the root locus is still between them, but its direction is reversed: it is always from the open loop pole to the open loop zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>If we have three poles:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">6</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Note that: - To the left of the third pole, the root locus goes to infinity - Between the first and the second critical frequencies the lines come together and then they go off the real axis. We will see in a minute where they go.</p>
+</section>
+<section id="rule-6" class="level3">
+<h3 class="anchored" data-anchor-id="rule-6">RULE 6</h3>
+<blockquote class="blockquote">
+<p>Lines leave (or break out) and enter (break in) the real line at <span class="math inline">\(90^o\)</span> (in search of an open loop zero)</p>
+</blockquote>
+</section>
+<section id="rule-7" class="level3">
+<h3 class="anchored" data-anchor-id="rule-7">RULE 7</h3>
+<blockquote class="blockquote">
+<p>If there are not enough poles or zeros to make a pair then the extra lines go to or come from infinity</p>
+</blockquote>
+<p>For example:</p>
+<ul>
+<li>One pole, no zero: <strong>1 extra pole</strong>: the left side of the pole is part of the locus and it goes to infinity</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Two poles and no zeros, <strong>2 extra poles</strong>: the left side of an odd number of poles in part of the locus and they leave the real axis at 90 deg towards infinity</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Two poles and one zero, <strong>1 extra pole</strong></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="dv">4</span>],[<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>]))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plt.xlim((<span class="op">-</span><span class="dv">10</span>, <span class="dv">0</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>What happens when we have two extra zeros?</li>
+<li>Two lines would be coming in <em>from</em> infinity</li>
+</ul>
+<p>Given that we have lines going to (or coming from) infinity, at what angles do they do that?</p>
+</section>
+<section id="rule-8" class="level3">
+<h3 class="anchored" data-anchor-id="rule-8">RULE 8</h3>
+<blockquote class="blockquote">
+<p>Lines go to infinity along asymptotes</p>
+</blockquote>
+<ul>
+<li>We have as many asymptotes as many unmatched pole-zero pairs (<span class="math inline">\(n-m\)</span>)</li>
+<li>The angles of the asymptotes is (in deg):</li>
+</ul>
+<p><span class="math display">\[
+\Phi_A = \frac{2q+1}{n-m} \cdot 180
+\]</span></p>
+<p>Where <span class="math inline">\(n-m\)</span> is the number of unmatched pairs (#poles-#zeros), and <span class="math inline">\(q=0, 1, 2, ..., (n-m-1)\)</span></p>
+<ul>
+<li>The centroid of the asymptotes is:</li>
+</ul>
+<p><span class="math display">\[
+C = \frac{\sum{\text{Finite poles}} - \sum{\text{Finite zeros}}}{n-m}
+\]</span></p>
+<ul>
+<li>This is the point on the real axis where all asymptotes come together.</li>
+</ul>
+<p>For example:</p>
+<ul>
+<li><span class="math inline">\(n-m=1\)</span> (1 line that goes to infinity)</li>
+</ul>
+<p><span class="math display">\[
+\Phi_A = \frac{2\cdot 0 + 1}{1} \cdot 180 = 180
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>For example:</p>
+<ul>
+<li><span class="math inline">\(n-m=2\)</span> (2 lines that go to infinity)</li>
+</ul>
+<p><span class="math display">\[
+\Phi_{A_0} = \frac{2\cdot 0 + 1}{2} \cdot 180 = 90
+\]</span></p>
+<p><span class="math display">\[
+\Phi_{A_1} = \frac{2\cdot 1 + 1}{2} \cdot 180 = 270 = -90
+\]</span></p>
+<p>with centroid (this determines exactly where they go off to <span class="math inline">\(\pm\)</span> 90 deg):</p>
+<p><span class="math display">\[
+C = \frac{\sum{\text{Finite poles}} - \sum{\text{Finite zeros}}}{n-m} = \frac{(-2-1)-0}{2} = -1.5
+\]</span></p>
+<ul>
+<li>half way between the poles in this case where we only have two poles.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<ul>
+<li>What would you expect if we added one more pole and one more zero to the left of the -2 pole?</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat answers<span class="op">/</span>solution_root_locus_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Still two lines going to infinity
+- Asymptotes +- 90
+- Centroid would be shifted to the left</code></pre>
+</div>
+</div>
+<hr>
+<ul>
+<li><span class="math inline">\(n-m=3\)</span> (3 lines that go to infinity)</li>
+</ul>
+<p><span class="math display">\[
+G(s) = \frac{1}{(s+1)(s+2)(s+3)}
+\]</span></p>
+<p>Centroid:</p>
+<p><span class="math display">\[
+\frac{-3 -2 -1}{3} = -2
+\]</span></p>
+<p>Angles:</p>
+<p><span class="math display">\[
+\Phi_{A_0} = 60
+\]</span></p>
+<p><span class="math display">\[
+\Phi_{A_1} = 180
+\]</span></p>
+<p><span class="math display">\[
+\Phi_{A_2} = -60
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">6</span>]))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)<span class="op">;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="rule-9" class="level3">
+<h3 class="anchored" data-anchor-id="rule-9">RULE 9</h3>
+<blockquote class="blockquote">
+<p>If there is at least two lines to infinity, then the sum of all roots is constant</p>
+</blockquote>
+<ul>
+<li>This does not help sketching the roots but helps us with intuition</li>
+</ul>
+<p>Suppose we have the system above:</p>
+<p><span class="math display">\[
+G(s) = \frac{1}{(s+1)(s+2)(s+3)}
+\]</span></p>
+<ul>
+<li>The sum of the roots is <span class="math inline">\(-6\)</span>. This is the sum of the roots when <span class="math inline">\(K=0\)</span> (the roots start at the open loop roots).</li>
+<li>When increase <span class="math inline">\(K\)</span> the roots starts too move, but their sum must still be <span class="math inline">\(-6\)</span></li>
+</ul>
+<p>For example in the picture below, we can plot how the roots move for <span class="math inline">\(K=0.29\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">6</span>]))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>k_id<span class="op">=</span><span class="dv">3</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'K='</span>, klist[k_id])</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(rlist[k_id]), np.imag(rlist[k_id]), marker<span class="op">=</span><span class="st">'x'</span>, color<span class="op">=</span><span class="st">'m'</span>, linestyle<span class="op">=</span><span class="st">''</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>K= 0.28867513459481264</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-26-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>What is important is that given that the sum is constant, we are destabilising the complex pair half as fast as how we move the real root</li>
+<li>This is useful when trying to decide the gain of our system</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">6</span>]))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>x_range<span class="op">+</span>np.tan(<span class="op">-</span><span class="dv">60</span><span class="op">/</span><span class="dv">180</span><span class="op">*</span><span class="fl">3.14</span>)<span class="op">*</span>(<span class="dv">2</span>), linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>, <span class="dv">30</span>, <span class="dv">2</span>):</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.real(rlist[k_id]), np.imag(rlist[k_id]), marker<span class="op">=</span><span class="st">'x'</span>, color<span class="op">=</span><span class="st">'m'</span>, linestyle<span class="op">=</span><span class="st">''</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>So far we have always considered <span class="math inline">\(K \in [0, +\infty]\)</span>, let’s see instead when we would like to analyse a negative gain.</li>
+</ul>
+</section>
+<section id="rule-10---negative-k" class="level3">
+<h3 class="anchored" data-anchor-id="rule-10---negative-k">RULE 10 - Negative K</h3>
+<blockquote class="blockquote">
+<p>The root locus when <span class="math inline">\(K\)</span> goes from 0 to <span class="math inline">\(-\infty\)</span> can be obtained reversing RULE 5 and adding <span class="math inline">\(+180^o\)</span> to the asymptote angles - For <span class="math inline">\(K&lt;0\)</span>, the root locus is on the right of the odd critical frequencies</p>
+</blockquote>
+</section>
+<section id="a-few-more-comments" class="level3">
+<h3 class="anchored" data-anchor-id="a-few-more-comments">A few more comments</h3>
+<p>These set of rules only provide a sketch of the root locus. For example we have not discussed where exactly is on the real axis the break in and break away points or the angle of departure for complex roots, or where the locus crosses the imaginary axis, or what is the gain associated to one specific point on the locus.</p>
+<ul>
+<li>Use references to go deeper in the topic (see <code>00_Syllabus</code>)</li>
+<li>Use software tool such as the Matlab SISO tool or the Python Control Library.</li>
+</ul>
+</section>
+</section>
+<section id="a-simple-control-problem" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-control-problem">A simple control problem</h2>
+<p>We have</p>
+<p><span class="math display">\[
+G(s) = \frac{1}{(s+1)(s-2)}
+\]</span></p>
+<p>And the root locus is:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>],[<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-28-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>System is unstable and there is no <span class="math inline">\(K\)</span> that can stabilise it</li>
+<li>How can we make this stable?</li>
+</ul>
+<hr>
+<ul>
+<li>Given that we have two unmatched poles, they go off to inifinity with <span class="math inline">\(\pm90\)</span></li>
+<li>However, we know that if have only one unmatched pair, the unmatched root would go to +180</li>
+<li>This means that if we had one more zero to the left of our poles, we should obtain the desired behaviour.</li>
+</ul>
+<p>For example, we could add a zero in <span class="math inline">\(s=-2\)</span>.</p>
+<p>Let’s use <code>root_locus</code> to confirm:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>[rlist, klist] <span class="op">=</span> control.root_locus(control.tf([<span class="dv">1</span>, <span class="dv">2</span>],[<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>]))</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>plt.xlim((<span class="op">-</span><span class="dv">10</span>, <span class="dv">2</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-29-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Adding an open loop zero and choosing the correct gain has stabilised the system</li>
+</ul>
+<p>To be more precide we have started from this:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-problem.png" alt="root-locus-problem.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>and added a zero:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-pd-controller.png" alt="root-locus-pd-controller.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>The controller now has a proportional controller <span class="math inline">\((K)\)</span> and a derivative controller <span class="math inline">\((s+2)\)</span></li>
+<li>We have designed a PD controller in the <span class="math inline">\(s\)</span>-domain</li>
+</ul>
+<section id="additional-properties" class="level3">
+<h3 class="anchored" data-anchor-id="additional-properties">Additional properties</h3>
+<section id="brake-in-and-break-away" class="level4">
+<h4 class="anchored" data-anchor-id="brake-in-and-break-away">Brake-in and break-away</h4>
+<p>Correspond to those points along the real axis where the root locus goes in or away from the it. These points corresponds to multiple roots of the characteristic equation.</p>
+<p>Let’s write the characteristic equation <span class="math inline">\(1+KG(s)=0\)</span> as:</p>
+<p><span class="math display">\[
+f(s) = B(s) + KA(s) = 0
+\]</span></p>
+<p><span class="math inline">\(f(s)\)</span> has multiple roots where <span class="math inline">\(\frac{d}{ds}f(s)=0\)</span></p>
+<p>We can see this condidering a root of order <span class="math inline">\(r\ge2\)</span>: <span class="math display">\[
+f(s) = (s-s_1)^r(s-s_2)...
+\]</span></p>
+<p>We can then calculate <span class="math inline">\(\frac{d}{ds}f(s)=0\)</span> when <span class="math inline">\(s=s_1\)</span> which gives us:</p>
+<p><span class="math display">\[
+\frac{d}{ds}f(s)\Big|_{s=s_1}=0
+\]</span></p>
+<p>This means that the multiple roots of <span class="math inline">\(f(s)\)</span> satisfy our equation.</p>
+<p>This means:</p>
+<p><span class="math display">\[
+\frac{d}{ds}f(s) = \frac{d}{ds}B(s) + K\frac{d}{ds}A(s) = 0 \rightarrow B'(s) + KA'(s) = 0
+\]</span></p>
+<p>and if we plug this back in the characteristic equation:</p>
+<p><span class="math display">\[
+B(s) + KA(s) = 0 \rightarrow B(s) - \frac{B'(s)}{A'(s)}A(s) = 0
+\]</span></p>
+<p>which we can also write as:</p>
+<p><span class="math display">\[
+B(s)A'(s) - B'(s)A(s) = 0
+\]</span></p>
+<p>when we solve this equation with respect to <span class="math inline">\(s\)</span> we obtain the points where multiple roots occur.</p>
+<p>Let’s also note that:</p>
+<p><span class="math display">\[
+B(s) + KA(s) = 0 \rightarrow K = -\frac{B(s)}{A(s)}
+\]</span></p>
+<p>and that:</p>
+<p><span class="math display">\[
+\frac{dK}{ds} = - \frac{B(s)A'(s) - B'(s)A(s)}{A^2(s)}
+\]</span></p>
+<p>If <span class="math inline">\(dK/ds\)</span> is set equal to zero, we get the same equation as before.</p>
+<p>In summary to find the break-in/break-away points we can simply find the roots of:</p>
+<p><span class="math display">\[
+\frac{dK}{ds} = 0
+\]</span></p>
+<p>Note that only those points that are on the root locus are actual breakaway/break-in points.</p>
+<p>Stated differently, if at a point at which <span class="math inline">\(dK/ds=0\)</span> the value of <span class="math inline">\(K\)</span> takes a real positive value, then that point is an actual breakaway or break-in point (we have assumed <span class="math inline">\(K&gt;0\)</span>).</p>
+</section>
+<section id="intersections-with-the-imaginary-axis" class="level4">
+<h4 class="anchored" data-anchor-id="intersections-with-the-imaginary-axis">Intersections with the imaginary axis</h4>
+<ul>
+<li>The points where the root locus intersects the imaginary axis can be determined using the Routh criterion: the parameters <span class="math inline">\(K^*\)</span> and <span class="math inline">\(\omega^*\)</span> provided both the value of parameter <span class="math inline">\(K = K^*\)</span> and the frequency <span class="math inline">\(\omega=\omega^*\)</span> for which the root locus intersects the imaginary axis.</li>
+</ul>
+<p>Alternatively, we can also set <span class="math inline">\(s=j\omega\)</span> in the characteristic equation and set to zero the real and imaginary parts to solve for <span class="math inline">\(\omega\)</span> and <span class="math inline">\(K\)</span>.</p>
+<hr>
+</section>
+</section>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example</h3>
+<p>Let’s consider a negative feedback system:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-problem.png" alt="root-locus-problem.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>where <span class="math display">\[
+G(s) =  \frac{K}{s(s+1)(s+2)}
+\]</span></p>
+<p>with <span class="math inline">\(K\ge0\)</span></p>
+<ol type="1">
+<li>Determine the root loci on the real axis.</li>
+<li>Determine the asymptotes of the root loci:</li>
+</ol>
+<p><span class="math display">\[
+\phi_A = \frac{2q+1}{n-m} 180
+\]</span></p>
+<p>where <span class="math inline">\(q=0,1, n-m-1\)</span></p>
+<p>We obtain: <span class="math inline">\(60\)</span>, <span class="math inline">\(180\)</span>, <span class="math inline">\(300\)</span></p>
+<p>With centroid:</p>
+<p><span class="math display">\[
+c = \frac{0-1-2}{3} = -1
+\]</span></p>
+<p>The asymptotes are almost parts of the root loci in regions very far from the origin.</p>
+<ol start="3" type="1">
+<li>Determine the breakaway points:</li>
+</ol>
+<p>Let’s consider the following characteristic equation <span class="math inline">\(G(s)+1 = 0\)</span>:</p>
+<p><span class="math display">\[
+G(s)+1 = \frac{K}{s(s+1)(s+2)}+1=0
+\]</span></p>
+<p>This means:</p>
+<p><span class="math display">\[
+K = - (s^3 + 3s^2 + 2s)
+\]</span></p>
+<p>Setting</p>
+<p><span class="math display">\[
+\frac{dK}{ds} = 0
+\]</span></p>
+<p>we obtain:</p>
+<p><span class="math display">\[
+\frac{dK}{ds} = -(3s^2+6s+2)=0
+\]</span></p>
+<p>and:</p>
+<p><span class="math display">\[
+s=-0.4226\;\;\;\;s=-1.5774
+\]</span></p>
+<ul>
+<li>The breakaway point must lie on a root locus between 0 and –1.</li>
+<li><span class="math inline">\(s=–0.4226\)</span> corresponds to the actual breakaway point.</li>
+<li><span class="math inline">\(s=–1.5774\)</span> is not on the root locus.</li>
+</ul>
+<p>Evaluation of the values of <span class="math inline">\(K\)</span> corresponding:</p>
+<ul>
+<li><span class="math inline">\(K=0.3849\)</span>, for <span class="math inline">\(s=–0.4226\)</span></li>
+<li><span class="math inline">\(K=-0.3849\)</span>, for <span class="math inline">\(s=–1.5774\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">## first point</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="op">-</span><span class="fl">0.4226</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>K<span class="op">=-</span>(s<span class="op">**</span><span class="dv">3</span><span class="op">+</span><span class="dv">3</span><span class="op">*</span>s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>s)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'K=</span><span class="sc">{</span>K<span class="sc">}</span><span class="ss"> for s=</span><span class="sc">{</span>s<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co">## second point</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="op">-</span><span class="fl">1.5774</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>K<span class="op">=-</span>(s<span class="op">**</span><span class="dv">3</span><span class="op">+</span><span class="dv">3</span><span class="op">*</span>s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>s)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'K=</span><span class="sc">{</span>K<span class="sc">}</span><span class="ss"> for s=</span><span class="sc">{</span>s<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>K=0.38490017517599995 for s=-0.4226
+K=-0.3849001751759995 for s=-1.5774</code></pre>
+</div>
+</div>
+<p>Determine the intersection with the imaginary axis:</p>
+<p>The characteristic equation is:</p>
+<p><span class="math display">\[
+s^3 + 3s^2 + 2s + K = 0
+\]</span></p>
+<p>We can compute the Routh array as:</p>
+<table class="table">
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(s^3\)</span></td>
+<td><span class="math inline">\(1\)</span></td>
+<td><span class="math inline">\(2\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(s^2\)</span></td>
+<td><span class="math inline">\(3\)</span></td>
+<td><span class="math inline">\(K\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(s^1\)</span></td>
+<td><span class="math inline">\((6-K)/3\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(s^0\)</span></td>
+<td><span class="math inline">\(K\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The value of <span class="math inline">\(K\)</span> that makes the <span class="math inline">\(s^1\)</span> term in the first column equal zero is <span class="math inline">\(K=6\)</span> (see notebook <code>09_Routh_hurwitz_criterion</code>)</p>
+<p>The crossing points can then be found solving the auxiliary polinomial obtained from the <span class="math inline">\(s^2\)</span> row:</p>
+<p><span class="math display">\[
+3s^2+K = 3s^2+6 = 0
+\]</span></p>
+<p>which gives us:</p>
+<p><span class="math display">\[
+s = \pm\sqrt{2}j
+\]</span></p>
+<ul>
+<li>The frequencies at the crossing points on the imaginary axis are thus <span class="math inline">\(\omega=\pm\sqrt{2}j\)</span>.</li>
+<li>The gain value corresponding to the crossing points is <span class="math inline">\(K=6\)</span>.</li>
+</ul>
+<p>Alternatively we can set <span class="math inline">\(s=j\omega\)</span> in the characteristic equation,e quate both the real part and the imaginary part to zero, and then solve for <span class="math inline">\(\omega\)</span> and <span class="math inline">\(K\)</span>.</p>
+<p>In this case:</p>
+<p><span class="math display">\[
+(j\omega)^3 + 3(j\omega)^2 + 2(j\omega) + K = 0
+\]</span></p>
+<p><span class="math display">\[
+(K-3\omega^2) + j(2\omega-\omega^3)=0
+\]</span></p>
+<p><span class="math display">\[
+(K-3\omega^2) = 0, \;\;\;\; (2\omega-\omega^3) = 0
+\]</span></p>
+<p>from which:</p>
+<p><span class="math inline">\(\omega=\pm\sqrt{2}j\)</span> and <span class="math inline">\(K=6\)</span></p>
+<p>and</p>
+<p><span class="math inline">\(\omega=0\)</span> and <span class="math inline">\(K=0\)</span></p>
+<ol start="4" type="1">
+<li>solve for system requirements</li>
+</ol>
+<p>We can now determine a pair of dominant complex-conjugate closed loop poles such that the dumping ratio is <span class="math inline">\(\xi = 0.5\)</span>.</p>
+<ul>
+<li>We know that they must lie on a line passing through the origin and such that:</li>
+</ul>
+<p><span class="math display">\[
+cos(\theta) = \xi \rightarrow cos^{-1}(\xi) = \theta
+\]</span></p>
+<p>from which:</p>
+<p><span class="math display">\[
+cos^{-1}(\xi) = 60^o
+\]</span></p>
+<p>From the picture of the root locus we can obtain thatclosed-loop poles having <span class="math inline">\(\xi=0.5\)</span> are obtained approsimately as follows:</p>
+<p><span class="math display">\[
+s=-0.3\pm j0.58
+\]</span></p>
+<p>We can then determine the value of <span class="math inline">\(K\)</span> that yields such poles from what is called the <strong>magnitude condition</strong> (see also end of notebook):</p>
+<p><span class="math display">\[
+K = - (s^3 + 3s^2 + 2s)
+\]</span></p>
+<p><span class="math display">\[
+|K| = |- (s^3 + 3s^2 + 2s)|_{s=-0.3+ j0.58}
+\]</span></p>
+<p>or <span class="math inline">\(K=1.066\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>s<span class="op">=-</span><span class="fl">0.3</span><span class="op">+</span><span class="ot">0.58j</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(s<span class="op">**</span><span class="dv">3</span><span class="op">+</span><span class="dv">3</span><span class="op">*</span>s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>1.0662593604484791</code></pre>
+</div>
+</div>
+<p>Knowing <span class="math inline">\(K=1.066\)</span> we can determine the third pole from:</p>
+<p><span class="math display">\[
+s^3+3s^2+2s+1.066
+\]</span></p>
+<p>as <span class="math inline">\(s=-2.3399\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>np.roots([<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="fl">1.066</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([-2.33997629+0.j       , -0.33001185+0.5887719j,
+       -0.33001185-0.5887719j])</code></pre>
+</div>
+</div>
+<ul>
+<li>Note that for <span class="math inline">\(K=6\)</span>, the dominant poles would be on the imaginary axis with <span class="math inline">\(\omega=\pm j\sqrt{2}\)</span> and the system will have sustained osciellations.</li>
+<li>For <span class="math inline">\(K&gt;6\)</span> the dominant poles would be on the right-half plane and the system would be unstable.</li>
+</ul>
+</section>
+</section>
+<section id="yes-but-why-root-locus-development" class="level2">
+<h2 class="anchored" data-anchor-id="yes-but-why-root-locus-development">Yes, But Why? Root Locus Development</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-problem.png" alt="root-locus-problem.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Recall that the closed-loop characteristic equation is: <span class="math display">\[
+1 + KG(s) = 0
+\]</span></p>
+<p>where <span class="math inline">\(G(s) = G_{ol}(s)R(s)\)</span> is the open-loop transfer function.</p>
+<ul>
+<li><p>How can we tell if an arbitrary point s = σ + jω lies on the root locus?</p></li>
+<li><p>We seek conditions that determine whether s is a root of the characteristic equation.</p></li>
+<li><p><span class="math inline">\(s\)</span> is a root if <span class="math inline">\(KG(s) = −1 + j0.\)</span></p></li>
+</ul>
+<p>or in polar form:</p>
+<p><span class="math display">\[
+KG(s) = |KG(s)| e^{j\angle(KG(s))} = -1+j0=1\cdot e^{j(2n+1)\pi} \;\; \text{for}\;\;  n=0,1,2,..
+\]</span></p>
+<p>In fact:</p>
+<p><span class="math display">\[
+1+KG(s)=0 \Rightarrow KG(s)=-1
+\]</span></p>
+<p>Since this is a complex quantity, we can obtain a phase and a magnitude equation.</p>
+<p>This tells us that for any point s = σ + jω on the root locus:</p>
+<p><span class="math display">\[
+|KG(s)| = 1
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\angle (G(s)) = (2n + 1)\pi
+\]</span></p>
+<p>This gives two important conditions:</p>
+<ul>
+<li><p><strong>The angle condition:</strong> <span class="math inline">\(\angle (G(s)) = (2n + 1)\pi\)</span></p></li>
+<li><p><strong>The magnitude condition:</strong> <span class="math inline">\(|KG(s)|=1\)</span></p></li>
+<li><p>The angle condition is used to determine whether a point <span class="math inline">\(s\)</span> lies on the root locus</p></li>
+<li><p>If a point lies on the root locus, the magnitude condition is used to determine the gain <span class="math inline">\(K\)</span> associated with that point, since <span class="math inline">\(K = 1/ |G(s)|\)</span>.</p></li>
+<li><p>Values of <span class="math inline">\(s\)</span> that satisfies both the phase and magnitude equations are the roots of the characteristic equation, i.e., the closed loop poles.</p></li>
+<li><p>If only the phase equation is satisfied we obtain the root locus.</p></li>
+</ul>
+<p>When <span class="math inline">\(K &lt; 0\)</span> (positive feedback) the phase relationship must be modified as:</p>
+<p><span class="math display">\[
+\angle (G(s)) = (2n)\pi
+\]</span></p>
+<p><em>Note that we can always use the angle condition to test if any point lies on the root locus</em></p>
+<section id="determine-the-angle-of-departure-from-the-complex-conjugate-open-loop-poles" class="level3">
+<h3 class="anchored" data-anchor-id="determine-the-angle-of-departure-from-the-complex-conjugate-open-loop-poles">Determine the angle of departure from the complex-conjugate open-loop poles</h3>
+<p>The presence of a pair of complex-conjugate open-loop poles requires the determination of the angle of departure from these poles. Knowledge of this angle is important, since the root locus near a com- plex pole yields information as to whether the locus originating from the complex pole migrates toward the real axis or extends toward the asymptote.</p>
+<p>If we choose a test point and move it in the very vicinity of the complex open-loop pole at <span class="math inline">\(s=–p_1\)</span> , we find that the sum of the angular contributions from the pole at <span class="math inline">\(s=p_2\)</span> and zero at <span class="math inline">\(s=–z_1\)</span> to the test point can be considered remaining the same.</p>
+<p>If the test point is to be on the root locus, then the sum of <span class="math inline">\(\phi'_1\)</span> (phase of the zero) , <span class="math inline">\(–\theta_1\)</span>, and <span class="math inline">\(–\theta'_2\)</span> must be <span class="math inline">\(\pm 180^o(2k + 1)\)</span>.</p>
+<ul>
+<li><em>The angle of departure (or angle of arrival) of the root locus from a complex pole (or at a complex zero) can be found by subtracting from 180° the sum of all the angles of vectors from all other poles and zeros to the complex pole (or complex zero) in question, with appropriate signs included.</em></li>
+</ul>
+<p>Angle of departure from a complex pole=180° <span class="math inline">\(–\)</span> (sum of the angles of vectors to a complex pole in question from other poles) <span class="math inline">\(+\)</span> (sum of the angles of vectors to a complex pole in question from zeros)</p>
+<p>Angle of arrival at a complex zero=180° <span class="math inline">\(–\)</span> (sum of the angles of vectors to a complex zero in question from other zeros) <span class="math inline">\(+\)</span> (sum of the angles of vectors to a complex zero in question from poles)</p>
+<p>For example:</p>
+<p><span class="math display">\[
+G(s) = \frac{K(s+2)}{s^2+2s+3}
+\]</span></p>
+<p><span class="math inline">\(s=-1\pm j\sqrt{2}\)</span></p>
+<ul>
+<li><p>The real axis <span class="math inline">\([-\inf, -2]\)</span> is part of the loci</p></li>
+<li><p>Since there are two open-loop poles and one zero, there is one asymptote, which coincides with the negative real axis.</p></li>
+<li><p>The angle of departure from the complex-conjugate poles is:</p></li>
+</ul>
+<p><span class="math display">\[
+\phi'_1 - (\theta_1 + \theta'_2) = \pm 180^o(2k + 1)
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[
+\theta_1 = 180 - \theta'_2 + \phi'_1 = 180 - \theta_2 + \phi_1 =
+\]</span></p>
+<p>which is:</p>
+<p><span class="math display">\[
+\theta_1 = 180 - \theta_2 + \phi_1 = 180 - 90 + 55 = 145^o
+\]</span></p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-angle-of-departure.png" alt="root-locus-angle-of-departure" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><em>Figure From Ogata, Modern Control Engineering</em></p>
+<p>Break-in points:</p>
+<p><span class="math display">\[
+K = -\frac{s^2+2s+3}{s+2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dK}{ds} = -\frac{(2s+2)(s+2)-(s^2+2s+3)}{(s+2)^2}=0
+\]</span></p>
+<p>which gives:</p>
+<p><span class="math display">\[
+s^2+4s+1 = 0
+\]</span></p>
+<p>from which:</p>
+<p><span class="math inline">\(s= -3.7320,\;\;\;s=-0.2680\)</span></p>
+<p><span class="math inline">\(s= -3.732\)</span> is on the root locus and hence it is a break-in point.</p>
+<ul>
+<li>To determine accurate root loci, several points must be found by trial and error between the break- in point and the complex open-loop poles. (To facilitate sketching the root-locus plot, we should find the direction in which the test point should be moved by mentally summing up the changes on the angles of the poles and zeros.)</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-angle-of-departure-1.png" alt="root-locus-angle-of-departure" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<hr>
+</section>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example</h3>
+<p><span class="math display">\[
+G(s)H(s) = \frac{1}{s(s+4)(s^2+4s+20)}
+\]</span></p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root_locus_example_1.png" alt="root_locus_example_1" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Poles:</li>
+</ul>
+<p><span class="math inline">\(s = 0, -4, -2\pm4j\)</span></p>
+<ul>
+<li>4 asymptotes:
+<ul>
+<li>angles: 45, 135, 225, 315 (deg)</li>
+<li>centroid: -2 (everything is symmetric)</li>
+</ul></li>
+<li>How do the poles get to the asymptotes?</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root_locus_example_2.png" alt="root_locus_example_1" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Let’s use what the root locus looks like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">1</span>])</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>GH <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s<span class="op">*</span>(s<span class="op">+</span><span class="dv">4</span>)<span class="op">*</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">4</span><span class="op">*</span>s<span class="op">+</span><span class="dv">20</span>))</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(GH)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+             1
+---------------------------
+s^4 + 8 s^3 + 36 s^2 + 80 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>control.pzmap(GH)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-34-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>And for the closed loop system:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change K from 1 to 105</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>control.pzmap(control.feedback(GH<span class="op">*</span><span class="dv">40</span>, <span class="dv">1</span>))<span class="op">;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-35-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>control.rlocus(GH)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-36-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><code>control.rlocus</code> parameters:
+<ul>
+<li><code>kvect</code> (list or ndarray, optional) – List of gains to use in computing diagram.</li>
+<li><code>print_gain</code> (bool) – If True (default), report mouse clicks when close to the root locus branches, calculate gain, damping and print.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %matplotlib notebook</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>control.rlocus(GH)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-37-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The MATLAB sisotool has also additional tools that can help you in your controller design.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="comments-on-the-root-locus-plot" class="level2">
+<h2 class="anchored" data-anchor-id="comments-on-the-root-locus-plot">Comments on the Root Locus Plot</h2>
+<ul>
+<li>A slight change in the pole–zero configuration may cause significant changes in the root-locus configurations.</li>
+<li>The next two plots demonstrate the fact that a slight change in the location of a zero or pole will make the root-locus configuration look quite different.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">1</span>])</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>GH <span class="op">=</span> (s<span class="op">+</span><span class="fl">2.5</span>)<span class="op">/</span>(s<span class="op">*</span>(s<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">5</span><span class="op">*</span>s<span class="op">+</span><span class="dv">22</span>))</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(GH)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+          s + 2.5
+---------------------------
+s^4 + 6 s^3 + 27 s^2 + 22 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>control.rlocus(GH)<span class="op">;</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>axs.set_xlim((<span class="op">-</span><span class="dv">6</span>,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(-6.0, 3.0)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-39-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">1</span>])</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>GH <span class="op">=</span> (s<span class="op">+</span><span class="fl">2.6</span>)<span class="op">/</span>(s<span class="op">*</span>(s<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">5</span><span class="op">*</span>s<span class="op">+</span><span class="dv">22</span>))</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(GH)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+          s + 2.6
+---------------------------
+s^4 + 6 s^3 + 27 s^2 + 22 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>control.rlocus(GH)<span class="op">;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>axs.set_xlim((<span class="op">-</span><span class="dv">6</span>,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(-6.0, 3.0)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-41-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="cancellations-of-poles-of-gs-with-zeros-of-rs" class="level3">
+<h3 class="anchored" data-anchor-id="cancellations-of-poles-of-gs-with-zeros-of-rs">Cancellations of Poles of G(s) with Zeros of R(s)</h3>
+<p>The more general case</p>
+
+
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+
+
+<ul>
+<li><p>It is important to note that if the denominator of <span class="math inline">\(G(s)\)</span> and the numerator of <span class="math inline">\(R(s)\)</span> involve common factors, then the corresponding open-loop poles and zeros will cancel each other, reducing the degree of the characteristic equation by one or more.</p></li>
+<li><p>The root-locus plot of <span class="math inline">\(G(s)R(s)\)</span> does not show all the roots of the characteristic equation, only the roots of the reduced equation.</p></li>
+<li><p>To obtain the complete set of closed-loop poles, we must add the canceled pole of <span class="math inline">\(G(s)R(s)\)</span> to those closed-loop poles obtained from the root-locus plot of <span class="math inline">\(G(s)R(s)\)</span>.</p></li>
+<li><p>The important thing to remember is that the canceled pole of <span class="math inline">\(G(s)R(s)\)</span> is a closed-loop pole of the system</p></li>
+</ul>
+</section>
+</section>
+<section id="further-comments" class="level2">
+<h2 class="anchored" data-anchor-id="further-comments">Further comments</h2>
+<ul>
+<li>Plotting the damping ratio line given a desired overshoot <span class="math inline">\(S\)</span> (e.g.&nbsp;<span class="math inline">\(S=15\%\)</span>)</li>
+</ul>
+<p>We know that:</p>
+<p><span class="math display">\[
+\xi = \frac{|\ln(S/100)|}{\sqrt{\pi^2 + \ln^2(S/100)}}
+\]</span></p>
+<p>and the angle <span class="math inline">\(\beta = \cos^{-1}(\xi)\)</span></p>
+<p>Let’s see this in action:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Percentage Overshoot</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Equivalent damping ratio (from the equation)</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> np.<span class="bu">abs</span>(np.log(S<span class="op">/</span><span class="dv">100</span>)<span class="op">/</span>np.sqrt(np.pi<span class="op">**</span><span class="dv">2</span><span class="op">+</span>np.log(S<span class="op">/</span><span class="dv">100</span>)<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Damping ratio (xi): </span><span class="sc">{:.4f}</span><span class="st">'</span>.<span class="bu">format</span>(xi))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Damping ratio (xi): 0.5169</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># desired damping lines</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> np.arccos(xi)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Angle phi: </span><span class="sc">{:.4f}</span><span class="st"> deg'</span>.<span class="bu">format</span>(phi<span class="op">*</span><span class="dv">180</span><span class="op">/</span>np.pi))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Angle phi: 58.8734 deg</code></pre>
+</div>
+</div>
+<p>We can plot it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>) <span class="co"># points on the constant damping ratio line</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>np.tan(phi)<span class="op">*</span>x_range, </span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>         linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>plt.plot([x_range[<span class="dv">1</span>], x_range[<span class="dv">10</span>], x_range[<span class="op">-</span><span class="dv">6</span>]], </span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>          <span class="op">-</span>np.tan(phi)<span class="op">*</span> np.array([x_range[<span class="dv">1</span>], x_range[<span class="dv">10</span>], x_range[<span class="op">-</span><span class="dv">6</span>]]), </span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>         linewidth<span class="op">=</span><span class="dv">3</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'r'</span>, marker<span class="op">=</span><span class="st">'x'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>, markersize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(), [<span class="dv">0</span>, <span class="dv">0</span>], linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">0</span>], plt.ylim(), linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="op">-</span><span class="fl">0.7</span>, <span class="fl">0.5</span>, <span class="st">"$\phi$"</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'real'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'imag'</span>, fontsize<span class="op">=</span><span class="dv">20</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-44-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>All points along the line have the same damping ratio</li>
+</ul>
+<p>Now we can go deeper in our analysis and define a second order transfer function. - Note that to do this, we need to choose the natural frequency <span class="math inline">\(\omega_n\)</span>. - Natural frequency however does not influence overshoot, we are free to select any value. For example: <span class="math inline">\(\omega_n=1\)</span> rad/s.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Define the transfer function using the Python Control Library.</p>
+<p>Let’s use another way to do it, creating a transfer function object ‘s’ first:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>],[<span class="dv">1</span>])</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+s
+-
+1
+</code></pre>
+</div>
+</div>
+<p>And now we can use the ‘s’ object to define more complex transfer functions more easily:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> w<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>xi<span class="op">*</span>w<span class="op">*</span>s<span class="op">+</span>w<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        1
+-----------------
+s^2 + 1.034 s + 1
+</code></pre>
+</div>
+</div>
+<p>And we can plot the step response:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>[tout, yout] <span class="op">=</span> control.step_response(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>ax.plot(tout, yout)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>axin1 <span class="op">=</span> ax.inset_axes(</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">6</span>, <span class="fl">0.2</span>, <span class="dv">4</span>, <span class="fl">.4</span>], transform<span class="op">=</span>ax.transData)</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>axin1.plot(tout[yout<span class="op">&gt;</span><span class="fl">1.01</span>], yout[yout<span class="op">&gt;</span><span class="fl">1.01</span>])</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>ax.indicate_inset_zoom(axin1, edgecolor<span class="op">=</span><span class="st">"black"</span>)</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'amplitude'</span>)</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-49-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>As expected there is <span class="math inline">\(15\%\)</span> overshoot</li>
+</ul>
+<p>Let’s now verify that the natural frequency does not impact overshoot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> w <span class="kw">in</span> np.arange(<span class="fl">0.5</span>, <span class="fl">2.1</span>, <span class="fl">0.5</span>):</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'w'</span>, w)</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    G <span class="op">=</span> w<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>xi<span class="op">*</span>w<span class="op">*</span>s<span class="op">+</span>w<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    [tout, yout] <span class="op">=</span> control.step_response(G)</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    plt.plot(tout, yout)</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'amplitude'</span>)</span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>w 0.5
+w 1.0
+w 1.5
+w 2.0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-50-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>All responses have exactly $15$ overshoot</li>
+<li>The rise time and settling time are influenced by the natural frequency</li>
+</ul>
+<p>Let’s see how the poles are impacted:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> w <span class="kw">in</span> np.arange(<span class="fl">0.5</span>, <span class="fl">2.1</span>, <span class="fl">0.5</span>):</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>    roots <span class="op">=</span> np.roots([<span class="dv">1</span>,<span class="op">+</span><span class="dv">2</span><span class="op">*</span>xi<span class="op">*</span>w,<span class="op">+</span>w<span class="op">**</span><span class="dv">2</span>])</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.real(roots), np.imag(roots), </span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>             linestyle<span class="op">=</span><span class="st">''</span>, marker<span class="op">=</span><span class="st">'x'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>, markersize<span class="op">=</span><span class="dv">12</span>, label<span class="op">=</span><span class="st">'w=</span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(w))</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1.2</span>, <span class="dv">0</span>)</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>np.tan(phi)<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">+</span>np.tan(phi)<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'real axis'</span>)</span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'imag axis'</span>)</span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-51-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="requirements" class="level3">
+<h3 class="anchored" data-anchor-id="requirements">Requirements</h3>
+<ul>
+<li>Time requirements
+<ul>
+<li>Raise time</li>
+<li>Peak time</li>
+<li>Settle time</li>
+<li>Overshoot</li>
+<li>Steady state error</li>
+</ul></li>
+<li>Frequency requirements
+<ul>
+<li>Bandwidth</li>
+<li>Gain Margin</li>
+<li>Phase Margin</li>
+</ul></li>
+<li><strong>S-Domain</strong>
+<ul>
+<li>Pole/Zero locations</li>
+</ul></li>
+<li>Obviously they are all related</li>
+<li>We have tools in the s-domain or in the frequency domain that we do not have in the time domain (e.g.&nbsp;root locus)</li>
+</ul>
+<p>When focusing on S-Domain, the location of poles and zeros can be expressed: - rectangular coordinates: <span class="math inline">\(x+yj\)</span> - polar coordinates: <span class="math inline">\(\omega_n, \xi\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>w  <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> np.arccos(xi)</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>our_roots <span class="op">=</span> np.roots([<span class="dv">1</span>, <span class="dv">2</span><span class="op">*</span>xi<span class="op">*</span>w, w<span class="op">**</span><span class="dv">2</span>])</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> xi <span class="kw">in</span> np.arange(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.05</span>):</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> np.roots([<span class="dv">1</span>, <span class="dv">2</span><span class="op">*</span>xi<span class="op">*</span>w, w<span class="op">**</span><span class="dv">2</span>])</span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.real(r), np.imag(r), </span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'k'</span>, linestyle<span class="op">=</span><span class="st">''</span>, marker<span class="op">=</span><span class="st">'.'</span>, markeredgewidth<span class="op">=</span><span class="dv">1</span>, markersize<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a><span class="co"># constant damping ratio line</span></span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1.2</span>, <span class="dv">0</span>)</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>np.tan(phi)<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">+</span>np.tan(phi)<span class="op">*</span>x_range, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'g'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a><span class="co"># poles</span></span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a>plt.plot(np.real(our_roots), np.imag(our_roots), </span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">''</span>, marker<span class="op">=</span><span class="st">'x'</span>, markeredgewidth<span class="op">=</span><span class="dv">3</span>, markersize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-23"><a href="#cb71-23" aria-hidden="true" tabindex="-1"></a><span class="co"># axis</span></span>
+<span id="cb71-24"><a href="#cb71-24" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(), [<span class="dv">0</span>, <span class="dv">0</span>], linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb71-25"><a href="#cb71-25" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">0</span>], plt.ylim(), linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb71-26"><a href="#cb71-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-27"><a href="#cb71-27" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="op">-</span><span class="fl">1.5</span>, <span class="op">-</span><span class="dv">1</span>, <span class="st">'x+yj'</span>)</span>
+<span id="cb71-28"><a href="#cb71-28" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="op">-</span><span class="fl">1.5</span>, <span class="dv">1</span>, <span class="st">'$\omega_n$, $\zeta$'</span>)</span>
+<span id="cb71-29"><a href="#cb71-29" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'real axis'</span>)</span>
+<span id="cb71-30"><a href="#cb71-30" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'imag axis'</span>)</span>
+<span id="cb71-31"><a href="#cb71-31" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span>
+<span id="cb71-32"><a href="#cb71-32" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-52-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Damping ratio and natural frequency are only defined for 2nd order system</li>
+<li>They lose their meaning in higher order systems</li>
+<li>We saw that many higher order systems exibit 2nd order behaviours (e.g.&nbsp;dominant poles)</li>
+<li>When we have a requirement expressed in terms of damping ratio or natural frequency we are assuming that the system is 2nd order</li>
+<li>Play around with high order systems and verify what happens!</li>
+</ul>
+</section>
+</section>
+<section id="solving-for-gain-in-a-root-locus-plot" class="level2">
+<h2 class="anchored" data-anchor-id="solving-for-gain-in-a-root-locus-plot">Solving for gain in a root locus plot</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/root-locus-problem.png" alt="root-locus-problem.png" style="width: 650px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Let’s consier an arbitrary <span class="math inline">\(G(s)\)</span>:</p>
+<p><span class="math display">\[
+G(s) = \frac{5}{(s+4)(s+2)}
+\]</span></p>
+<ul>
+<li>Determine what value of <span class="math inline">\(K\)</span> gives a 15% overshoot</li>
+</ul>
+<p>Let’s start plotting the root locus</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>],[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>control.rlocus(<span class="dv">5</span><span class="op">/</span>((s<span class="op">+</span><span class="dv">4</span>)<span class="op">*</span>(s<span class="op">+</span><span class="dv">2</span>)))<span class="op">;</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="co"># desired damping ratio line</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">4</span>, <span class="dv">0</span>)</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>plt.plot(x_range, <span class="op">-</span>np.tan(<span class="fl">1.0276</span>)<span class="op">*</span>x_range, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="fl">5.5</span>, <span class="fl">5.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(-5.5, 5.5)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="14_Root_locus_files/figure-html/cell-54-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>We saw that a 15% overshoot translates into:
+<ul>
+<li><span class="math inline">\(\zeta=0.5169\)</span></li>
+<li><span class="math inline">\(\theta=\cos^{-1}(0.5169) = 1.0276\)</span> rad</li>
+</ul></li>
+<li>We would like to have our poles where the root locus intersects the line of damping ratio desired (see orange line in the plot above)</li>
+</ul>
+<p>We can calculate the desired position for the poles:</p>
+<ul>
+<li><p>real component: <span class="math inline">\(-3\)</span></p></li>
+<li><p>imaginary component: <span class="math inline">\(3\tan(\theta)=4.9683\)</span></p></li>
+<li><p>Desired poles: <span class="math inline">\(-3 \pm 4.9683 j\)</span></p></li>
+</ul>
+<p>The closed loop transfer function is:</p>
+<p><span class="math display">\[
+\frac{KG(s)}{1+KG(s)}
+\]</span></p>
+<p>We can then find:</p>
+<p><span class="math display">\[
+K = \frac{-1}{|G(s)|}\Big|_{s=-3 + 4.9683 j} = \frac{-1}{\frac{5}{(-3+4.97j+4)(-3+4.97j+2)}} = -\frac{(1+4.97j)(-1+4.97j)}{5}=\frac{1+4.97^2}{5}= 5.14
+\]</span></p>
+<p><strong>Steps:</strong> - Draw the loop locus - Figure out where you would like the poles to be - Plug the desired poles in the close loop characteristic equation and solve for <span class="math inline">\(K\)</span></p>
+<ul>
+<li>For more complex cases it could become more complicated.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

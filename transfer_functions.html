@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Transfer Functions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Transfer Functions">
+<meta property="og:description" content="It is key to be able to describe the system in an efficient and useful manner.">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Transfer Functions">
+<meta name="twitter:description" content="It is key to be able to describe the system in an efficient and useful manner.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Transfer Functions</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link active">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#problem-settings" id="toc-problem-settings" class="nav-link active" data-scroll-target="#problem-settings">Problem Settings</a></li>
+  <li><a href="#definition-of-transfer-function" id="toc-definition-of-transfer-function" class="nav-link" data-scroll-target="#definition-of-transfer-function">Definition of Transfer Function</a>
+  <ul class="collapse">
+  <li><a href="#the-s-domain-and-the-laplace-transform" id="toc-the-s-domain-and-the-laplace-transform" class="nav-link" data-scroll-target="#the-s-domain-and-the-laplace-transform">The <em>s</em> domain and the Laplace Transform</a></li>
+  <li><a href="#the-laplace-transform" id="toc-the-laplace-transform" class="nav-link" data-scroll-target="#the-laplace-transform">The Laplace Transform</a></li>
+  <li><a href="#properties-of-the-laplace-transform-relationships-between-time-and-frequency" id="toc-properties-of-the-laplace-transform-relationships-between-time-and-frequency" class="nav-link" data-scroll-target="#properties-of-the-laplace-transform-relationships-between-time-and-frequency">Properties of the Laplace Transform: relationships between time and frequency</a></li>
+  <li><a href="#delta" id="toc-delta" class="nav-link" data-scroll-target="#delta">delta</a></li>
+  <li><a href="#ramp" id="toc-ramp" class="nav-link" data-scroll-target="#ramp">ramp</a></li>
+  <li><a href="#step" id="toc-step" class="nav-link" data-scroll-target="#step">step</a></li>
+  <li><a href="#transforms-of-known-functions" id="toc-transforms-of-known-functions" class="nav-link" data-scroll-target="#transforms-of-known-functions">Transforms of known functions</a></li>
+  <li><a href="#delta-function" id="toc-delta-function" class="nav-link" data-scroll-target="#delta-function">Delta function</a></li>
+  <li><a href="#step-function" id="toc-step-function" class="nav-link" data-scroll-target="#step-function">Step function</a></li>
+  <li><a href="#putting-this-all-together" id="toc-putting-this-all-together" class="nav-link" data-scroll-target="#putting-this-all-together">Putting this all Together</a></li>
+  </ul></li>
+  <li><a href="#table-of-laplace-transforms" id="toc-table-of-laplace-transforms" class="nav-link" data-scroll-target="#table-of-laplace-transforms">Table of Laplace transforms</a></li>
+  <li><a href="#inverse-laplace-transform-partial-fraction-decomposition" id="toc-inverse-laplace-transform-partial-fraction-decomposition" class="nav-link" data-scroll-target="#inverse-laplace-transform-partial-fraction-decomposition">Inverse Laplace Transform: Partial fraction decomposition</a>
+  <ul class="collapse">
+  <li><a href="#case-1.-roots-of-the-denominator-of-fs-are-real-and-distinct" id="toc-case-1.-roots-of-the-denominator-of-fs-are-real-and-distinct" class="nav-link" data-scroll-target="#case-1.-roots-of-the-denominator-of-fs-are-real-and-distinct">Case 1. Roots of the Denominator of F(s) Are Real and Distinct</a></li>
+  <li><a href="#case-2.-roots-of-the-denominator-of-fs-are-real-and-repeated" id="toc-case-2.-roots-of-the-denominator-of-fs-are-real-and-repeated" class="nav-link" data-scroll-target="#case-2.-roots-of-the-denominator-of-fs-are-real-and-repeated">Case 2. Roots of the Denominator of F(s) Are Real and Repeated</a></li>
+  <li><a href="#case-3.-roots-of-the-denominator-of-fs-are-complex-or-imaginary" id="toc-case-3.-roots-of-the-denominator-of-fs-are-complex-or-imaginary" class="nav-link" data-scroll-target="#case-3.-roots-of-the-denominator-of-fs-are-complex-or-imaginary">Case 3. Roots of the Denominator of F(s) Are Complex or Imaginary</a></li>
+  <li><a href="#some-more-on-the-laplace-transform" id="toc-some-more-on-the-laplace-transform" class="nav-link" data-scroll-target="#some-more-on-the-laplace-transform">Some more on the Laplace transform</a></li>
+  </ul></li>
+  <li><a href="#sympy" id="toc-sympy" class="nav-link" data-scroll-target="#sympy">Sympy</a></li>
+  <li><a href="#transfer-function-matrix" id="toc-transfer-function-matrix" class="nav-link" data-scroll-target="#transfer-function-matrix">Transfer function matrix</a>
+  <ul class="collapse">
+  <li><a href="#matrix-transfer-function-and-poles" id="toc-matrix-transfer-function-and-poles" class="nav-link" data-scroll-target="#matrix-transfer-function-and-poles">Matrix transfer function and poles</a></li>
+  <li><a href="#poles-and-zeros" id="toc-poles-and-zeros" class="nav-link" data-scroll-target="#poles-and-zeros">Poles and zeros</a></li>
+  </ul></li>
+  <li><a href="#transfer-function-controllability-and-observability" id="toc-transfer-function-controllability-and-observability" class="nav-link" data-scroll-target="#transfer-function-controllability-and-observability">Transfer function, controllability and observability</a></li>
+  <li><a href="#single-input-single-output-siso" id="toc-single-input-single-output-siso" class="nav-link" data-scroll-target="#single-input-single-output-siso">Single Input, Single Output (SISO)</a></li>
+  <li><a href="#stability-in-classical-control" id="toc-stability-in-classical-control" class="nav-link" data-scroll-target="#stability-in-classical-control">Stability in Classical Control</a></li>
+  <li><a href="#system-stability-and-system-matrix" id="toc-system-stability-and-system-matrix" class="nav-link" data-scroll-target="#system-stability-and-system-matrix">System stability and system matrix</a></li>
+  <li><a href="#system-stability-and-transfer-function" id="toc-system-stability-and-transfer-function" class="nav-link" data-scroll-target="#system-stability-and-transfer-function">System stability and transfer function</a></li>
+  <li><a href="#more-structural-properties" id="toc-more-structural-properties" class="nav-link" data-scroll-target="#more-structural-properties">More structural properties</a>
+  <ul class="collapse">
+  <li><a href="#controllability" id="toc-controllability" class="nav-link" data-scroll-target="#controllability">Controllability</a></li>
+  <li><a href="#observability" id="toc-observability" class="nav-link" data-scroll-target="#observability">Observability</a></li>
+  </ul></li>
+  <li><a href="#laplace-transforms-examples" id="toc-laplace-transforms-examples" class="nav-link" data-scroll-target="#laplace-transforms-examples">Laplace Transforms Examples</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example 1</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2">Example 2</a></li>
+  <li><a href="#example-3" id="toc-example-3" class="nav-link" data-scroll-target="#example-3">Example 3</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Transfer Functions</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<section id="problem-settings" class="level2">
+<h2 class="anchored" data-anchor-id="problem-settings">Problem Settings</h2>
+<p>It is key to be able to describe the system in an efficient and useful manner.</p>
+<ul>
+<li>To do this, we describe the system mathematically writing the equations of motion in the form of differential equations.</li>
+<li>We have seen how to model the simplified case of a car driving uphill.</li>
+</ul>
+<p>The two most popular representations: - state space representation - transfer functions.</p>
+<p>Loosely speaking, <strong>transfer functions</strong> are a Laplace domain representation of your system and they are commonly associated with the era of control techniques labeled classical control theory.</p>
+<p><strong>State space</strong> is a time domain representation, packaged in matrix form, and they are commonly associated with the era labeled modern control theory.</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/16.ss-tf.png" alt="16.ss-tf" style="width: 800px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Each representation has its own set of benefits and drawbacks and as a control engineer we need to use what is best for our problem.</li>
+<li>We will focus on Transfer Functions.</li>
+</ul>
+</section>
+<section id="definition-of-transfer-function" class="level2">
+<h2 class="anchored" data-anchor-id="definition-of-transfer-function">Definition of Transfer Function</h2>
+<blockquote class="blockquote">
+<p>A transfer function is the Laplace transform of the impulse response of a linear, time-invariant (LTI) system with a single input and single output when you set the initial conditions to zero.</p>
+</blockquote>
+<section id="the-s-domain-and-the-laplace-transform" class="level3">
+<h3 class="anchored" data-anchor-id="the-s-domain-and-the-laplace-transform">The <em>s</em> domain and the Laplace Transform</h3>
+<ul>
+<li>The Laplace Transform takes the Fourier Transform one step forward</li>
+<li>Decomposes a time domain signal into both cosines and exponential functions</li>
+<li>For the Laplace transform we need a symbol that represents more than just frequency, <span class="math inline">\(\omega\)</span></li>
+<li>Need to also account for the exponential aspect of the signal.</li>
+<li>This is where the variable <span class="math inline">\(s\)</span> comes in.</li>
+</ul>
+<p><span class="math inline">\(s\)</span> is a complex number, which means that it contains values for two dimensions: - one dimension that describes the frequency of a cosine wave - the second dimension that describes the exponential term.</p>
+<p>It is defined as <span class="math inline">\(s = \sigma + j\omega\)</span>.</p>
+<p>Exponential functions that have imaginary exponents, such as <span class="math inline">\(e^{j2t}\)</span>, produce two-dimensional sinusoids through Euler’s formula:</p>
+<p><span class="math display">\[e^{j\omega t} = cos(\omega t) + jsin(\omega t)\]</span></p>
+<p>For exponential functions that have <strong>real</strong> numbers for exponents: - Negative real numbers give us exponentially decaying signals - Positive real numbers give us exponentially growing signals.</p>
+<p>Two examples are <span class="math inline">\(e^{2t}\)</span>, which grows exponentially for all positive time, and <span class="math inline">\(e^{−5t}\)</span>, which decays exponentially for all positive time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">0.2</span>, <span class="dv">1</span>, <span class="dv">20</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t, np.exp(<span class="dv">2</span><span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>plt.plot(t, np.exp(<span class="op">-</span><span class="dv">5</span><span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Text(0.5, 0, 'time (s)')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="03_Transfer_functions_files/figure-html/cell-5-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Now let’s think about our new variable <span class="math inline">\(s\)</span> which has both a real and imaginary component.</p>
+<ul>
+<li>The equation <span class="math inline">\(e^{st}\)</span> is really just an exponential function multiplied by a sinusoid</li>
+</ul>
+<p><span class="math display">\[e^{st} = e^{(\sigma+j\omega)t} = e^{\sigma t}e^{j\omega t}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmath</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>) <span class="co"># we know we are forcing our hands below, so no need to be reminded..</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">5</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">0.2</span>, <span class="dv">10</span>, <span class="dv">50</span>) <span class="co"># time range</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># s = 1 + j2</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="bu">complex</span>(<span class="dv">1</span>, <span class="dv">2</span>) </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(t[:<span class="dv">10</span>], np.exp(t[:<span class="dv">10</span>]), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">0</span>].set_title(<span class="st">'exp(t)'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(t, np.exp(<span class="bu">complex</span>(<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">1</span>].set_title(<span class="st">'exp(j2t)'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].plot(t, np.exp(t)<span class="op">*</span>np.exp(<span class="bu">complex</span>(<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">2</span>].set_title(<span class="st">'exp(st)'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="03_Transfer_functions_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">5</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">50</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># s = -2 + j</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="bu">complex</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">1</span>) </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(t[:<span class="dv">10</span>], np.exp(<span class="op">-</span><span class="dv">2</span><span class="op">*</span>t[:<span class="dv">10</span>]), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">0</span>].set_title(<span class="st">'exp(-2t)'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(t, np.exp(<span class="bu">complex</span>(<span class="dv">0</span>, <span class="dv">1</span>)<span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">1</span>].set_title(<span class="st">'exp(jt)'</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].plot(t, np.exp(<span class="op">-</span><span class="dv">2</span><span class="op">*</span>t)<span class="op">*</span>np.exp(<span class="bu">complex</span>(<span class="dv">0</span>, <span class="dv">1</span>)<span class="op">*</span>t), linewidth<span class="op">=</span><span class="dv">6</span>)<span class="op">;</span> axs[<span class="dv">2</span>].set_title(<span class="st">'exp(st)'</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="03_Transfer_functions_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p>We can combine the two parts of <span class="math inline">\(s = \sigma + j\omega\)</span> into a two-dimensional plane where the real axis is the exponential line and the imaginary axis is the frequency line.</p></li>
+<li><p>The value of <span class="math inline">\(s\)</span> provides a location in this plane and describes the resulting signal, <span class="math inline">\(e^{st}\)</span>, as function of the selected <span class="math inline">\(\omega\)</span> and <span class="math inline">\(\sigma\)</span>.</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/17.s-plane.png" alt="17.s-plane" style="width: 700px;">
+</td>
+</tr>
+
+</tbody></table>
+<hr>
+</section>
+<section id="the-laplace-transform" class="level3">
+<h3 class="anchored" data-anchor-id="the-laplace-transform">The Laplace Transform</h3>
+<p>The Laplace transform is an integral transform that converts a function of a real variable <span class="math inline">\(t\)</span> (e.g., <span class="math inline">\(time\)</span>) to a function of a complex variable <span class="math inline">\(s = \sigma + j\omega \in \mathbb{C}\)</span> (complex frequency).</p>
+<p><span class="math display">\[{\displaystyle F(s)={\mathcal {L}}\{f\}(s)=\int _{0}^{\infty }f(t)e^{-st}\,dt.}\]</span></p>
+<p>The inverse Laplace transform is:</p>
+<p><span class="math display">\[{\displaystyle f(t)={\mathcal {L}}^{-1}\{F(s)\}(t)={\frac {1}{2\pi j}}\lim _{\omega\to \infty }\int _{\sigma -j\omega}^{\sigma +j\omega}e^{st}F(s)\,ds}\]</span></p>
+<p>The Laplace transform is particularly important because it is a tool for solving differential equations: <em>it transforms linear differential equations into algebraic equations, and convolution into multiplication!</em></p>
+<ul>
+<li>Derivatives and integrals become algebric operations</li>
+</ul>
+<p>From a system perspective, the Transfer function expresses the relation between the Laplace Transform of the input and that of the output:</p>
+<p><span class="math display">\[ Y(s)=\mathbf{c}^T(s\mathbf{I}-\mathbf{A})^{-1} \mathbf{b} U(s) \]</span></p>
+<hr>
+</section>
+<section id="properties-of-the-laplace-transform-relationships-between-time-and-frequency" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-the-laplace-transform-relationships-between-time-and-frequency">Properties of the Laplace Transform: relationships between time and frequency</h3>
+<p>The Laplace transform has a number of properties. These are really useful to calculate the transforms without using its integral definition.</p>
+<table class="table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 37%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Time domain</th>
+<th>Frequency domain (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linearity</td>
+<td><span class="math inline">\(af(t)\)</span> + <span class="math inline">\(bg(t)\)</span></td>
+<td><span class="math inline">\(aF(s)+bG(s)\)</span></td>
+</tr>
+<tr class="even">
+<td>Time shift (delay)</td>
+<td><span class="math inline">\(f(t-\tau)\)</span></td>
+<td><span class="math inline">\(e^{-\tau s}F(s)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Frequency shift</td>
+<td><span class="math inline">\(f(t)e^{\alpha t}\)</span></td>
+<td><span class="math inline">\(F(s-\alpha)\)</span></td>
+</tr>
+<tr class="even">
+<td>Derivative</td>
+<td><span class="math inline">\(\frac{df}{dt}(t)\)</span></td>
+<td><span class="math inline">\(sF(s) − f(0)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Second Derivative</td>
+<td><span class="math inline">\(\frac{df^2}{d^2t}(t)\)</span></td>
+<td><span class="math inline">\(s^2F(s)-sf(0)-f'(0)\)</span></td>
+</tr>
+<tr class="even">
+<td>Integral</td>
+<td><span class="math inline">\(\int _{0}^{t}f(\tau )\,d\tau\)</span> = <span class="math inline">\((u*f)(t)\)</span></td>
+<td><span class="math inline">\(\frac{1}{s}F(s)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Convolution</td>
+<td><span class="math inline">\((f*g)(t)\)</span> = <span class="math inline">\(\int _{0}^{t} f(\tau )g(t\)</span>-<span class="math inline">\(\tau )d\tau\)</span></td>
+<td><span class="math inline">\(F(s)G(s)\)</span></td>
+</tr>
+<tr class="even">
+<td></td>
+<td><span class="math inline">\(t\rightarrow\inf\)</span></td>
+<td><span class="math inline">\(s\rightarrow 0\)</span></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><span class="math inline">\(t\rightarrow 0\)</span></td>
+<td><span class="math inline">\(s\rightarrow \inf\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>From this table it is easier to calculate Laplace transforms of known functions:</p>
+<hr>
+<p><a href="https://github.com/andreamunafo/feedback_control/blob/main/feedback_control/transfer_functions.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="delta" class="level3">
+<h3 class="anchored" data-anchor-id="delta">delta</h3>
+<blockquote class="blockquote">
+<pre><code> delta (t, delta_t=0, eps=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/andreamunafo/feedback_control/blob/main/feedback_control/transfer_functions.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ramp" class="level3">
+<h3 class="anchored" data-anchor-id="ramp">ramp</h3>
+<blockquote class="blockquote">
+<pre><code> ramp (t)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/andreamunafo/feedback_control/blob/main/feedback_control/transfer_functions.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="step" class="level3">
+<h3 class="anchored" data-anchor-id="step">step</h3>
+<blockquote class="blockquote">
+<pre><code> step (t, step_time=0)</code></pre>
+</blockquote>
+<p>Heaviside step function</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">10</span>,<span class="dv">10</span>,<span class="dv">1000</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(t, delta(t), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(t, step(t), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].plot(t, ramp(t), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].plot(t, ramp(t)<span class="op">**</span><span class="dv">2</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="03_Transfer_functions_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Note that the <a href="https://andreamunafo.github.io/feedback_control/transfer_functions.html#step"><code>step</code></a> function is the derivative of the <a href="https://andreamunafo.github.io/feedback_control/transfer_functions.html#ramp"><code>ramp</code></a>, and that the <a href="https://andreamunafo.github.io/feedback_control/transfer_functions.html#ramp"><code>ramp</code></a> is the derivative of the <code>quadratic</code> function.</p>
+<hr>
+</section>
+<section id="transforms-of-known-functions" class="level3">
+<h3 class="anchored" data-anchor-id="transforms-of-known-functions">Transforms of known functions</h3>
+</section>
+<section id="delta-function" class="level3">
+<h3 class="anchored" data-anchor-id="delta-function">Delta function</h3>
+<p>If we then want to calculate the Laplace transform of the <a href="https://andreamunafo.github.io/feedback_control/transfer_functions.html#delta"><code>delta</code></a> <span class="math inline">\(\delta(t)\)</span> function:</p>
+<p><span class="math display">\[{\displaystyle F(s)={\mathcal {L}}\{f\}(s)=\int _{0}^{\infty }\delta(t)e^{-st}\,dt.}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\delta(t)=0, \forall t \neq 0 \]</span> <span class="math display">\[\int _{-\infty}^{\infty } \delta(t)dt=1\]</span></p>
+<p><span class="math display">\[{\displaystyle F(s)={\mathcal {L}}\{f\}(s)=\int _{0}^{\infty }\delta(t)e^{-st}\,dt.}=e^{-s0}=1\]</span></p>
+</section>
+<section id="step-function" class="level3">
+<h3 class="anchored" data-anchor-id="step-function">Step function</h3>
+<p>Or of the <a href="https://andreamunafo.github.io/feedback_control/transfer_functions.html#step"><code>step</code></a> <span class="math inline">\(1(t)\)</span> function:</p>
+<p><span class="math display">\[{\displaystyle F(s)={\mathcal {L}}\{f\}(s)=\int _{0}^{\infty }1(t)e^{-st}\,dt.}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[1(t)=0, \forall t &lt; 0 \]</span> <span class="math display">\[1(t)=1, \forall t \geq 0 \]</span></p>
+<p><span class="math display">\[{\displaystyle F(s)={\mathcal {L}}\{f\}(s)=\int _{0}^{\infty }1(t)e^{-st}\,dt.} = \int _{0}^{\infty}e^{-st}\,dt. = -\frac{e^{-st}}{s} \Bigg|^\infty_0 = -\frac{1}{s} \bigg( \lim_{t\rightarrow \infty} e^{-st} - \lim_{t\rightarrow 0} e^{-st} \bigg) = \frac{1}{s}\]</span></p>
+<p>A great thing about working with linear systems is that usually we don’t have to perform the Laplace transform integration by hand.</p>
+<p>Most the Laplace transforms for most functions that we will encounter have been solved many times and are available already collected into tables.</p>
+</section>
+<section id="putting-this-all-together" class="level3">
+<h3 class="anchored" data-anchor-id="putting-this-all-together">Putting this all Together</h3>
+<p>Let’s consider the rolling cart example:</p>
+
+
+<img src="img/18.rolling-cart.png" alt="18.rolling-cart" style="width: 700px;">
+
+
+<p>We can model this cart as:</p>
+<p><span class="math display">\[m\ddot{x} = F_{input}(t) - F_{dumper}(t) - F_{spring}(t)\]</span></p>
+<p>And since: <span class="math inline">\(F_{spring}(t)=kx(t)\)</span>, <span class="math inline">\(F_{dumper}(t)=b\dot{x}(t)\)</span></p>
+<p>We obtain:</p>
+<p><span class="math display">\[m\ddot{x} + kx(t) + b\dot{x}(t) -  F_{input}(t) = 0\]</span></p>
+<p>We can convert this system model into a transfer function: - it’s a linear, - time-invariant system, - there is a single input, <span class="math inline">\(F_{input}\)</span>, - and a single output, <span class="math inline">\(x\)</span>.</p>
+<p>To calculate the Transfer Function we need to take the Laplace Transform of the impulse response of the system.</p>
+<p>To do so, let’s set our input to <span class="math inline">\(F_{input}(t)=\delta(t)\)</span> and solve for the response <span class="math inline">\(x(t)\)</span>.</p>
+<p><span class="math display">\[m\ddot{x} + kx(t) + b\dot{x}(t) -  \delta(t) = 0\]</span></p>
+<ul>
+<li>Solving linear, ordinary differential equations in the time domain can be time consuming.</li>
+<li>We can make the task easier by taking the Laplace transform of the entire differential equation, one term at a time, and solve for the impulse response in the <span class="math inline">\(s\)</span> domain directly.</li>
+<li>Simply take each term and replace with the corresponding <span class="math inline">\(s\)</span> domain equivalent.</li>
+</ul>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>time domain</td>
+<td><span class="math inline">\(\large m\ddot{x} + kx(t) + b\dot{x}(t) - \delta(t) = 0\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(s\)</span> domain</td>
+<td>$(ms^2 + bs + k)X(s) - 1 = 0 $</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(X(s)\)</span> is the impulse response in the <span class="math inline">\(s\)</span> domain</td>
+<td><span class="math inline">\(\large X(s) = \frac{1}{m*s^2 + bs + k}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><em>note that the initial conditions are zeros</em></p>
+<p>To go back to the time domain we could preform the inverse Laplace transform on <span class="math inline">\(X(s)\)</span>.</p>
+<hr>
+</section>
+</section>
+<section id="table-of-laplace-transforms" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-laplace-transforms">Table of Laplace transforms</h2>
+
+
+<img src="img/table-1-complete-laplace-transform-table-cut.png" alt="table-1-complete-laplace-transform-table" style="width: 600px;">
+
+
+</section>
+<section id="inverse-laplace-transform-partial-fraction-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="inverse-laplace-transform-partial-fraction-decomposition">Inverse Laplace Transform: Partial fraction decomposition</h2>
+<p>To find the inverse Laplace transform of a complicated function, we can convert the function to a sum of simpler terms for which we know the Laplace transform of each term. The result is called a partial-fraction expansion.</p>
+<p>Given:</p>
+<p><span class="math display">\[Y(s) = G(s)U(s) = \frac{N(s)}{D(s)}U(s)\]</span></p>
+<p>where the order of <span class="math inline">\(N(s)\)</span> is less than the order of <span class="math inline">\(D(s)\)</span>, then a partial-fraction expansion can be made.</p>
+<p>If the order of <span class="math inline">\(N(s)\)</span> is greater than or equal to the order of <span class="math inline">\(D(s)\)</span>, then <span class="math inline">\(N(s)\)</span> must be divided by <span class="math inline">\(D(s)\)</span> successively until the result has a remainder whose numerator is of order less than its denominator.</p>
+<p>We want to expand <span class="math inline">\(G(s)\)</span> into the sum of functions for which we already know the inverse transform, then thanks to the linearity we can simply sum them all up to obtain the inverse of the entire function:</p>
+<section id="case-1.-roots-of-the-denominator-of-fs-are-real-and-distinct" class="level3">
+<h3 class="anchored" data-anchor-id="case-1.-roots-of-the-denominator-of-fs-are-real-and-distinct">Case 1. Roots of the Denominator of F(s) Are Real and Distinct</h3>
+<p>Let’s suppose we have all <strong>distinct poles</strong>:</p>
+<p><span class="math display">\[ D(s) = \prod^{n}_{k=1}{(s-p_k)}\]</span></p>
+<p>we want to find the coefficient <span class="math inline">\(P_k\)</span> such that:</p>
+<p><span class="math display">\[ \frac{N(s)}{\prod^{n}_{k=1}{(s-p_k)}} = \sum^{n}_{k=1}\frac{P_k}{s-p_k}\]</span></p>
+<p>Multiplying for <span class="math inline">\((s-p_i)\)</span>:</p>
+<p><span class="math display">\[ (s-p_i)\frac{N(s)}{\prod^{n}_{k=1}{(s-p_k)}} = (s-p_i)\sum^{n}_{k=1}\frac{P_k}{s-p_k}\]</span></p>
+<p>we can obtain:</p>
+<p><span class="math display">\[P_i = [(s-p_i)G(s)] \big|_{s=p_i}\]</span></p>
+<p>and finally:</p>
+<p><span class="math display">\[ g(t) = \mathcal {L}^{-1}[G(s)]=\mathcal {L}^{-1} \bigg[\sum^{n}_{k=1}\frac{P_k}{s-p_k}\bigg] = \sum^{n}_{k=1} P_k e^{p_kt}\]</span></p>
+<p>For example:</p>
+<p><span class="math display">\[G(s) = \frac{s-10}{(s+2)(s+5)}\]</span></p>
+<p><span class="math display">\[P_1=(s+2)\frac{s-10}{(s+2)(s+5)}\bigg|_{s=-2}=-\frac{12}{3}=-4\]</span> <span class="math display">\[P_2=(s+5)\frac{s-10}{(s+2)(s+5)}\bigg|_{s=-5}=\frac{-15}{-3}=5\]</span></p>
+<p>which means that:</p>
+<p><span class="math display">\[G(s) = \frac{-4}{(s+2)} + \frac{5}{(s+5)}\]</span></p>
+<p>and finally:</p>
+<p><span class="math display">\[ g(t) = \mathcal {L}^{-1}[G(s)] = -4e^{-2t} + 5e^{-5t}\]</span></p>
+</section>
+<section id="case-2.-roots-of-the-denominator-of-fs-are-real-and-repeated" class="level3">
+<h3 class="anchored" data-anchor-id="case-2.-roots-of-the-denominator-of-fs-are-real-and-repeated">Case 2. Roots of the Denominator of F(s) Are Real and Repeated</h3>
+<p>If we have <strong>muliple poles</strong> the decomposition is similar.</p>
+<p>Let’s consider, as an example</p>
+<p><span class="math display">\[
+Y(s) =  \frac{2}{(s+1)(s+2)^2}
+\]</span></p>
+<p>The roots of <span class="math inline">\((s+2)^2\)</span> in the denominator are repeated, since the factor is raised to an integer power higher than 1. In this case, the denominator root at <span class="math inline">\(-2\)</span> is a multiple root of multiplicity 2.</p>
+<p>We can write the partial-fraction expansion as a sum of terms, where each factor of the denominator forms the denominator of each term.</p>
+<p><strong>In addition, each multiple root generates additional terms consisting of denominator factors of reduced multiplicity.</strong></p>
+<p>In our case</p>
+<p><span class="math display">\[
+Y(s) =  \frac{2}{(s+1)(s+2)^2} = \frac{K_1}{(s+1)} + \frac{K_2}{(s+2)^2} + \frac{K_3}{(s+2)}
+\]</span></p>
+<ul>
+<li><p>We obtain <span class="math inline">\(K_1\)</span> as before. In this case <span class="math inline">\(K_1=2\)</span></p></li>
+<li><p>We obtain <span class="math inline">\(K_2\)</span> multiplying the previous equation by <span class="math inline">\((s+2)^2\)</span>:</p></li>
+</ul>
+<p><span class="math display">\[
+\frac{2}{(s+1)} = \frac{K_1(s+2)^2}{(s+1)} + K_2 + K_3(s+2)
+\]</span></p>
+<p>When <span class="math inline">\(s \rightarrow -2\)</span>, <span class="math inline">\(K_2=-2\)</span></p>
+<ul>
+<li>We obtain <span class="math inline">\(K_3\)</span> differentiating the previous equation with respect to <span class="math inline">\(s\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+\frac{-2}{(s+1)^2} = \frac{2(s+2)K_1}{(s+1)^2} + K_3
+\]</span></p>
+<p>From which <span class="math inline">\(K_3\)</span> can be isolated and found if we let <span class="math inline">\(s \rightarrow -2\)</span>. Hence, <span class="math inline">\(K_3=-2\)</span>.</p>
+<p>In this case then:</p>
+<p><span class="math display">\[
+Y(s) =  \frac{2}{(s+1)(s+2)^2} = \frac{2}{(s+1)} + \frac{-2}{(s+2)^2} + \frac{-2}{(s+2)}
+\]</span></p>
+<p>and the inverse transform is:</p>
+<p><span class="math display">\[
+y(t) = 2e^{-t} - 2te^{-2t} -2e^{-2t}
+\]</span></p>
+<p>If the denominator root is of higher multiplicity than 2, successive differentiation would isolate each residue in the expansion of the multiple root.</p>
+<p>In general, given a <span class="math inline">\(H(s)\)</span> whose denominator has real and repeater roots:</p>
+<p><span class="math display">\[H(s) = \frac{N(s)}{(s+p_1)^r(s+p_2)...(s+p_n)}\]</span></p>
+<p>We can find the general expression for <span class="math inline">\(K_1\)</span> (the coefficient of the roots with multiplicity greater than 1):</p>
+<p><span class="math display">\[
+K_i = \frac{1}{(i-1)!}\frac{d^{i-1}(F(s)(s+p_1)^r)}{ds^{i-1}}\Big|_{s\rightarrow-p_1} \;\; i=1,2,...,r
+\]</span></p>
+</section>
+<section id="case-3.-roots-of-the-denominator-of-fs-are-complex-or-imaginary" class="level3">
+<h3 class="anchored" data-anchor-id="case-3.-roots-of-the-denominator-of-fs-are-complex-or-imaginary">Case 3. Roots of the Denominator of F(s) Are Complex or Imaginary</h3>
+<p>The technique used for the partial-fraction expansion of <span class="math inline">\(F(s)\)</span> with real roots in the denominator can be used for complex and imaginary roots.</p>
+<p>However, the residues of the complex and imaginary roots are themselves complex conjugates.</p>
+<p>In this case, the resulting terms can be identified as:</p>
+<p><span class="math display">\[
+\frac{e^{j\theta}+e^{-j\theta}}{2} = \cos{\theta}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\frac{e^{j\theta}-e^{-j\theta}}{2j} = \sin{\theta}
+\]</span></p>
+<p>For example:</p>
+<p><span class="math display">\[
+F(s) = \frac{3}{s(s^2+2s+5)} = \frac{3}{s(s+1+j2)(s+1-j2)} = \frac{K_1}{s} + \frac{K_2}{s+1+j2} + \frac{K_3}{s+1-j2}
+\]</span></p>
+<p><span class="math inline">\(K_1\)</span> is found as usual, and found <span class="math inline">\(K_1=3/5\)</span>.</p>
+<p>To find <span class="math inline">\(K_2\)</span>:</p>
+<p><span class="math display">\[
+K_2 = \frac{3}{s(s+1-j2)}\Big|_{s\rightarrow -1-j2} = \frac{-3}{20}(2+j1)
+\]</span></p>
+<p><span class="math inline">\(K_3\)</span> is found to be the complex conjugate of <span class="math inline">\(K_2\)</span>.</p>
+<p><span class="math display">\[
+F(s) = \frac{3/5}{s} - \frac{3}{20}\Big(\frac{2+j1}{s+1+2j} + \frac{2-j1}{s+1-2j}\Big)
+\]</span></p>
+<p>which we can inverse transform to obtain:</p>
+<p><span class="math display">\[
+f(t) = \frac{3}{5} - \frac{3}{20}\Big[ (2+j1)e^{-(1+j2)t} + (2-j1)e^{-(1-j2)t} \Big]
+\]</span></p>
+<p><span class="math display">\[
+f(t) = \frac{3}{5} - \frac{3}{20} e^{-t}\Big[4 \Big( \frac{e^{j2t}+e^{-j2t}}{2}\Big) + 2 \Big(\frac{e^{j2t}-e^{-j2t}}{2j} \Big) \Big]
+\]</span></p>
+<p><span class="math display">\[
+f(t) = \frac{3}{5} - \frac{3}{5} e^{-t} \Big( cos(2t) + \frac{1}{2}sin(2t) \Big) = 0.6 - 0.671e^tcos(2t-\phi)
+\]</span></p>
+<p>where <span class="math inline">\(\phi = arctan0.5=26.57^o\)</span></p>
+<hr>
+</section>
+<section id="some-more-on-the-laplace-transform" class="level3">
+<h3 class="anchored" data-anchor-id="some-more-on-the-laplace-transform">Some more on the Laplace transform</h3>
+<ul>
+<li>Convert dfferential problems into algebric ones (finding the poles of the system)</li>
+<li>Makes it possible to understand the system output for a given input</li>
+<li>Using the transfer function it is possible to represent the input/output relationship</li>
+<li>Interconnected systems can be represented using block diagrams</li>
+<li>However, <em>it does not allow analysing the controllability and observability of each single block!</em></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="sympy" class="level2">
+<h2 class="anchored" data-anchor-id="sympy"><a href="https://dynamics-and-control.readthedocs.io/en/latest/1_Dynamics/3_Linear_systems/Laplace%20transforms.html">Sympy</a></h2>
+<p>The sympy Python module makes it easier to work with Laplace transforms. Let’s import it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sympy.init_printing()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's also ignore some warnings here due to sympy using an old matplotlib function to render Latex equations.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And let’s define the symbols with need to work with.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>t, s <span class="op">=</span> sympy.symbols(<span class="st">'t, s'</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> sympy.symbols(<span class="st">'a'</span>, real<span class="op">=</span><span class="va">True</span>, positive<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sympy provides a function called <code>laplace_transform</code> to easily calculate Laplace transforms:</p>
+<p>For example, if we want to know the Laplace transform of <span class="math inline">\(e^{\alpha t}\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> sympy.exp(a<span class="op">*</span>t)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle e^{a t}\)</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> sympy.laplace_transform(f, t, s, noconds<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>F</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle \frac{1}{- a + s}\)</span></p>
+</div>
+</div>
+<p>We can define a function to make it easier:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> L(f):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sympy.laplace_transform(f, t, s, noconds<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invL(F):</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sympy.inverse_laplace_transform(F, s, t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>L(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle \frac{1}{- a + s}\)</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>invL(L(f))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle e^{a t} \theta\left(t\right)\)</span></p>
+</div>
+</div>
+<p>where <span class="math inline">\(\theta(t)\)</span> is the name used by Sympy for the unit step function.</p>
+<p>More transforms:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>omega <span class="op">=</span> sympy.Symbol(<span class="st">'omega'</span>, real<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>exp <span class="op">=</span> sympy.exp</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>sin <span class="op">=</span> sympy.sin</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>cos <span class="op">=</span> sympy.cos</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>functions <span class="op">=</span> [<span class="dv">1</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>         t,  </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>         t<span class="op">**</span><span class="dv">2</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>         exp(<span class="op">-</span>a<span class="op">*</span>t),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>         t<span class="op">*</span>exp(<span class="op">-</span>a<span class="op">*</span>t),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>         t<span class="op">**</span><span class="dv">2</span><span class="op">*</span>exp(<span class="op">-</span>a<span class="op">*</span>t),</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>         sin(omega<span class="op">*</span>t),</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>         cos(omega<span class="op">*</span>t),</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>         <span class="dv">1</span> <span class="op">-</span> exp(<span class="op">-</span>a<span class="op">*</span>t),</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>         exp(<span class="op">-</span>a<span class="op">*</span>t)<span class="op">*</span>sin(omega<span class="op">*</span>t),</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>         exp(<span class="op">-</span>a<span class="op">*</span>t)<span class="op">*</span>cos(omega<span class="op">*</span>t),</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>         ]</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>functions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle \left[ 1, \  t, \  t^{2}, \  e^{- a t}, \  t e^{- a t}, \  t^{2} e^{- a t}, \  \sin{\left(\omega t \right)}, \  \cos{\left(\omega t \right)}, \  1 - e^{- a t}, \  e^{- a t} \sin{\left(\omega t \right)}, \  e^{- a t} \cos{\left(\omega t \right)}\right]\)</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Fs <span class="op">=</span> [L(f) <span class="cf">for</span> f <span class="kw">in</span> functions]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>Fs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle \left[ \frac{1}{s}, \  \frac{1}{s^{2}}, \  \frac{2}{s^{3}}, \  \frac{1}{a + s}, \  \frac{1}{\left(a + s\right)^{2}}, \  \frac{2}{\left(a + s\right)^{3}}, \  \frac{\omega}{\omega^{2} + s^{2}}, \  \frac{s}{\omega^{2} + s^{2}}, \  \frac{a}{s \left(a + s\right)}, \  \frac{\omega}{\omega^{2} + \left(a + s\right)^{2}}, \  \frac{a + s}{\omega^{2} + \left(a + s\right)^{2}}\right]\)</span></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="transfer-function-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="transfer-function-matrix">Transfer function matrix</h2>
+<p>We can apply the Laplace transform to the state equation of LTI systems</p>
+<ul>
+<li>We start from the state equations and use the derivate operator of <span class="math inline">\(s\)</span></li>
+<li>We also consider only the forced output of the system</li>
+</ul>
+<p><span class="math display">\[\dot{x} = Ax + Bu;\; y = Cx\]</span></p>
+<p><span class="math display">\[sX = AX + BU;\; Y = CX\]</span></p>
+<p><span class="math display">\[(sI-A)X=BU;\; Y = CX\]</span></p>
+<p><span class="math display">\[X = (sI-A)^{-1}BU;\]</span> <span class="math display">\[Y = C(sI-A)^{-1}BU\]</span></p>
+<p>Matrix <span class="math inline">\(G(s)=C(sI-A)^{-1}B\)</span> is the <em>Transfer Function Matrix</em>(or <em>Transfer Matrix</em>).</p>
+<p>Each element of <span class="math inline">\(G(s)\)</span> expresses the <strong>dynamic</strong> relation (there is <span class="math inline">\(s\)</span>) between an input channel and an output channel.</p>
+<p><span class="math display">\[
+\begin{equation}
+G(s)=
+\begin{bmatrix}
+g_{11}(s) &amp; ... &amp; g_{1m}(s)\\
+... &amp; ... &amp; ... \\
+g_{p1}(s) &amp; ... &amp; g_{pm}(s)
+\end{bmatrix}
+\end{equation}
+\]</span></p>
+<p><span class="math inline">\(g_{ij}(s)\)</span>: Transfer function between <span class="math inline">\(u_j\)</span> and <span class="math inline">\(y_i\)</span>, each <span class="math inline">\(g_{ij}(s)=\frac{N(s)}{D(s)}\)</span></p>
+<section id="matrix-transfer-function-and-poles" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-transfer-function-and-poles">Matrix transfer function and poles</h3>
+<p><span class="math display">\[G(s) = C(sI-A)^{-1}B\]</span></p>
+<ul>
+<li>we need to calculate the inverse of a matrix:</li>
+</ul>
+<p><span class="math display">\[A^{-1} = \frac{Adjugate(A)}{det(A)}\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[G(s) = \frac{CAdjugate(sI-A)B}{det(sI-A)}\]</span></p>
+</section>
+<section id="poles-and-zeros" class="level3">
+<h3 class="anchored" data-anchor-id="poles-and-zeros">Poles and zeros</h3>
+<ul>
+<li><p>Roots of the denominator of <span class="math inline">\(G(s)\)</span> (values of <span class="math inline">\(s\)</span> that make <span class="math inline">\(den(G)=0\)</span>) are called <em>poles</em> of the system.</p></li>
+<li><p>A pole is a value of <span class="math inline">\(s\)</span> that causes <span class="math inline">\(G(s)\rightarrow \inf\)</span> (e.g.&nbsp;<span class="math inline">\(\frac{1}{s}\)</span>, when <span class="math inline">\(s=0\)</span>, <span class="math inline">\(G(s)\rightarrow \inf\)</span>)</p></li>
+<li><p>A zero is a value of <span class="math inline">\(s\)</span> that causes <span class="math inline">\(G(s)\rightarrow 0\)</span> (e.g.&nbsp;<span class="math inline">\(s\)</span>, when <span class="math inline">\(s=0\)</span>, <span class="math inline">\(G(s)=0)\)</span></p></li>
+<li><p>The poles of the system <span class="math inline">\(G(s)\)</span> are, in general, a <em>subset</em> of the roots of the eq. <span class="math inline">\(det(sI-A)=0\)</span></p></li>
+<li><p>which are the same as the roots of the characteristic equation: <span class="math inline">\(det(A-\lambda I)=0\)</span></p></li>
+<li><p>this means that the poles of the system are a subset of the eigenvalue of the matrix <span class="math inline">\(A\)</span>.</p></li>
+</ul>
+
+
+<img src="img/N.poles-zeros-ex.png" alt="N.poles-zeros-ex" style="width: 700px;">
+
+
+<hr>
+<p>Sidenote - Adjugate Matrix</p>
+<p>The adjugate (or adjoint) of a square matrix is a matrix obtained by taking the transpose of the matrix of cofactors of the original matrix.</p>
+<p>To compute the adjugate of a matrix A, we first calculate the matrix of cofactors of A. The matrix of cofactors of A is obtained by multiplying each element of A by the corresponding determinant of the submatrix obtained by removing the row and column of the element, and then multiplying by -1 if the sum of the row and column indices is odd.</p>
+<p>Once we have the matrix of cofactors, we take its transpose to obtain the adjugate of A.</p>
+<p>The adjugate of a matrix A is often denoted as adj(A) or adjug(A). It has many applications in linear algebra and is particularly useful for computing the inverse of a matrix, as the inverse of A can be expressed as:</p>
+<p><span class="math display">\[A^-1 = \frac{adj(A)}{det(A)}\]</span></p>
+<p>where <span class="math inline">\(det(A)\)</span> is the determinant of A.</p>
+<p>Example:</p>
+<p><span class="math display">\[
+A = \begin{bmatrix}
+a &amp; b \\
+c &amp; d \\
+\end{bmatrix}
+\]</span></p>
+<p>And</p>
+<p><span class="math display">\[
+Adj(A) = \begin{bmatrix}
+d &amp; -b \\
+-c &amp; a \\
+\end{bmatrix}
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="transfer-function-controllability-and-observability" class="level2">
+<h2 class="anchored" data-anchor-id="transfer-function-controllability-and-observability">Transfer function, controllability and observability</h2>
+<ul>
+<li>For each <span class="math inline">\(g_{ij}(s)\)</span>, the poles of the transfer function are only the poles that are <strong>controllable</strong> from input <span class="math inline">\(u_j\)</span> and <strong>observable</strong> from the output <span class="math inline">\(y_i\)</span>.</li>
+</ul>
+</section>
+<section id="single-input-single-output-siso" class="level2">
+<h2 class="anchored" data-anchor-id="single-input-single-output-siso">Single Input, Single Output (SISO)</h2>
+<p>It is similar to what we had before, but now we only have one input and one output:</p>
+<p><span class="math display">\[\dot{x} = Ax + bu;\; y = c^Tx\]</span></p>
+<p><span class="math display">\[G(s) = c^T(sI-A)^{-1}b\]</span></p>
+<p>Again, the transfer function only includes poles that are controllable and observable.</p>
+<hr>
+</section>
+<section id="stability-in-classical-control" class="level2">
+<h2 class="anchored" data-anchor-id="stability-in-classical-control">Stability in Classical Control</h2>
+<ul>
+<li><p>Stability of a system is a property that describes how the system behaves in response to small perturbations or changes.</p></li>
+<li><p>A system is considered stable if it is able to maintain a desired state or behavior in the face of disturbances or variations in its environment.</p></li>
+<li><p>Stability is the property of the system to stay close to its equilibrium <span class="math inline">\(\bar{x}\)</span> when perturbed.</p></li>
+<li><p>An equilibrium is stable if</p></li>
+</ul>
+<p><span class="math display">\[ \forall \epsilon &gt;0, \exists \delta_\epsilon: ||\bar{x}|| \le \delta_\epsilon \Rightarrow ||x(t)||\le\epsilon,\;\; \forall t\ge 0\]</span></p>
+<ul>
+<li><p>Asymptotic stability: the property of the system to go back to its equilibrium when perturbed: <span class="math inline">\(||x(t)|| \rightarrow \bar{x}\)</span>, for <span class="math inline">\(t\rightarrow \inf\)</span>.</p></li>
+<li><p>Assumes zero input: it is a definition w.r.t. state perturbations</p></li>
+</ul>
+<p><strong>BIBO stability</strong> - A system is BIBO stable (Bounded Input, Bounded Output) if for each limited input, there is a limited output - For linear systems: BIBO stability if and only if poles of the transfer functions have Re <span class="math inline">\(&lt;0\)</span></p>
+<p>A system is said to be BIBO stable if there exists a finite positive constant <span class="math inline">\(M\)</span> such that, for any input <span class="math inline">\(u(t)\)</span> that satisfies <span class="math inline">\(|u(t)| \le B\)</span> (i.e., bounded), the corresponding output <span class="math inline">\(y(t)\)</span> satisfies <span class="math inline">\(|y(t)| \le M\)</span>, where <span class="math inline">\(M\)</span> and <span class="math inline">\(B\)</span> are finite positive constants.</p>
+<p><strong>Intuition:</strong> You can think of stability as meaning that your system’s response decays over time - instability implies the opposite is true, that a finite input will cause your system to respond with increasing amplitude over time, leading to an unstable system.</p>
+<p>Note that it is possible to be maginally stable: the system has an infinite, oscillatory response (e.g., sinusoid at constant frequency and amplitude).</p>
+<p><strong>Stability margins:</strong> - Even if your system is stable, unmodelled dynamics or parameter variations could make it unstable. - Stability margins make it possible to evaluate the robustness of the system to these variations.</p>
+<p>Note that too much stability is not necessarily a good thing: a system that is too stable means that will tend not to move from its equilibrium even when you desired it to do so.</p>
+</section>
+<section id="system-stability-and-system-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="system-stability-and-system-matrix">System stability and system matrix</h2>
+<p>System stability depends on the eigenvalues of the system matrix <span class="math inline">\(A\)</span> or on the poles of the transfer function: - eigenvalues with <span class="math inline">\(Re &lt; 0\)</span>, system is asymptotically stable - eigenvalues with <span class="math inline">\(Re \le 0\)</span>, and <span class="math inline">\(Re=0\)</span> have multiplicity 1 then the system is stable</p>
+<p>When we analyse the stability of linearised systems things can be more complicated. - If the linear system is aymptotically stable, then the non-linear system is stable (around the equilibrium): we can always move close enough to the equilibrium to be inside its region of stability)</p>
+<ul>
+<li>If the linear system is marginally stable, we cannot say anything on the non-linear system (other non-linear dynamics become key)</li>
+</ul>
+</section>
+<section id="system-stability-and-transfer-function" class="level2">
+<h2 class="anchored" data-anchor-id="system-stability-and-transfer-function">System stability and transfer function</h2>
+<ul>
+<li>The stability of a linear system may be determined directly from its transfer function.</li>
+<li>An <span class="math inline">\(n\)</span>-th order linear system is asymptotically stable only if all of the components in the response from a finite set of initial conditions decay to zero as time increases, or: <span class="math display">\[
+\lim \limits_{t\rightarrow\inf} \sum_{i=1}^{n} C_ie^{p_it}
+\]</span></li>
+</ul>
+<p>where the <span class="math inline">\(p_i\)</span> are the system poles.</p>
+<p>For linear systems modelled through their transfer function <span class="math inline">\(G(s)=\frac{N(s)}{D(s)}\)</span>, we need to analyse the roots of the characteristic equation <span class="math inline">\(D(s)=0\)</span>: - the system is stable if all the roots of the characteristic equation have negative real part - the system is stable if all its poles have negative real part.</p>
+<p><em>In order for a linear system to be stable, all of its poles must have negative real parts, that is they must all lie within the left-half of the s-plane. An “unstable” pole, lying in the right half of the s-plane, generates a component in the system homogeneous response that increases without bound from any finite initial conditions. A system having one or more poles lying on the imaginary axis of the s-plane has non-decaying oscillatory components in its homogeneous response, and is defined to be marginally stable.</em></p>
+<hr>
+</section>
+<section id="more-structural-properties" class="level2">
+<h2 class="anchored" data-anchor-id="more-structural-properties">More structural properties</h2>
+<ul>
+<li><p>Stability only depends on the structure of the system (matrix A)</p></li>
+<li><p>Other aspects:</p>
+<ul>
+<li>What input do we need to take the system into a given state?</li>
+<li>Given the output of a system, how can we determine the state?</li>
+</ul></li>
+</ul>
+<section id="controllability" class="level3">
+<h3 class="anchored" data-anchor-id="controllability">Controllability</h3>
+<ul>
+<li>A state <span class="math inline">\(x\)</span> is controllable if exists an input <span class="math inline">\(u\)</span> that can take the trajectory of the system from state <span class="math inline">\(0\)</span> to <span class="math inline">\(x\)</span> in finite time.</li>
+<li>A system is controllable if all its states are controllable</li>
+</ul>
+</section>
+<section id="observability" class="level3">
+<h3 class="anchored" data-anchor-id="observability">Observability</h3>
+<ul>
+<li>An initial state is observable if it is possible to determine <span class="math inline">\(x\)</span> measuring the system output <span class="math inline">\(y\)</span></li>
+<li>A system is observable if all its states are observable</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="laplace-transforms-examples" class="level2">
+<h2 class="anchored" data-anchor-id="laplace-transforms-examples">Laplace Transforms Examples</h2>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example 1</h3>
+<p><span class="math display">\[F(s)=\frac{10}{s^2+12s+40}\]</span></p>
+<ul>
+<li><p>poles: <span class="math inline">\(-6 \pm \sqrt{36-40} = -6 \pm \sqrt{-4} = -6 \pm j2\)</span></p></li>
+<li><p>let’s call <span class="math inline">\(\alpha_1=-6 + j2\)</span>, <span class="math inline">\(\alpha^*_1=-6 - j2\)</span></p></li>
+</ul>
+<p>We can then re-write: <span class="math display">\[
+F(s) = \frac{10}{[s - (-6+j2)][s - (-6-j2)]} = \frac{10}{(s-\alpha_1)(s-\alpha^*_1)}
+\]</span></p>
+<p>To calculate the inverse transform we need to find the coefficients:</p>
+<p><span class="math display">\[
+F(s) = \frac{10}{(s-\alpha_1)(s-\alpha^*_1)} = \frac{A}{s-\alpha_1} + \frac{B}{s-\alpha^*_1}
+\]</span></p>
+<p>where <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> must be complex conjugated: <span class="math inline">\(B=A^*\)</span> (or we would not get real cofficient in <span class="math inline">\(F(s)\)</span>).</p>
+<p><span class="math display">\[
+F(s) = \frac{10}{(s-\alpha_1)(s-\alpha^*_1)} = \frac{A}{s-\alpha_1} + \frac{A^*}{s-\alpha^*_1}
+\]</span></p>
+<p><span class="math display">\[
+A = \lim \limits_{s\rightarrow \alpha_1}  \frac{10}{(s-\alpha_1)(s-\alpha^*_1)} (s-\alpha_1) = \frac{10}{\alpha_1-\alpha_1^*} = \frac{10}{2j \text{Img(}\alpha_1)}
+\]</span></p>
+<p>this is because <span class="math inline">\(a + jb - (a - jb) = 2jb\)</span></p>
+<p><span class="math display">\[
+B = \lim \limits_{s\rightarrow \alpha^*_1}  \frac{10}{(s-\alpha_1)(s-\alpha^*_1)} (s-\alpha^*_1) = \frac{10}{\alpha^*_1-\alpha_1} = -\frac{10}{2j \text{Img(}\alpha_1)}
+\]</span></p>
+<p>Let’s see now the inverse transform:</p>
+<p><span class="math display">\[
+F(s) = \frac{A}{s-\alpha_1} + \frac{A^*}{s-\alpha^*_1} \rightarrow \mathcal{L^{-1}}  \rightarrow Ae^{\alpha_1t} + A^*e^{\alpha^*_1t}
+\]</span></p>
+<p>where we could explicit <span class="math inline">\(\alpha_1 = \sigma + j\omega\)</span>, and <span class="math inline">\(A=|A|e^{j\Phi_A}\)</span>, <span class="math inline">\(A^*=|A|e^{-j\Phi_A}\)</span></p>
+<p><span class="math display">\[
+f(t) = Ae^{\alpha_1t} + A^*e^{\alpha^*_1t} = |A|e^{j\Phi_A}e^{(\sigma +j\omega)t} + |A|e^{-j\Phi_A}e^{(\sigma -j\omega)t} = |A|e^{j\Phi_A}e^{\sigma t} e^{+j\omega t} + |A|e^{-j\Phi_A}e^{\sigma t}e^{-j\omega t}
+\]</span></p>
+<p>we can group things together:</p>
+<p><span class="math display">\[
+f(t) = |A|e^{j\Phi_A}e^{\sigma t} e^{+j\omega t} + |A|e^{-j\Phi_A}e^{\sigma t}e^{-j\omega t} = |A|e^{\sigma t} \big [   e^{j\Phi_A}e^{j\omega t} + e^{-j\Phi_A}e^{-j\omega t}  \big ] = |A|e^{\sigma t} \big [   e^{j(\Phi_A+\omega t)} + e^{-j(\Phi_A+\omega t)}  \big ]
+\]</span></p>
+<p>and since <span class="math inline">\(\frac{e^{jx}+e^{-jx}}{2}=cos(x)\)</span>, we can write the above expression as:</p>
+<p><span class="math display">\[
+f(t) = |A|e^{\sigma t} \big [   e^{j(\Phi_A+\omega t)} + e^{-j(\Phi_A+\omega t)}  \big ] = 2|A|e^{\sigma t}\cos(\Phi_A+\omega t)
+\]</span></p>
+<p>As expected we have an oscillatory term that could decrease or increase depending on the value of <span class="math inline">\(\sigma\)</span> (real part of the poles).</p>
+<hr>
+</section>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example 2</h3>
+<p><span class="math display">\[F(s) = \frac{100}{(s+1)(s^2+4s+13)}\]</span></p>
+<ul>
+<li>poles: <span class="math inline">\(s=-1, s=-2\pm j3\)</span></li>
+</ul>
+<p>We can write:</p>
+<p><span class="math display">\[
+F(s) = \frac{100}{(s+1)(s^2+4s+13)} = \frac{A_1}{(s+1)} + \frac{B_1}{(s-\alpha_1)} + \frac{B^*_1}{(s-\alpha^*_1)}
+\]</span></p>
+<p>Where we can calculate the value of the coefficient <span class="math inline">\(A_1\)</span>:</p>
+<ul>
+<li><p>for the pole in <span class="math inline">\(s=-1\)</span> <span class="math display">\[
+A_1 = \frac{100}{s^2+4s+13} \bigg |_{s=-1} = \frac{100}{1-4+13} = 10
+\]</span></p></li>
+<li><p>for the pole in <span class="math inline">\(s=\alpha_1=-2+j3\)</span> <span class="math display">\[
+B_1 = (s-\alpha_1)\frac{100}{(s-\alpha_1)(s+1)(s-\alpha^*_1)} \bigg |_{s=-2+j3} =
+\frac{100}{(-2+j3+1)(-2+j3-(-2+j3)} = \frac{100}{(-1+j3)6j} = \frac{100}{-18-6j} \\
+= \frac{100}{-18-6j}\frac{-18+6j}{-18+6j} = \frac{100}{|-18-6j|^2}(-18+6j) = -\frac{100}{360}6(3-j)=-\frac{5}{3}(3-j)
+\]</span></p></li>
+<li><p>note: <span class="math inline">\(z^{-1} = \frac{z^*}{|z|^2}\)</span></p></li>
+</ul>
+<p>and the inverse transform is:</p>
+<p><span class="math display">\[
+f(t) = 10e^{-t} + 2|B_1|e^{-2t}cos(3t+\arg(B_1))
+\]</span></p>
+</section>
+<section id="example-3" class="level3">
+<h3 class="anchored" data-anchor-id="example-3">Example 3</h3>
+<p><span class="math display">\[
+F(s) = \frac{s+3}{s(s+7)(s+1)} = \frac{A}{s} + \frac{B}{s+7} + \frac{C}{s+1}  
+\]</span></p>
+<p>Note that when we apply partial fraction decomposition we do:</p>
+<p><span class="math display">\[
+\bigg [ \frac{A}{s} + \frac{B}{s+7} + \frac{C}{s+1} \bigg ]  (s+7) = \frac{A(s+7)}{s} + \frac{B(s+7)}{s+7} + \frac{C(s+7)}{s+1} \bigg | _{s=-7} = B
+\]</span></p>
+<p>so if we calculate the limits of both sides we can exactly what we want.</p>
+<p>we can then</p>
+<p><span class="math display">\[
+B = \lim \limits_{s\rightarrow-7} \frac{s+3}{s(s+7)(s+1)} (s+7) = \frac{-4}{-7(-6)} = \frac{-4}{42} = \frac{-2}{21}
+\]</span></p>
+<p>we can then calculate the other terms:</p>
+<p><span class="math display">\[
+A = \lim \limits_{s\rightarrow 0} \frac{s+3}{s(s+7)(s+1)} (s) = \frac{3}{7}
+\]</span></p>
+<p><span class="math display">\[
+C = \lim \limits_{s\rightarrow -1} \frac{s+3}{s(s+7)(s+1)} (s+1) = \frac{2}{-6} = -\frac{1}{3}
+\]</span></p>
+<p>Now we can do the inverse transform of:</p>
+<p><span class="math display">\[
+F(s) = \frac{s+3}{s(s+7)(s+1)} = \frac{3}{7}\frac{1}{s} - \frac{2}{21}\frac{1}{s+7} - \frac{1}{3}\frac{1}{s+1}
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+f(t) = \frac{3}{7} 1(t) - \frac{2}{21}e^{-7t} - \frac{1}{3}e^{-t}
+\]</span></p>
+<hr>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

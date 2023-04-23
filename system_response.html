@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - System Response</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - System Response">
+<meta property="og:description" content="This notebook analyses how different systems might respond to different classes of inputs.">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - System Response">
+<meta name="twitter:description" content="This notebook analyses how different systems might respond to different classes of inputs.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">System Response</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link active">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#notebook-objectives" id="toc-notebook-objectives" class="nav-link active" data-scroll-target="#notebook-objectives">Notebook Objectives</a></li>
+  <li><a href="#first-and-second-order-systems-and-the-dominant-pole-approximation" id="toc-first-and-second-order-systems-and-the-dominant-pole-approximation" class="nav-link" data-scroll-target="#first-and-second-order-systems-and-the-dominant-pole-approximation">First and second order systems, and the dominant pole approximation</a>
+  <ul class="collapse">
+  <li><a href="#dominant-poles" id="toc-dominant-poles" class="nav-link" data-scroll-target="#dominant-poles">Dominant Poles</a></li>
+  <li><a href="#reduction-of-a-second-order-system-to-first-order" id="toc-reduction-of-a-second-order-system-to-first-order" class="nav-link" data-scroll-target="#reduction-of-a-second-order-system-to-first-order">Reduction of a second order system to first order</a></li>
+  <li><a href="#example-1-second-order-system" id="toc-example-1-second-order-system" class="nav-link" data-scroll-target="#example-1-second-order-system">Example 1, second order system</a></li>
+  <li><a href="#example-2-second-order-pole-dominates-but-not-as-strongly" id="toc-example-2-second-order-pole-dominates-but-not-as-strongly" class="nav-link" data-scroll-target="#example-2-second-order-pole-dominates-but-not-as-strongly">Example 2, Second order, Pole dominates but not as strongly</a></li>
+  </ul></li>
+  <li><a href="#example-3-second-order-neither-pole-dominates" id="toc-example-3-second-order-neither-pole-dominates" class="nav-link" data-scroll-target="#example-3-second-order-neither-pole-dominates">Example 3, Second Order, neither pole dominates</a>
+  <ul class="collapse">
+  <li><a href="#simplifying-higher-order-systems" id="toc-simplifying-higher-order-systems" class="nav-link" data-scroll-target="#simplifying-higher-order-systems">Simplifying Higher Order Systems</a></li>
+  </ul></li>
+  <li><a href="#example-5-third-order-real-pole-dominates" id="toc-example-5-third-order-real-pole-dominates" class="nav-link" data-scroll-target="#example-5-third-order-real-pole-dominates">Example 5, Third order, Real Pole Dominates</a></li>
+  <li><a href="#first-order-and-second-order-systems" id="toc-first-order-and-second-order-systems" class="nav-link" data-scroll-target="#first-order-and-second-order-systems">First-order and second-order systems</a>
+  <ul class="collapse">
+  <li><a href="#step-response-of-first-order-systems" id="toc-step-response-of-first-order-systems" class="nav-link" data-scroll-target="#step-response-of-first-order-systems">Step response of first order systems</a></li>
+  <li><a href="#to-recap" id="toc-to-recap" class="nav-link" data-scroll-target="#to-recap">To recap</a></li>
+  <li><a href="#step-response-of-second-order-systems" id="toc-step-response-of-second-order-systems" class="nav-link" data-scroll-target="#step-response-of-second-order-systems">Step response of second order systems</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">System Response</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="notebook-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="notebook-objectives">Notebook Objectives</h2>
+<p>This notebook analyses how different systems might respond to different classes of inputs.</p>
+<ul>
+<li>Dominal pole approximation</li>
+<li>First and second order systems</li>
+<li>System response and performance requirements</li>
+</ul>
+<hr>
+</section>
+<section id="first-and-second-order-systems-and-the-dominant-pole-approximation" class="level2">
+<h2 class="anchored" data-anchor-id="first-and-second-order-systems-and-the-dominant-pole-approximation">First and second order systems, and the dominant pole approximation</h2>
+<p>The number of poles of the system determines its order</p>
+<p>Lower order (1st and 2nd) are well understood and easy to characterize (speed of system, oscillations, damping…), but his is much more difficult with higher order systems.</p>
+<p>One way to make many such systems easier to think about is to approximate the system by a lower order system using a technique called the dominant pole approximation. This approximation assumes that the slowest part of the system dominates the response, and that the faster part(s) of the system can be ignored.</p>
+<p><strong>Notes:</strong> - In a transfer function representation, the <em>order</em> is the highest exponent in the transfer function. In a proper system, the system order is defined as the degree of the denominator polynomial. - A <em>proper system</em> is a system where the degree of the denominator is larger than or equal to the degree of the numerator polynomial. - A <em>strictly proper</em> system is a system where the degree of the denominator polynomial is larger than the degree of the numerator polynomial.</p>
+<p>Let’s take some examples and verify how a few systems behaves.</p>
+<p>We will use Sympy to do it, so we need to define some variables first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t, K, tau <span class="op">=</span> sympy.symbols(<span class="st">'t, K, tau'</span>,real<span class="op">=</span><span class="va">True</span>, positive<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> sympy.Symbol(<span class="st">'s'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> sympy.Heaviside(t) <span class="co"># step function</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> L(f):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sympy.laplace_transform(f, t, s, noconds<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invL(F):</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sympy.inverse_laplace_transform(F, s, t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate(f, times):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> []</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> time <span class="kw">in</span> times:        </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        res.append(f.evalf(subs<span class="op">=</span>{t:time}).n(chop<span class="op">=</span><span class="fl">1e-5</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Side note:</strong></p>
+<p><code>chop</code> makes it possible to round float numbers off to a desired precision. Below is an example</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>q1 <span class="op">=</span> (<span class="op">-</span><span class="fl">1.53283653303955</span> <span class="op">+</span> <span class="fl">6.08703605256546e-17</span><span class="op">*</span>sympy.I)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>q2 <span class="op">=</span> (<span class="op">-</span><span class="fl">1.53283653303955</span> <span class="op">+</span> <span class="fl">6.08703605256546e-5</span><span class="op">*</span>sympy.I)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'q1:'</span>, q1.n(chop<span class="op">=</span><span class="fl">1e-5</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'q2:'</span>, q2.n(chop<span class="op">=</span><span class="fl">1e-5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>q1: -1.53283653303955
+q2: -1.53283653303955 + 6.08703605256546e-5*I</code></pre>
+</div>
+</div>
+<section id="dominant-poles" class="level3">
+<h3 class="anchored" data-anchor-id="dominant-poles">Dominant Poles</h3>
+<ul>
+<li>When we have a BIBO stable system and every mode of the system is an exponentially dumped signal.</li>
+<li>Beyond the initial transient, the main effect is driven by the slowest modes</li>
+</ul>
+<p>For example let’s consider these poles:</p>
+<p><span class="math display">\[
+p_1 = -0.1
+\]</span></p>
+<p><span class="math display">\[
+p_{2,3} = -5 \pm 8.66j
+\]</span></p>
+<p><span class="math display">\[
+p_4 = -15.5
+\]</span></p>
+<p><span class="math display">\[
+p_{5,6} = -20 \pm 34.64j
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">7</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="op">-</span><span class="fl">0.1</span>,    <span class="dv">0</span>,                  marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">25</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="op">-</span><span class="dv">5</span>, <span class="op">-</span><span class="dv">5</span>],   [<span class="op">-</span><span class="fl">8.66</span>, <span class="fl">8.66</span>],   marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">25</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'orange'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="op">-</span><span class="fl">15.5</span>,   <span class="dv">0</span>,                  marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">25</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="op">-</span><span class="dv">20</span>, <span class="op">-</span><span class="dv">20</span>], [<span class="op">-</span><span class="fl">34.64</span>, <span class="fl">34.64</span>], marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">25</span>, linestyle<span class="op">=</span><span class="st">''</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>axs.set_xlim([<span class="op">-</span><span class="dv">24</span>, <span class="dv">1</span>])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>axs.set_ylim([<span class="op">-</span><span class="dv">36</span>, <span class="dv">36</span>])</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>axs.set_xlabel(<span class="st">'Re'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>axs.set_ylabel(<span class="st">'Img'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.legend([<span class="st">'$p_1$'</span>, <span class="st">'$p_{2,3}$'</span>, <span class="st">'$p_4$'</span>, <span class="st">'$p_{5,6}$'</span>])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can now verify what output is associated to each of these poles.</p>
+<p>To do this we define four systems that have poles at the positions depicted above:</p>
+<p><span class="math display">\[ G_1(s) = \frac{1}{(s + 0.1)} \]</span></p>
+<p><span class="math display">\[ G_2(s) = \frac{100}{(s^2 + 10s + 100)} \]</span></p>
+<p><span class="math display">\[ G_3(s) = \frac{15.5}{(s + 15.5)} \]</span></p>
+<p><span class="math display">\[ G_2(s) = \frac{1600}{(s^2 + 40s + 1600)} \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">4</span>,figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">7</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">100</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define our systems</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s <span class="op">+</span> <span class="fl">0.1</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>zeta, w_n <span class="op">=</span> <span class="fl">0.5</span>, <span class="dv">10</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> w_n<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>zeta<span class="op">*</span>w_n<span class="op">*</span>s <span class="op">+</span> w_n<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>G3 <span class="op">=</span> <span class="fl">15.5</span><span class="op">/</span>(s <span class="op">+</span> <span class="fl">15.5</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>zeta, w_n <span class="op">=</span> <span class="fl">0.5</span>, <span class="dv">40</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>G4 <span class="op">=</span> w_n<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>zeta<span class="op">*</span>w_n<span class="op">*</span>s <span class="op">+</span> w_n<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># plot them</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(time, evaluate(invL(G1), time), color<span class="op">=</span><span class="st">'blue'</span>,   linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylim(<span class="op">-</span><span class="fl">.5</span>, <span class="dv">1</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'G1'</span>), axs[<span class="dv">0</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(time, evaluate(invL(G2), time), color<span class="op">=</span><span class="st">'orange'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), axs[<span class="dv">1</span>].set_title(<span class="st">'G2'</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].plot(time, evaluate(invL(G3), time), color<span class="op">=</span><span class="st">'green'</span>,  linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_ylim(<span class="op">-</span><span class="fl">.5</span>, <span class="dv">1</span>), axs[<span class="dv">2</span>].set_title(<span class="st">'G3'</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].plot(time, evaluate(invL(G4), time), color<span class="op">=</span><span class="st">'red'</span>,    linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].set_ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].set_title(<span class="st">'G4'</span>), axs[<span class="dv">3</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>invL(G2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle 11.5470053837925 e^{- 5.0 t} \sin{\left(8.66025403784439 t \right)}\)</span></p>
+</div>
+</div>
+<ul>
+<li>Depending on how far they are in the <span class="math inline">\(s\)</span> plane their influence in time is different.</li>
+<li><strong>Beyond the initial transient, the slower modes are those the matter</strong></li>
+</ul>
+</section>
+<section id="reduction-of-a-second-order-system-to-first-order" class="level3">
+<h3 class="anchored" data-anchor-id="reduction-of-a-second-order-system-to-first-order">Reduction of a second order system to first order</h3>
+<p>Consider an overdamped second order system:</p>
+<p><span class="math display">\[
+G(s) = K \frac{\alpha\beta}{(s+\alpha)(s+\beta)}
+\]</span></p>
+<p>whose step response is:</p>
+<p><span class="math display">\[
+Y(s) = K \frac{\alpha\beta}{(s+\alpha)(s+\beta)}\frac{1}{s}
+\]</span></p>
+<p>and hence, applying partial fraction expansion:</p>
+<p><span class="math display">\[
+y(t) = K \bigg ( 1 - \frac{\beta e^{-\alpha t} - \alpha e^{-\beta t}}{\beta - \alpha}\bigg )
+\]</span></p>
+<p>If the magnitude of <span class="math inline">\(\beta\)</span> is large compared to <span class="math inline">\(\alpha\)</span> (typically if <span class="math inline">\(\beta/\alpha &gt; 5\)</span>), and assuming <span class="math inline">\(s\)</span> is sufficiently small compared to <span class="math inline">\(\beta\)</span>, we can write the following approximation for the transfer function (and as well as an approximation for the step response):</p>
+<p><span class="math display">\[
+G(s) \approx K \frac{\alpha\beta}{(s+\alpha)(\beta)}
+\]</span></p>
+<p>at which corresponds the following step response:</p>
+<p><span class="math display">\[
+y(t) \approx K \bigg ( 1 - \frac{\beta e^{-\alpha t}}{\beta} \bigg ) = K(1-e^{-\alpha t})
+\]</span></p>
+<p>Note that <span class="math inline">\(G(0)\)</span> is unchanged and this is necessary to ensure that the steady state value remains the same.</p>
+</section>
+<section id="example-1-second-order-system" class="level3">
+<h3 class="anchored" data-anchor-id="example-1-second-order-system">Example 1, second order system</h3>
+<p>Let’s now consider when we have two cascaded systems:</p>
+<p><span class="math display">\[ G_1 = \frac{0.1}{(s+0.1)} \]</span></p>
+<p><span class="math display">\[ G_2 = \frac{1}{(s+1)} \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="fl">0.1</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">0.1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s<span class="op">+</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this case, one pole is 10 times bigger than the other.</p>
+<p>The entire system is then</p>
+<p><span class="math display">\[ G(s) = G_1(s)G_2(s) = \frac{0.1}{(s+0.1)(s+1)} \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> G1<span class="op">*</span>G2</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.1/((s + 0.1)*(s + 1))</code></pre>
+</div>
+</div>
+<p>And now we can plot their output:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">40</span>,<span class="dv">100</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">0.3</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>And we can also calculate the step response:</p>
+<p><span class="math display">\[
+Y(s)= G(s) U(s) = G(s)\frac{1}{s}
+\]</span></p>
+<p>And this is the output of our system when we have a step input:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/step-response-placeholder.png" alt="step-response-placeholder" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can plot the figure above running this cell. </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Unfortunately, github CI throws an error and I still need to figure out why.</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">40</span>,<span class="dv">100</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">1.1</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>The step response plot shows three plots: the blue plot is the exact response, the orange plot is the approximation assuming the pole at -0.1 dominates; the green plot is the approximation assuming that the pole at 1 dominates (which clearly it doesn’t because the plot is nowhere near the exact response)</p></li>
+<li><p>Note that the blue and orange plots are very close to each other, so the dominant pole approximation is a good one.</p></li>
+<li><p>The exact response has two exponentials, a fast one with a relatively short time constant of <span class="math inline">\(\tau_1 = 1/(p_1)\)</span> and a much slower exponential with time constant <span class="math inline">\(\tau_2 = 1/(p_2)\)</span>.</p></li>
+<li><p>If we look at the overall resonse, the fast exponential comes to equilibrium much more quickly than the slow explonential. From the perspective of the overall response, the faster exponential comes to equilibrium (i.e., has decayed to zero) instantaneously compared to the slower exponential.</p></li>
+<li><p>Therefore, the slower response (due to the pole closer to the origin — at s=-0.1) <em>dominates</em>.</p></li>
+</ul>
+<p>The second order system <span class="math inline">\(G(s)\)</span> behaves approximately like <span class="math inline">\(G_1(s)\)</span> which is the one with the slower dynamics: <span class="math display">\[G(s) = \frac{0.1}{(s+0.1)(s+1)} \approx \frac{0.1}{(s+0.1)}\]</span></p>
+</section>
+<section id="example-2-second-order-pole-dominates-but-not-as-strongly" class="level3">
+<h3 class="anchored" data-anchor-id="example-2-second-order-pole-dominates-but-not-as-strongly">Example 2, Second order, Pole dominates but not as strongly</h3>
+<p>Let’s now consider a different case and build an overall system composing the following two systems in cascade:</p>
+<p><span class="math display">\[
+G_1(s) = \frac{0.2}{s+0.2}
+\]</span></p>
+<p><span class="math display">\[
+G_2(s) = \frac{1}{s+1}
+\]</span></p>
+<p>In this case, one pole is only 5 times bigger than the other.</p>
+<p>The entire system is then</p>
+<p><span class="math display">\[ G(s) = G_1(s)G_2(s) = \frac{0.2}{(s+0.2)(s+1)} \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="fl">0.2</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">0.2</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>G<span class="op">=</span>G1<span class="op">*</span>G2</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G:'</span>, G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G: 0.2/((s + 0.2)*(s + 1))</code></pre>
+</div>
+</div>
+<p>If we now evaluate the step response for this system:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">40</span>,<span class="dv">100</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">1.1</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The approximation is still fairly good, but not not quite as good as when <span class="math inline">\(p_1=0.1\)</span>, as we would expect.</p>
+</section>
+</section>
+<section id="example-3-second-order-neither-pole-dominates" class="level2">
+<h2 class="anchored" data-anchor-id="example-3-second-order-neither-pole-dominates">Example 3, Second Order, neither pole dominates</h2>
+<p>If we instead have two poles quite close to each other (note that it is their relative location - or ratio of the pole locations - that is of interest to determine if the dominant approximation is applicable).</p>
+<p>Let’s consider:</p>
+<p><span class="math display">\[
+G_1(s) = \frac{1.25}{s+1.25}
+\]</span></p>
+<p><span class="math display">\[
+G_2(s) = \frac{1}{s+1}
+\]</span></p>
+<p>and the final system is:</p>
+<p><span class="math display">\[
+G(s) = G_1(s)G_2(s) = \frac{1.25}{(s+1)(s+1.25)}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="fl">1.25</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">1.25</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(s<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> G1<span class="op">*</span>G2</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G:'</span>, G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G: 1.25/((s + 1)*(s + 1.25))</code></pre>
+</div>
+</div>
+<p>If we now calculate and plot the step response:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">100</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">1.1</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>In this case, the two poles are very close to each other and the dominat pole approximation cannot be applied.</p>
+<p>The three plots above are different: the blue (exact) response is not at all close the approximation of the approximation in which a first order pole dominates (orange or green).</p>
+<p>Note that the step response for this case has a different time scale than the other two.</p>
+<section id="simplifying-higher-order-systems" class="level3">
+<h3 class="anchored" data-anchor-id="simplifying-higher-order-systems">Simplifying Higher Order Systems</h3>
+<p>The dominant pole approximation can also be applied to higher order systems. Here we consider a third order system with one real root, and a pair of complex conjugate roots.</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/25.3rd-order-dominant-poles.png" alt="25.3rd-order-dominant-poles" style="width: 600px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>In this case the test for the dominant pole compare <span class="math inline">\(\alpha\)</span> against <span class="math inline">\(\zeta \omega_0\)</span>
+<ul>
+<li>Note: sometimes <span class="math inline">\(\zeta \omega_0\)</span> is also written <span class="math inline">\(\xi \omega_n\)</span> - they are the same thing</li>
+</ul></li>
+<li>This is because <span class="math inline">\(\zeta \omega_0\)</span> is the real part of the complex conjugate root</li>
+<li>We only compare the real parts of the roots when determining dominance because it is the real part that determines how fast the response decreases.</li>
+<li>Note, that as with the previous case, the steady state gain <span class="math inline">\(H(0)\)</span> of the exact system and the two approximate systems are equal. This is necessary to ensure that the final value of the step response (which is determined by <span class="math inline">\(H(0)\)</span> is unchanged).</li>
+</ul>
+</section>
+</section>
+<section id="example-5-third-order-real-pole-dominates" class="level2">
+<h2 class="anchored" data-anchor-id="example-5-third-order-real-pole-dominates">Example 5, Third order, Real Pole Dominates</h2>
+<p>Let’s now consider the following system</p>
+<p><span class="math display">\[G(s) = \frac{\alpha \omega_n^2}{(s+\alpha)(s^2+2\xi\omega_n s + \omega_n^2)} = \frac{0.1\cdot17}{(s+0.1)(s^2+2s+17)}\]</span></p>
+<p><span class="math display">\[ \approx G_dp(s) = \frac{\alpha}{s+\alpha} = \frac{0.1}{s+0.1}\]</span></p>
+<p>The second order poles are at <span class="math inline">\(s=-1 \pm j4\)</span> (<span class="math inline">\(\xi\)</span>=0.24 and <span class="math inline">\(\omega_n=\sqrt{17}\)</span>=4.1) and the real pole is at <span class="math inline">\(s = -\alpha = -0.1\)</span>.</p>
+<p>As before we write the entire system as a cascade of two systems</p>
+<p><span class="math display">\[
+G_1(s)=\frac{\alpha}{s + \alpha}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+G_2(s)=\frac{\omega_n^2}{s^2+2\xi\omega_n s + \omega_n^2}
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+G(s) = G_1(s)G_2(s)
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.1</span> <span class="co"># real pole that dominates</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="fl">0.1</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">0.1</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> <span class="dv">17</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>s<span class="op">+</span><span class="dv">17</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> G1<span class="op">*</span>G2</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G:'</span>, G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G: 1.7/((s + 0.1)*(s**2 + 2*s + 17))</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.arange(<span class="dv">0</span>,<span class="dv">40</span>,<span class="fl">0.2</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># The next line might is commented out only because github CI failes. </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The response of G matches up the reponse of G1.</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">5</span>) </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">1.6</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The blue (exact) and orange (due to pole at <span class="math inline">\(s=-\alpha=-0.1\)</span>) lines are very close since that is the pole that dominates in this example.</li>
+<li>The green line (corresponding to <span class="math inline">\(G_2(s)\)</span>, and that would correspond to the case where the second order poles are assumed to dominate) is obviously a bad approximation and not useful, as expected.</li>
+</ul>
+<p><strong>Dominant pole approximation can simplify systems analysis</strong></p>
+<p>The dominant pole approximation is a method for approximating a (more complicated) high order system with a (simpler) system of lower order if the location of the real part of some of the system poles are sufficiently close to the origin compared to the other poles.</p>
+<p>Let’s consider another example: <span class="math display">\[
+G1 = \frac{150.5}{s+150.5}
+\]</span></p>
+<p>with pole at -150.5</p>
+<p><span class="math display">\[
+G2 = \frac{100}{s^2 + 10s +100}
+\]</span></p>
+<p>with poles at: <span class="math inline">\(p = -5 \pm 8.66j\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> <span class="fl">150.5</span><span class="op">/</span>(s <span class="op">+</span> <span class="fl">150.5</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G1: '</span>, G1)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>zeta, w_n <span class="op">=</span> <span class="fl">0.5</span>, <span class="dv">10</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> w_n<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(s<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>zeta<span class="op">*</span>w_n<span class="op">*</span>s <span class="op">+</span> w_n<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G2: '</span>, G2)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> G1<span class="op">*</span>G2</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G: '</span>, G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G1:  150.5/(s + 150.5)
+G2:  100/(s**2 + 10.0*s + 100)
+G:  15050.0/((s + 150.5)*(s**2 + 10.0*s + 100))</code></pre>
+</div>
+</div>
+<p>The step response is:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/Dominant-pole-approximation.png" alt="Dominant-pole-approximation" style="width: 600px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>We can obtain the figure above uncommenting and running the cell below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">4</span>, <span class="fl">0.05</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time),  linewidth<span class="op">=</span><span class="dv">7</span>, color <span class="op">=</span> <span class="st">'blue'</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G1<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">4</span>, color <span class="op">=</span> <span class="st">'orange'</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>ax.plot(time, evaluate(invL(G2<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s), time), linewidth<span class="op">=</span><span class="dv">3</span>, color <span class="op">=</span> <span class="st">'green'</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">.1</span>, <span class="fl">1.6</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'y_g(t)'</span>, <span class="st">'y_g1(t)'</span>, <span class="st">'y_g2(t)'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="first-order-and-second-order-systems" class="level2">
+<h2 class="anchored" data-anchor-id="first-order-and-second-order-systems">First-order and second-order systems</h2>
+<ul>
+<li>Given that the main effect is driven by the slowest modes, then the dynamics of the system can be approximated by the modes associated to the dominant poles</li>
+<li>Typically this ends up being a first-order system (real dominant pole) or a second-oder system (complex-conjugated poles), possibly with a constant delay</li>
+<li>It is hence important to understand the response of the first-order and second-order systems as they can be representive of a broader class.</li>
+</ul>
+<section id="step-response-of-first-order-systems" class="level3">
+<h3 class="anchored" data-anchor-id="step-response-of-first-order-systems">Step response of first order systems</h3>
+<p>A first order system has form: <span class="math display">\[G(s) = \frac{1}{s+p} = \frac{\tau}{1+\tau s}\]</span></p>
+<p>with pole in $s = -p = $</p>
+<hr>
+<p>Let’s hence consider</p>
+<p><span class="math display">\[
+G(s) = \frac{1}{1+\tau s}\frac{1}{s}
+\]</span></p>
+<p>where we would like to have <span class="math inline">\(G(0)=1\)</span>.</p>
+<p>Given an input: <span class="math display">\[u(t) = 1(t)\]</span></p>
+<p>the output of the system is: <span class="math display">\[ y(t) = 1 - e^{-\frac{t}{\tau}}\]</span></p>
+<p>This is obtained:</p>
+<p><span class="math display">\[\frac{1}{1+\tau s}\frac{1}{s} = \frac{1/\tau}{s + 1/\tau} \frac{1}{s} = \frac{A}{s + 1/\tau} + \frac{B}{s}\]</span></p>
+<p>where <span class="math inline">\(A = -1\)</span>, <span class="math inline">\(B = 1\)</span></p>
+<p>We can also verify it with Sympy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(K<span class="op">*</span>s <span class="op">+</span> <span class="dv">1</span>)<span class="op">*</span><span class="dv">1</span><span class="op">/</span>s</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>invL(F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math inline">\(\displaystyle 1 - e^{- \frac{t}{K}}\)</span></p>
+</div>
+</div>
+<p>We can then plot the output <span class="math inline">\(y(t)\)</span> for a particular value of the time constant <span class="math inline">\(\tau=2\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">20</span>,<span class="dv">100</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="dv">2</span> <span class="co"># define the time constant</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>y_t <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>time<span class="op">/</span>tau)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, y_t, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Step response'</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We call:</p>
+<ul>
+<li><span class="math inline">\(\tau\)</span>: time constant - Characterises completely the response of a first order system</li>
+<li>Settling time: the time it takes to get to 95% (or other times 90%, 98%) of the steady state value <span class="math inline">\(y(t)=1\)</span>:
+<ul>
+<li><span class="math inline">\(t_s = -\tau ln(0.05)\)</span></li>
+<li>This is because: <span class="math display">\[
+y(t) = 1 - e^{-\frac{t}{\tau}} \Rightarrow 1 - y(t) = e^{-\frac{t}{\tau}} \Rightarrow \ln(1-y(t)) = -\frac{t}{\tau}, \;\; \text{when} \;\; y(t)=0.95 \Rightarrow t = -\tau ln(0.05)
+\]</span></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#y_t = -1 # Desired steady state value</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>final_value_pc <span class="op">=</span> <span class="fl">0.95</span> <span class="co"># percentage of y_t</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># final_value = 1 - np.exp(-t/tau)</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># np.log(1-final_value) = -t/tau</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>t_s <span class="op">=</span> <span class="op">-</span>tau<span class="op">*</span>np.log(<span class="dv">1</span><span class="op">-</span>final_value_pc)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Time to get to </span><span class="sc">{}% o</span><span class="st">f final value </span><span class="sc">{:.1f}</span><span class="st">: </span><span class="sc">{:.2f}</span><span class="st">s'</span>.<span class="bu">format</span>(final_value_pc, y_t[<span class="op">-</span><span class="dv">1</span>], t_s))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time to get to 0.95% of final value 1.0: 5.99s</code></pre>
+</div>
+</div>
+<p>Note that, after <span class="math inline">\(\tau\)</span> seconds, the system gets to the <span class="math inline">\(64\%\)</span> of the final value</p>
+</section>
+<section id="to-recap" class="level3">
+<h3 class="anchored" data-anchor-id="to-recap">To recap</h3>
+<ul>
+<li>We have defined two times in the response of a first order system:
+<ul>
+<li>Settling time <span class="math inline">\(t_s\)</span>: time to get to 0.95% of the final value</li>
+<li>Time constant <span class="math inline">\(\tau\)</span>, which is the time to get to the 64% of the final value.</li>
+</ul></li>
+</ul>
+<p>We can plot them, together with the step response of the system:</p>
+<p><span class="math display">\[ y(t) = 1 - e^{-\frac{t}{\tau}}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># step response</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>plt.plot(time, y_t, linewidth<span class="op">=</span><span class="dv">3</span>)  </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># tau - time constant</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>plt.plot(tau, <span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>tau<span class="op">/</span>tau), marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># settling time</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>plt.plot(t_s, final_value_pc<span class="op">*</span>y_t[<span class="op">-</span><span class="dv">1</span>], marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'Step response'</span>, <span class="st">'Tau seconds'</span>, <span class="st">'$t_s$ seconds'</span>], loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Step response'</span>)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="step-response-of-second-order-systems" class="level3">
+<h3 class="anchored" data-anchor-id="step-response-of-second-order-systems">Step response of second order systems</h3>
+<p>Given a system: <span class="math display">\[G(s) = \frac{1}{\frac{s^2}{w_n^2} + \frac{2\xi}{w_n}s + 1}\]</span></p>
+<p>with $ 0 &lt; &lt; 1 $</p>
+<ul>
+<li><span class="math inline">\(\xi\)</span> is called damping ratio</li>
+<li><span class="math inline">\(\omega_n\)</span> (sometime also called <span class="math inline">\(\omega_0\)</span>) is the natural frequency of the system.</li>
+</ul>
+<p>The system has two conjugate-complex poles:</p>
+<p><span class="math display">\[s = -\xi w_n \pm j \sqrt{1-\xi^2} \]</span></p>
+<p>As before, we can calculate the step reponse:</p>
+<ul>
+<li>input <span class="math display">\[u(t)=1(t)\]</span></li>
+<li>output <span class="math display">\[y(t) = 1 - \frac{1}{\sqrt{1-\xi^2}} e^{-\xi w_n t} \sin\Big( w_n\sqrt{1-\xi^2}t + arccos(\xi)\Big)\]</span></li>
+</ul>
+<p><em>Note: Proving this is a useful exercise</em></p>
+<p>As before we can plot it.</p>
+<p>We will do it for a set of damping ratios: <span class="math inline">\(\xi = [0.1, 0.25, 0.5, 0.7]\)</span> and for a fixed value of <span class="math inline">\(\omega_n=1\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>xis <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>] <span class="co"># damping ratios</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>wn <span class="op">=</span> <span class="dv">1</span> <span class="co"># natural frequency.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>legend_strs <span class="op">=</span> []</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> xi <span class="kw">in</span> xis:</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    y_t <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (<span class="dv">1</span><span class="op">/</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)) <span class="op">*</span> np.exp(<span class="op">-</span>xi<span class="op">*</span>wn<span class="op">*</span>time) <span class="op">*</span> np.sin(wn<span class="op">*</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>time<span class="op">+</span>np.arccos(xi))</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    plt.plot(time, y_t, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># this part is to have a legend</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> xi <span class="kw">in</span> xis:</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    legend_strs.append(<span class="st">'xi: '</span> <span class="op">+</span> <span class="bu">str</span>(xi))</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>fig.legend(legend_strs, loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="dv">20</span>)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Step response'</span>)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-29-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>There are a few notable points that we can identify for the response of a second order system:</p>
+<ul>
+<li><p>Rise time (to 90%): <span class="math display">\[t_r \approx \frac{1.8}{w_n} \]</span></p></li>
+<li><p>Maximum overshoot: <span class="math display">\[ S \% = 100 e^{\Large -\frac{\xi\pi}{\sqrt{1-\xi^2}}} \]</span></p></li>
+<li><p>Time of Maximum overshoot (Peak time): <span class="math display">\[t_{max} = \frac{\pi}{w_n\sqrt{1-\xi^2}} \]</span></p></li>
+<li><p>Settling time (within a desired interval, e.g., 5%): <span class="math display">\[t_{s} \approx -\frac{1}{\xi w_n}ln(0.05) \]</span></p></li>
+<li><p>Oscillation period: <span class="math display">\[T_{P} = \frac{2\pi}{w_n\sqrt{1-\xi^2}} \]</span></p></li>
+</ul>
+<p>We can connect <span class="math inline">\(\zeta\)</span> and <span class="math inline">\(w_n\)</span> to <span class="math inline">\(S, T_p, t_{max}, t_s\)</span> with two important caveats: - some of the relationships are approximate - additional poles and zeros will change the results, so all of the results should be viewed as guidelines.</p>
+<p>We can obtain the previous relationships using the <em>step response</em> of <span class="math inline">\(G(s)\)</span> (see above)</p>
+<ul>
+<li>Rise time, peak time, and settling time yield information about the speed of the transient response.</li>
+<li>This information can help a designer determine if the speed and the nature of the response do or do not degrade the performance of the system.</li>
+</ul>
+<p>For example: - The speed of an entire computer system depends on the time it takes for a hard drive head to reach steady state and read data - Passenger comfort depends in part on the suspension system of a car and the number of oscillations it goes through after hitting a bump.</p>
+<p>Let’s see where they are on the plot for one specific choise of <span class="math inline">\(\xi=0.2\)</span> and <span class="math inline">\(\omega_n=1\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>wn <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Maximum overshoot</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.exp(<span class="op">-</span>xi<span class="op">*</span><span class="fl">3.14</span><span class="op">/</span>(np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Time of maximum overshoot</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>t_max <span class="op">=</span> <span class="fl">3.14</span><span class="op">/</span>(wn<span class="op">*</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Settling time within 5%</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>t_s <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">/</span>(xi<span class="op">*</span>wn)<span class="op">*</span>np.log(<span class="fl">0.05</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Period of the oscillations</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>Tp <span class="op">=</span> <span class="dv">2</span><span class="op">*</span><span class="fl">3.14</span><span class="op">/</span>(wn<span class="op">*</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co"># time vector</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">30</span>,<span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the figure</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">5</span>))</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># overall response y(t)</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>y_t <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (<span class="dv">1</span><span class="op">/</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)) <span class="op">*</span> np.exp(<span class="op">-</span>xi<span class="op">*</span>wn<span class="op">*</span>time) <span class="op">*</span> np.sin(wn<span class="op">*</span>np.sqrt(<span class="dv">1</span><span class="op">-</span>xi<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>time<span class="op">+</span>np.arccos(xi))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>plt.plot(time, y_t, linewidth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># maximum overshoot</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>plt.plot([t_max, t_max], [y_t[<span class="op">-</span><span class="dv">1</span>], y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S], marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>plt.text(t_max<span class="op">+</span><span class="fl">0.2</span>, y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S<span class="op">/</span><span class="dv">2</span>, <span class="st">'S'</span>, fontsize<span class="op">=</span><span class="dv">15</span>) <span class="co"># text box</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Time of maximum overshoot</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>plt.plot([t_max, t_max], [<span class="dv">0</span>, <span class="dv">1</span>], markersize<span class="op">=</span><span class="dv">12</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>plt.text(t_max<span class="op">+</span><span class="fl">0.2</span>, <span class="fl">0.0</span>, <span class="st">'t_max'</span>, fontsize<span class="op">=</span><span class="dv">15</span>) <span class="co"># text box</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's also plot +-0.05 boundary lines around y(t)</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, time[<span class="op">-</span><span class="dv">1</span>]], [<span class="dv">1</span><span class="op">-</span><span class="fl">0.05</span>, <span class="dv">1</span><span class="op">-</span><span class="fl">0.05</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, time[<span class="op">-</span><span class="dv">1</span>]], [<span class="dv">1</span><span class="op">+</span><span class="fl">0.05</span>, <span class="dv">1</span><span class="op">+</span><span class="fl">0.05</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Settling time within a desired +-0.05 interval</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>plt.plot([t_s, t_s], [<span class="dv">0</span>, <span class="fl">1.1</span>], linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>plt.text(t_s<span class="op">+</span><span class="fl">0.2</span>, <span class="fl">0.0</span>, <span class="st">'t_s'</span>, fontsize<span class="op">=</span><span class="dv">15</span>) <span class="co"># textbox</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Oscillation period (this is only to show it on the plot)</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>plt.plot([t_max, t_max<span class="op">+</span>Tp], [y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S<span class="op">+</span><span class="fl">0.1</span>, y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S<span class="op">+</span><span class="fl">0.1</span>], </span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>         marker<span class="op">=</span><span class="st">'.'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'k'</span>, markersize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>plt.plot([t_max<span class="op">+</span>Tp, t_max<span class="op">+</span>Tp], [y_t[<span class="op">-</span><span class="dv">1</span>], y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S<span class="op">+</span><span class="fl">0.1</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>plt.text((t_max<span class="op">+</span>t_max<span class="op">+</span>Tp)<span class="op">/</span><span class="dv">2</span>, y_t[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>S, <span class="st">'Tp'</span>, fontsize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>fig.legend([<span class="st">'xi:</span><span class="sc">{:.1f}</span><span class="st">'</span>.<span class="bu">format</span>(xi)], loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Step response'</span>)</span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="05_System_response_files/figure-html/cell-31-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>How do you find (some of) the previous expressions:</p>
+<ul>
+<li>Evaluation of <span class="math inline">\(t_{max}\)</span>, differentiating <span class="math inline">\(y(t)\)</span> and finding the first zero crossing after <span class="math inline">\(t = 0\)</span>.</li>
+<li>Evaluation of <span class="math inline">\(S\%\)</span>: max value is found by evaluating <span class="math inline">\(y(t)\)</span> at the peak time: <span class="math inline">\(y(t_{max})\)</span> and comparing it with <span class="math inline">\(y_{final}=1\)</span> (for unit step input)</li>
+<li>Evaluation of <span class="math inline">\(t_s\)</span>: find the time for which <span class="math inline">\(y(t)\)</span> reaches and stays within <span class="math inline">\(5\%\)</span> of the steady-state value <span class="math inline">\(y_{final}=1\)</span> (note that our expression is an approximation).</li>
+</ul>
+<hr>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

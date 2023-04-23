@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - PID Control</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - PID Control">
+<meta property="og:description" content="The general structure of a PID controller is:">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - PID Control">
+<meta name="twitter:description" content="The general structure of a PID controller is:">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">PID Control</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link active">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#standard-feedback-loop" id="toc-standard-feedback-loop" class="nav-link" data-scroll-target="#standard-feedback-loop">Standard Feedback Loop</a></li>
+  <li><a href="#proportional-p-control" id="toc-proportional-p-control" class="nav-link" data-scroll-target="#proportional-p-control">Proportional (P) control</a></li>
+  <li><a href="#derivative-d-control" id="toc-derivative-d-control" class="nav-link" data-scroll-target="#derivative-d-control">Derivative (D) control</a></li>
+  <li><a href="#integral-i-control" id="toc-integral-i-control" class="nav-link" data-scroll-target="#integral-i-control">Integral (I) control</a></li>
+  <li><a href="#comments" id="toc-comments" class="nav-link" data-scroll-target="#comments">Comments</a></li>
+  <li><a href="#diving-a-little-deeper" id="toc-diving-a-little-deeper" class="nav-link" data-scroll-target="#diving-a-little-deeper">Diving a little deeper</a>
+  <ul class="collapse">
+  <li><a href="#filtering-and-set-point-weighting" id="toc-filtering-and-set-point-weighting" class="nav-link" data-scroll-target="#filtering-and-set-point-weighting">Filtering and Set Point Weighting</a></li>
+  <li><a href="#comments-1" id="toc-comments-1" class="nav-link" data-scroll-target="#comments-1">Comments</a></li>
+  <li><a href="#set-point-weighting" id="toc-set-point-weighting" class="nav-link" data-scroll-target="#set-point-weighting">Set Point Weighting</a></li>
+  </ul></li>
+  <li><a href="#integral-windup" id="toc-integral-windup" class="nav-link" data-scroll-target="#integral-windup">Integral Windup</a>
+  <ul class="collapse">
+  <li><a href="#solutions" id="toc-solutions" class="nav-link" data-scroll-target="#solutions">Solutions</a></li>
+  </ul></li>
+  <li><a href="#pid-tuning-ziegler-and-nichols" id="toc-pid-tuning-ziegler-and-nichols" class="nav-link" data-scroll-target="#pid-tuning-ziegler-and-nichols">PID Tuning: Ziegler and Nichols</a>
+  <ul class="collapse">
+  <li><a href="#ziegler-and-nicols-in-action" id="toc-ziegler-and-nicols-in-action" class="nav-link" data-scroll-target="#ziegler-and-nicols-in-action">Ziegler and Nicols in action</a></li>
+  </ul></li>
+  <li><a href="#industrial-controllers" id="toc-industrial-controllers" class="nav-link" data-scroll-target="#industrial-controllers">Industrial Controllers</a>
+  <ul class="collapse">
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a>
+  <ul class="collapse">
+  <li><a href="#using-a-proportional-controller" id="toc-using-a-proportional-controller" class="nav-link" data-scroll-target="#using-a-proportional-controller">Using a proportional controller</a></li>
+  <li><a href="#using-a-pid-controller" id="toc-using-a-pid-controller" class="nav-link" data-scroll-target="#using-a-pid-controller">Using a PID controller</a></li>
+  </ul></li>
+  <li><a href="#first-order-systems-with-pi-control" id="toc-first-order-systems-with-pi-control" class="nav-link" data-scroll-target="#first-order-systems-with-pi-control">First order systems with PI control</a>
+  <ul class="collapse">
+  <li><a href="#applying-the-pid-control-to-the-real-car" id="toc-applying-the-pid-control-to-the-real-car" class="nav-link" data-scroll-target="#applying-the-pid-control-to-the-real-car">Applying the PID control to the real Car</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">PID Control</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<ul>
+<li>The PID controller is the most common form of feedback.</li>
+<li>Standard tool when process control emerged in the 1940s.</li>
+<li>In process control today, more than 95% of the control loops are of PID type
+<ul>
+<li>Most loops are PI control.</li>
+</ul></li>
+<li>PID control is often combined with logic, sequential functions, selectors, and simple function blocks to build more complicated automation systems</li>
+<li>Sophisticated control strategies, such as model predictive control, are also organized hierarchically.</li>
+<li>PID control is used at the lowest level: high level controller gives the setpoints (the reference variables) to the controllers at the lower level.</li>
+</ul>
+</section>
+<section id="standard-feedback-loop" class="level2">
+<h2 class="anchored" data-anchor-id="standard-feedback-loop">Standard Feedback Loop</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/standard-control-loop.png" alt="standard-control-loop" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>A common way to design a control system is to use PID control.</li>
+<li>PID = Proportional-Integral-Derivative
+<ul>
+<li>Describes how the error term is treated before being sum and sent into the plant</li>
+</ul></li>
+<li>It is a simple and effective controller in a wide range of applications</li>
+<li>Majority of controllers in industrial applications are PIDs</li>
+</ul>
+<p>The general structure of a PID controller is:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-general.png" alt="PID-Controller-general" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>The three gains <span class="math inline">\(K_p, K_i, K_d\)</span> are adjustable and can be tuned to the specific application</li>
+<li>Varying <span class="math inline">\(K_p, K_i, K_d\)</span> means adjusting how sensitive the system is across the three paths</li>
+</ul>
+<p>The “textbook” version of the PID algorithm is:</p>
+<p><span class="math display">\[
+u(t) = K\Big(e(t) + \frac{1}{T_i}\int_0^t e(\tau)d\tau + T_d\frac{de(t)}{dt} \Big)
+\]</span></p>
+<p>Will consider each in turn, using an example transfer function</p>
+<p><span class="math display">\[
+G(s) = \frac{A}{s^2+a_1s+a_2}
+\]</span></p>
+</section>
+<section id="proportional-p-control" class="level2">
+<h2 class="anchored" data-anchor-id="proportional-p-control">Proportional (P) control</h2>
+<p>In proportional control, the control law is simply a gain <span class="math inline">\(K_p\)</span>, so that <span class="math inline">\(u\)</span> is proportional to <span class="math inline">\(e\)</span>:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional.png" alt="PID-Controller-Proportional" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+u(t) = K_p e(t)
+\]</span></p>
+<p>Let’s consider our system and its characteristic equation:</p>
+<p><span class="math display">\[ 1 + K_p G(s) = 0 \]</span></p>
+<p><span class="math display">\[ 1 + K_p \frac{A}{s^2+a_1s+a_2} = 0 \]</span></p>
+<p><span class="math display">\[ \Rightarrow s^2+a_1s+a_2 + K_pA = 0 \]</span></p>
+<p>Since we know:</p>
+<p><span class="math display">\[
+s^2+2\zeta\omega_n s+ \omega_n^2 = 0
+\]</span></p>
+<p><span class="math display">\[
+s_{1,2} = -\zeta\omega_n \pm \omega_n\sqrt{(1-\zeta^2)}j
+\]</span></p>
+<p>The resulting natural frequency is:</p>
+<p><span class="math display">\[ w_n = \sqrt{a_2+K_pA} \]</span></p>
+<ul>
+<li>Increasing <span class="math inline">\(K_p\)</span> increases the natural frequency,</li>
+<li>Note that the dumping ratio is reduced (we do not change <span class="math inline">\(a_1\)</span>).</li>
+</ul>
+<p>If we plot the position of the poles in the Root Locus:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional-Root-Locus.png" alt="PID-Controller-Proportional-Root-Locus" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Proportial error and output:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional-Error.png" alt="PID-Controller-Proportional-Error" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Output is the error scaled by the gain <span class="math inline">\(K_p\)</span></li>
+<li>When error is large, output is large</li>
+<li>When error is small, output is small</li>
+</ul>
+</section>
+<section id="derivative-d-control" class="level2">
+<h2 class="anchored" data-anchor-id="derivative-d-control">Derivative (D) control</h2>
+<p>To add damping to a system, it is often useful to add a derivative term to the control,</p>
+<p><span class="math display">\[
+u(t) = K_p e(t) + K_d\dot{e}(t)
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[
+U(s) = K_p E(s) + K_d sE(s)
+= (K_p+K_ds)E(s)
+= K(s) E(s)
+\]</span></p>
+<p>And the characteristic equation is:</p>
+<p><span class="math display">\[
+0 = 1+K(s)G(s)
+\]</span></p>
+<p><span class="math display">\[
+1 + \frac{(K_p + K_ds) A}{s^2+a_1s+a_2}
+\]</span></p>
+<p><span class="math display">\[
+0 = s^2 + (a_1+K_dA)s + (a_2 + K_p)
+\]</span></p>
+<ul>
+<li><em>In this example</em>, increasing K_d increases the damping ratio without changing the natural frequency.</li>
+<li>For other <span class="math inline">\(G(s)\)</span> the result might differ!</li>
+</ul>
+<p>When we keep <span class="math inline">\(K_p\)</span> fixed, and vary <span class="math inline">\(K_d\)</span> the Root Locus changes:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional-Derivative-Error.png" alt="PID-Controller-Proportional-Derivative-Error" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>In the derivative path is the rate of change of the error that contributes to the output of the controller</li>
+<li>The faster the change the larger the output</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Control-Derivative-Path.png" alt="PID-Controller-Derivative-Path" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+</section>
+<section id="integral-i-control" class="level2">
+<h2 class="anchored" data-anchor-id="integral-i-control">Integral (I) control</h2>
+<p>Especially if the plant is a type 0 system, we may want to add integrator to controller to drive steady-state error to zero:</p>
+<p><span class="math display">\[
+U(s) = (K_p + \frac{K_I}{s} + K_d s) E(s)
+\]</span></p>
+<ul>
+<li>In the integral path, as the error moves over time the integral continually sum it up (multiplying it by the constant <span class="math inline">\(K_I\)</span>)</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Control-Integral-Path.png" alt="PID-Control-Integral-Path" style="width: 450px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>The integral path is used to remove constant errors</li>
+<li>Even small errors accumulates and add up to adjust the controller output</li>
+</ul>
+</section>
+<section id="comments" class="level2">
+<h2 class="anchored" data-anchor-id="comments">Comments</h2>
+<ul>
+<li>Not all PID paths must be present (set the corresponding constant to zero)</li>
+<li>Making a simple controller is better when all requirements are met
+<ul>
+<li>Easy to implement</li>
+<li>Easy to test, tune and troubleshoot</li>
+<li>Easy to understand by other people</li>
+</ul></li>
+<li>This is also why PID are so widdespread even if there are a lot of controller types available</li>
+</ul>
+</section>
+<section id="diving-a-little-deeper" class="level2">
+<h2 class="anchored" data-anchor-id="diving-a-little-deeper">Diving a little deeper</h2>
+<ul>
+<li>The PID transfer function:</li>
+</ul>
+<p><span class="math display">\[
+PID(s) = K_p + \frac{K_I}{s} + K_d s = \frac{K_ds^2 + K_p s + K_I}{s} = K_p\Big( 1+\frac{1}{\tau_I s} + \tau_d s \Big) = K_p \frac{\tau_I\tau_ds^2 + \tau_Is+1}{\tau_Is}
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\tau_I, \tau_D\)</span>: integral and derivative time constant (paramenters)</p></li>
+<li><p>Note that the PID has one pole at the origina and two zeros in:</p></li>
+</ul>
+<p><span class="math display">\[
+s_{1,2} = \frac{-\tau_I \pm \sqrt{\tau_I(\tau_I-4\tau_d)}}{2\tau_I\tau_d}
+\]</span></p>
+<ul>
+<li>This is an ideal PID;</li>
+<li>A real PID has high frequency poles (high frequency roll off of the frequency response)</li>
+</ul>
+<section id="filtering-and-set-point-weighting" class="level3">
+<h3 class="anchored" data-anchor-id="filtering-and-set-point-weighting">Filtering and Set Point Weighting</h3>
+<ul>
+<li><p>Differentiation is always sensitive to noise</p></li>
+<li><p>Think of <span class="math inline">\(G(s)=s\)</span>, whose response goes to infinity for large <span class="math inline">\(s\)</span>.</p></li>
+<li><p>In practice, when there is a derivative action we need to limit the high frequency gain.</p></li>
+<li><p>This can be done implementing the derivative term as:</p></li>
+</ul>
+<p><span class="math display">\[
+D = \frac{K_d s}{1+s\hat{K}_d/N}
+\]</span></p>
+<ul>
+<li>We are filtering the ideal derivative <span class="math inline">\(K_d s\)</span> with a first order system with time constant <span class="math inline">\(\hat{K}_d/N\)</span>.</li>
+<li>Acts as a derivative for low-frequency signal components</li>
+<li>Gain is limited (depends on <span class="math inline">\(\frac{K_d}{\hat{K}_d/N}\)</span>) and so is high-frequency noise</li>
+</ul>
+</section>
+<section id="comments-1" class="level3">
+<h3 class="anchored" data-anchor-id="comments-1">Comments</h3>
+<ul>
+<li>Pole at the origin ensures steady state performance</li>
+<li>Two zeros and gain <span class="math inline">\(K_p\)</span> makes it possible to achieve the desired transient behaviour</li>
+<li>Using a PID makes is possible to use a standard controller, but this also limits the design freedom</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-mounting-2.png" alt="PID-Controller-mounting" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><p>The derivative action might lead to large control outputs at high frequency</p></li>
+<li><p>A step change in the reference signal will result in an impulse in the control signal</p>
+<p><span class="math display">\[
+K_d \frac{d e(t)}{dt} \rightarrow \infty
+\]</span></p></li>
+<li><p>A similar issue is also present in the proportional term <span class="math inline">\(K_p e(t)\)</span> which undergoes a step change in value</p></li>
+<li><p>In process control applications, a step change in the manipulated variable may require sudden and abrupt changes in valve position, process flows, or pressures, all of which can cause significant strain on very large devices.</p></li>
+<li><p>This phenomenon is called <strong>setpoint kick</strong> (or sometimes <strong>derivative kick</strong>) which is generally to be avoided.</p></li>
+</ul>
+</section>
+<section id="set-point-weighting" class="level3">
+<h3 class="anchored" data-anchor-id="set-point-weighting">Set Point Weighting</h3>
+<ul>
+<li><p>Setpoint Kick can be avoided filtering the reference before feeding it to the controller</p></li>
+<li><p>or changing the structure of the PID controller:</p></li>
+</ul>
+<p><span class="math display">\[
+u(t) = K_p\Big( \beta r(t) - y(t) + \frac{1}{T_i} \int_0^te(\tau)d\tau + T_d\Big(\gamma\frac{dr(t)}{dt} - \frac{dy(t)}{dt} \Big) \Big)
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are two additional parameters</p></li>
+<li><p>The effect is to introduce a different error term for each term in the control equation</p></li>
+<li><p>Note that the integral term must be based on error feedback to ensure the desired steady state</p></li>
+<li><p>The error terms for the proportional and derivative terms now include constants <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> that are used to modify the response to setpoint changes.</p></li>
+<li><p>Common practice is to set <span class="math inline">\(\gamma=0\)</span></p></li>
+<li><p>Entirely eliminates derivative action based on change in the setpoint.</p></li>
+<li><p>When incorporated in PID control, this is also called <em>derivative on output</em> (and <span class="math inline">\(e(t)=y(t)\)</span>)</p></li>
+<li><p>Almost always a good idea in process control because it eliminates the ‘derivative kick’ associated with a quick change in setpoint.</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-mounting-1.png" alt="PID-Controller-mounting" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>In practice, the term <span class="math inline">\(\beta\)</span> is generally tuned to meet the specific application requirements.</li>
+<li>If setpoint tracking is not a high priority, setting <span class="math inline">\(\beta=0\)</span> is a reasonable starting point.</li>
+</ul>
+</section>
+</section>
+<section id="integral-windup" class="level2">
+<h2 class="anchored" data-anchor-id="integral-windup">Integral Windup</h2>
+<ul>
+<li>If the integral of the error grows too much, the control output might hit actuation limits</li>
+<li>The integral output produces control outputs even when error is zero.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.1</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> []  <span class="co"># error</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>int_e <span class="op">=</span> [] <span class="co"># integral of the error</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>int_e.append(<span class="dv">0</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> time:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    e.append(<span class="fl">0.3</span><span class="op">*</span>(<span class="op">-</span>t<span class="op">+</span><span class="dv">5</span>))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    int_e.append((int_e[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>e[<span class="op">-</span><span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.plot(time, e, color<span class="op">=</span><span class="st">'b'</span>, label<span class="op">=</span><span class="st">'error'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, int_e[:<span class="op">-</span><span class="dv">1</span>], color<span class="op">=</span><span class="st">'r'</span>, label<span class="op">=</span><span class="st">'int(e)'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.plot(time, np.clip(np.array(int_e[:<span class="op">-</span><span class="dv">1</span>]), <span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>), color<span class="op">=</span><span class="st">'g'</span>, label<span class="op">=</span><span class="st">'clip(int(e))'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="solutions" class="level3">
+<h3 class="anchored" data-anchor-id="solutions">Solutions</h3>
+<ul>
+<li>Initializing the controller integral to a desired value, for instance to the value before the problem</li>
+<li>Zeroing the integral value every time the error is equal to, or crosses zero. This avoids having the controller attempt to drive the system to have the same error integral in the opposite direction as was caused by a perturbation</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.1</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>int_e <span class="op">=</span> []</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>int_e.append(<span class="dv">0</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> time:</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    e.append(<span class="fl">0.3</span><span class="op">*</span>(<span class="op">-</span>t<span class="op">+</span><span class="dv">5</span>))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">abs</span>(e[<span class="op">-</span><span class="dv">1</span>]) <span class="op">&lt;</span> <span class="fl">0.1</span>:</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        int_value <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        int_value <span class="op">=</span> int_e[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>e[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    int_e.append(int_value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.plot(time, e, color<span class="op">=</span><span class="st">'b'</span>, label<span class="op">=</span><span class="st">'error'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, int_e[:<span class="op">-</span><span class="dv">1</span>], color<span class="op">=</span><span class="st">'r'</span>, label<span class="op">=</span><span class="st">'int(e)'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.plot(time, np.clip(np.array(int_e[:<span class="op">-</span><span class="dv">1</span>]), <span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>), color<span class="op">=</span><span class="st">'g'</span>, label<span class="op">=</span><span class="st">'clip(int(e))'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="pid-tuning-ziegler-and-nichols" class="level2">
+<h2 class="anchored" data-anchor-id="pid-tuning-ziegler-and-nichols">PID Tuning: Ziegler and Nichols</h2>
+<ul>
+<li><span class="math inline">\(G(s)\)</span> BIBO stable</li>
+<li><span class="math inline">\(G(0)&gt;0\)</span></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional.png" alt="PID-Controller-Proportional" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>Steps: - Close the loop with the proportional part only - Apply step input and increase the gain until output starts to oscillate - Record <span class="math inline">\(K^*\)</span> (critical gain) and <span class="math inline">\(T_p^*\)</span> (oscillation period) of the output. - Choose the PID parameters as:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(R(s)\)</span></th>
+<th><span class="math inline">\(K_p\)</span></th>
+<th><span class="math inline">\(\tau_I\)</span></th>
+<th><span class="math inline">\(\tau_d\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(P\)</span></td>
+<td><span class="math inline">\(0.5K^*\)</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(PI\)</span></td>
+<td><span class="math inline">\(0.45K^*\)</span></td>
+<td><span class="math inline">\(0.8T_p^*\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(PID\)</span></td>
+<td><span class="math inline">\(0.6K^*\)</span></td>
+<td><span class="math inline">\(0.5T_p^*\)</span></td>
+<td><span class="math inline">\(01258T_p^*\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>These rules do not squeeze out the best possible performance</p></li>
+<li><p><span class="math inline">\(K^*\)</span> is the gain margin with a proportional controller</p></li>
+<li><p>Critical frequency (for which <span class="math inline">\(|L(jw)|=1\)</span> is <span class="math inline">\(\frac{2\pi}{T_p^*}\)</span></p></li>
+<li><p>The rules means having a 6dB gain margin</p></li>
+<li><p>Integral term better steady state but slows down the system (reduces bandwidth and phase margin)</p></li>
+<li><p>Derivative term increases the bandwidth and phase margin</p></li>
+<li><p>Not possible to use when the plant is potentially dangerous</p></li>
+<li><p>Plants that are difficult to bring to oscillate using a proportional controller only (1st and 2nd order with infinite gain margin)</p></li>
+</ul>
+<section id="ziegler-and-nicols-in-action" class="level3">
+<h3 class="anchored" data-anchor-id="ziegler-and-nicols-in-action">Ziegler and Nicols in action</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">1</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> <span class="fl">6.2</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>s<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>s<span class="op">**</span><span class="dv">2</span> <span class="op">+</span>s <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+         6.2
+---------------------
+2 s^3 + 3 s^2 + s + 1
+</code></pre>
+</div>
+</div>
+<p>Let’s see what happens when we close the loop:</p>
+<p><span class="math display">\[
+R(s) = 1
+\]</span></p>
+<p>Measurement <span class="math display">\[
+H(s) = 0.042
+\]</span></p>
+<p>Step response with no controller:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>t_out, y_out <span class="op">=</span> control.step_response(control.feedback(G_s, <span class="fl">0.042</span>, sign<span class="op">=-</span><span class="dv">1</span>), T<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>K_p_range <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.5</span>, <span class="fl">1.92</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K_p <span class="kw">in</span> K_p_range:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    t_out, y_out <span class="op">=</span> control.step_response(control.feedback(K_p<span class="op">*</span>G_s, <span class="fl">0.042</span>, sign<span class="op">=-</span><span class="dv">1</span>), T<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'K=</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(K_p))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    plt.grid()</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'time'</span>)<span class="op">;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="fl">5.0</span>, <span class="dv">15</span>, marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="fl">13.95</span>, <span class="dv">15</span>, marker<span class="op">=</span><span class="st">'.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">'r'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Critical gain <span class="math inline">\(K^*=1.92\)</span></li>
+<li>Period <span class="math inline">\(T_p^*=8.95\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>K_star <span class="op">=</span> <span class="fl">1.92</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>T_p_start <span class="op">=</span> <span class="fl">8.95</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we can then calculate the parameter of the PID from the ZN table</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>K_p <span class="op">=</span> <span class="fl">0.6</span><span class="op">*</span>K_star</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>tau_I <span class="op">=</span> <span class="fl">0.5</span><span class="op">*</span>T_p_start</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>tau_d <span class="op">=</span> <span class="fl">0.125</span><span class="op">*</span>T_p_start</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'K_p:'</span>, K_p)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'tau_I:'</span>, tau_I)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'tau_d:'</span>, tau_d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>K_p: 1.152
+tau_I: 4.475
+tau_d: 1.11875</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>PID <span class="op">=</span> K_p<span class="op">*</span>(tau_I<span class="op">*</span>tau_d<span class="op">*</span>s<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> tau_I<span class="op">*</span>s <span class="op">+</span> <span class="dv">1</span>)<span class="op">/</span>(tau_I<span class="op">*</span>s)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Or in the standard form:</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># K_I = K_p/tau_I</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># K_d = K_p/tau_d</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># PID = K_p + K_I/s + K_d*s</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(PID)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+5.767 s^2 + 5.155 s + 1.152
+---------------------------
+          4.475 s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>control.feedback(PID<span class="op">*</span>G_s, <span class="fl">0.042</span>, sign<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math display">\[\frac{35.76 s^2 + 31.96 s + 7.142}{8.95 s^4 + 13.42 s^3 + 5.977 s^2 + 5.817 s + 0.3}\]</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>t_out, y_out <span class="op">=</span> control.step_response(control.feedback(PID<span class="op">*</span>G_s, <span class="fl">0.042</span>, sign<span class="op">=-</span><span class="dv">1</span>), T<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'PID'</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Performance can also be improved manually tuning the parameters further</li>
+</ul>
+</section>
+</section>
+<section id="industrial-controllers" class="level1">
+<h1>Industrial Controllers</h1>
+<ul>
+<li>Components are already equipped with standard controllers, of which we need to tune the parameters</li>
+<li>Programmable Logic Controllers (PLC) are industrial computers, ruggedized and adapted for the control of manufacturing processes
+<ul>
+<li>They might include control and supervision.</li>
+</ul></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/industrial-controllers.jpeg" alt="industrial-controllers" style="width: 350px;">
+</td><td>
+<img src="img/industrial-controllers-what-is-a-plc.webp" alt="industrial-controllers" style="width: 350px;">
+</td></tr>
+
+</tbody></table>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/9.car-uphill.png" alt="9.car-uphill.png" style="width: 350px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[m\frac{dv}{dt} + \alpha|v|v+\beta v = \gamma u-mgsin(\theta)\]</span></p>
+<p>We can linearise and calculate the transfer function from gas pedal and car velocity:</p>
+<p><span class="math display">\[
+G(s) = \frac{\gamma}{m}\frac{1}{s+\frac{\beta}{m}}
+\]</span></p>
+<p>And the disturbance transfer function, between slope of the road (<span class="math inline">\(\theta\)</span>) and car velocity:</p>
+<p><span class="math display">\[
+G_d(s) = \frac{-g}{s+\frac{\beta}{m}}
+\]</span></p>
+<p><span class="math inline">\(g = 9.8m/s^2\)</span></p>
+<p>(see also <code>02_Intro_to_control_theory</code>)</p>
+<p>Closed loop transfer function:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional.png" alt="PID-Controller-Proportional" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[
+G(s) = \frac{1}{10}\frac{1}{s+\frac{1}{10}}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> feedback_control.intro_to_control_theory <span class="im">import</span> LinearCar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We assume we have identified the model parameters</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>beta <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> (m, alpha, beta, gamma)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># We select the car initial conditions (position and velocity)</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># We create our car</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> LinearCar(x_0, params)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We define out inputs:</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">20</span>) <span class="co"># disturbance</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> <span class="dv">0</span>                  <span class="co"># Input, constant and set to 0</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># And finally we define the simulation parameters</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.1</span> <span class="co"># time</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> np.arange(t0, tf, dt):</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u, theta)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    x, y, v <span class="op">=</span> car.sensor_i()</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    position.append((x,y)) </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    velocity.append(v)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'simulation complete'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>simulation complete</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()<span class="op">;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, velocity, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'speed (m/s)'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Constant slope, the car rolls down</li>
+<li>What happens when there is no disturbance (road is flat)?
+<ul>
+<li>Set <code>theta = np.radians(0) # disturbance</code> in the cell above</li>
+</ul></li>
+</ul>
+<section id="using-a-proportional-controller" class="level3">
+<h3 class="anchored" data-anchor-id="using-a-proportional-controller">Using a proportional controller</h3>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/PID-Controller-Proportional.png" alt="PID-Controller-Proportional" style="width: 550px;">
+</td>
+</tr>
+
+</tbody></table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> control.tf([<span class="dv">1</span>,<span class="dv">0</span>], [<span class="dv">1</span>])</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> <span class="fl">0.1</span><span class="op">/</span>(s<span class="op">+</span><span class="fl">0.1</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>t_out, y_out <span class="op">=</span> control.step_response(control.feedback(K<span class="op">*</span>G_s, <span class="dv">1</span>))</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G(s):'</span>, G_s)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gcc(s):'</span>, control.feedback(K<span class="op">*</span>G_s, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G(s): 
+  0.1
+-------
+s + 0.1
+
+Gcc(s): 
+  0.5
+-------
+s + 0.6
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fig, axs = plt.subplots(1, 1, figsize=(10, 5))</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># control.rlocus(G_s);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'y(end) = </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(y_out[<span class="op">-</span><span class="dv">1</span>]))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Text(0.5, 1.0, 'y(end) = 0.832499999999999')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-21-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let’s define a proportional controller in python:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> proportional(Kp, MV_bar<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Creates proportional controllers with specified gain (Kp) and setpoint (SP). </span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The output is MV (manipulated variable)"""</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    MV <span class="op">=</span> MV_bar</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        r, y <span class="op">=</span> <span class="cf">yield</span> MV</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        MV <span class="op">=</span> Kp <span class="op">*</span> (r <span class="op">-</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>and use the car now.</p>
+<p>We will verify how the car responds: - with no disturbance (i.e., the slope of the road) - without disturbance.</p>
+<p>We will also change the controller <span class="math inline">\(K\)</span> value (e.g., 10, 20)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We select the car initial conditions (position and velocity)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We create our car</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> LinearCar(x_0, params)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We define out inputs:</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">0</span>) <span class="co"># disturbance</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Proportional Controller</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>controller <span class="op">=</span> proportional(Kp<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>controller.send(<span class="va">None</span>) <span class="co"># initialise</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Desired set point (we would like the vehicle not to move)</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>desired_velocity <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># And finally we define the simulation parameters</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">10</span>, <span class="fl">0.1</span> <span class="co"># time</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation cycle</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> np.arange(t0, tf, dt):</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> controller.send((desired_velocity, car.speedometer()[<span class="dv">0</span>]))</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u, theta)</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for plotting reasons</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>    x, y, v <span class="op">=</span> car.sensor_i()</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>    position.append((x,y)) </span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>    velocity.append(v)</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'simulation complete'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>simulation complete</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, velocity, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'speed (m/s)'</span>)<span class="op">;</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'velocity(end)=</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(velocity[<span class="op">-</span><span class="dv">1</span>]))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Comments?</li>
+</ul>
+</section>
+<section id="using-a-pid-controller" class="level3">
+<h3 class="anchored" data-anchor-id="using-a-pid-controller">Using a PID controller</h3>
+<p>Let’s define a PID controller in python:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> PID(Kp, Ki, Kd, MV_bar<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize stored data</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    e_prev <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    t_prev <span class="op">=</span> <span class="op">-</span><span class="dv">100</span> <span class="co"># we can also set t_prev = -0.05 because in this example we are using dt=0.05</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    y_prev <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    I <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initial control</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    MV <span class="op">=</span> MV_bar</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># yield MV, wait for new t, PV, SP</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>        t, y, ref <span class="op">=</span> <span class="cf">yield</span> MV</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># PID calculations</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>        e <span class="op">=</span> ref <span class="op">-</span> y</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>        P <span class="op">=</span> Kp<span class="op">*</span>e</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> t_prev <span class="op">&gt;=</span> <span class="dv">0</span>:</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>            I <span class="op">=</span> I <span class="op">+</span> Ki<span class="op">*</span>e<span class="op">*</span>(t <span class="op">-</span> t_prev)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>            D <span class="op">=</span> Kd<span class="op">*</span>(e <span class="op">-</span> e_prev)<span class="op">/</span>(t <span class="op">-</span> t_prev)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>            I <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>            D <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        MV <span class="op">=</span> MV_bar <span class="op">+</span> P <span class="op">+</span> I <span class="op">+</span> D</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># update stored data for next iteration</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>        e_prev <span class="op">=</span> e</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>        t_prev <span class="op">=</span> t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And simulate the PID control loop applied to the car.</p>
+<p>We will choose arbitrary parameters <span class="math inline">\((Kp=1, Ki=1, Kd=1)\)</span> for now, and then we will try and tune them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We select the car initial conditions (position and velocity)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We create our car</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> LinearCar(x_0, params)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We define out inputs:</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">0</span>) <span class="co"># disturbance</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> <span class="dv">0</span>                 <span class="co"># Initial Input</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>controller <span class="op">=</span> PID(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)        <span class="co"># create pid control (Kp, Ki, Kd)</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>controller.send(<span class="va">None</span>)               <span class="co"># initialize</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>desired_velocity <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co"># And finally we define the simulation parameters</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">150</span>, <span class="fl">0.05</span> <span class="co"># time</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> np.arange(t0, tf, dt):    </span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># feedback loop</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> controller.send((t, car.speedometer()[<span class="dv">0</span>], desired_velocity))</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u, theta)</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot </span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>    x, y, v <span class="op">=</span> car.sensor_i()</span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>    position.append((x,y)) </span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>    velocity.append(v)</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'simulation complete'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>simulation complete</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, velocity, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'speed (m/s)'</span>)<span class="op">;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plt.grid()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>What happens when we add the disturbance?
+<ul>
+<li>Set <code>theta = np.radians(20) # disturbance</code> in the code cell to simulate the PID control loop applied to the case</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="first-order-systems-with-pi-control" class="level2">
+<h2 class="anchored" data-anchor-id="first-order-systems-with-pi-control">First order systems with PI control</h2>
+<p>Given the plant:</p>
+<p><span class="math display">\[
+G_{plant}(s) = \frac{K}{\tau s+1}
+\]</span></p>
+<p>Closed loop transfer function:</p>
+<p><span class="math display">\[
+G(s) = \frac{K\Big(K_p + \frac{K_I}{s} \big)}{\tau s+1+K\Big(K_p + \frac{K_I}{s} \big)}
+\]</span></p>
+<p>which we can write as:</p>
+<p><span class="math display">\[
+G(s) = \frac{K\Big(K_p s + K_I\Big)}{s^2 + (1+K K_p) s + K_I K}
+\]</span></p>
+<p>with natural frequency:</p>
+<p><span class="math display">\[
+w_n = \sqrt{\frac{K_IK}{\tau}}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\zeta = \frac{KK_p + 1}{2\sqrt{K_IK\tau}}
+\]</span></p>
+<p>The steady state error for a step input of magnitude <span class="math inline">\(R\)</span> is:</p>
+<p><span class="math display">\[
+e_{ss} = \lim_{s\rightarrow0} \Big[ s\Big( \frac{R}{s}-\frac{R}{s}G(s)\Big) \Big ] = 0
+\]</span></p>
+<ul>
+<li><p>The PI control removes the step response steady state error and allows for more control over the transient control, at least when compared with a proportional only, or integral only controller.</p></li>
+<li><p>For ex. it is now possible to reduce the rise time and max overshoot simultaneously.</p>
+<p>Given:</p>
+<p><span class="math display">\[
+\large
+S = 100e^{-\frac{\zeta\pi}{\sqrt{1-\xi^2}}}
+\]</span></p>
+<p>we can then solve for <span class="math inline">\(\zeta\)</span>:</p>
+<p><span class="math display">\[
+  \Big(\ln{\frac{S}{100}}\Big)^2 = {\zeta^2\pi^2} + \Big(\ln{\frac{S}{100}}\Big)^2 \zeta^2
+\]</span></p>
+<p><span class="math display">\[\Downarrow\]</span></p>
+<p><span class="math display">\[
+  \zeta \ge \sqrt{ \frac{\Big(\ln{\frac{S}{100}}\Big)^2}{\Big(\ln{\frac{S}{100}}\Big)^2+\pi^2}}  \approx 0.5
+\]</span></p></li>
+</ul>
+<p>Maximum desired overshoot: S=15%</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="dv">15</span> <span class="co"># 15%</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># damping ratio:</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>zeta <span class="op">=</span> np.sqrt(np.log(S<span class="op">/</span><span class="dv">100</span>)<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(<span class="fl">3.14</span><span class="op">**</span><span class="dv">2</span><span class="op">+</span>np.log(S<span class="op">/</span><span class="dv">100</span>)<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>zeta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0.5171229589315239</code></pre>
+</div>
+</div>
+<p>Given:</p>
+<p><span class="math display">\[
+t_r \approx \frac{1.8}{w_n}
+\]</span></p>
+<p>We can calculate the desired natural frequency for our system:</p>
+<p><span class="math display">\[
+w_n \approx \frac{1.8}{t_r}
+\]</span></p>
+<p>Rise time equal to <span class="math inline">\(t_r=15 s\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>w_n <span class="op">=</span> <span class="fl">1.8</span><span class="op">/</span><span class="dv">15</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>w_n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0.12000000000000001</code></pre>
+</div>
+</div>
+<p>Our plant is:</p>
+<p><span class="math display">\[G(s) = \frac{1}{10s+1}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>Ki <span class="op">=</span> tau<span class="op">*</span>w_n<span class="op">**</span><span class="dv">2</span><span class="op">/</span>K</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>Ki</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0.14400000000000002</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>Kp <span class="op">=</span> (<span class="op">-</span><span class="dv">1</span><span class="op">+</span><span class="dv">2</span><span class="op">*</span>np.sqrt(Ki<span class="op">*</span>K<span class="op">*</span>tau)<span class="op">*</span>zeta)<span class="op">/</span>K</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>Kp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0.2410951014356577</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>Kd <span class="op">=</span> <span class="dv">0</span> <span class="co"># we do not want to use the derivative path.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can verify our performance with the Python Control Library:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>PID_s <span class="op">=</span> Kp <span class="op">+</span> Ki<span class="op">/</span>s <span class="op">+</span> Kd<span class="op">*</span>s</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(PID_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+0.2411 s + 0.144
+----------------
+       s
+</code></pre>
+</div>
+</div>
+<p>The closed loop transfer function is:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>control.feedback(PID_s<span class="op">*</span>G_s, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math display">\[\frac{0.02411 s + 0.0144}{s^2 + 0.1241 s + 0.0144}\]</span></p>
+</div>
+</div>
+<p>And the step response:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>t_out, y_out <span class="op">=</span> control.step_response(control.feedback(PID_s<span class="op">*</span>G_s, <span class="dv">1</span>, sign<span class="op">=-</span><span class="dv">1</span>), T<span class="op">=</span><span class="dv">150</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'max(y_out)=</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="bu">max</span>(y_out)))</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'output (m/s)'</span>)<span class="op">;</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>plt.grid()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-37-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can also plot the control command using the associated transfer function</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>PID_s<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>PID_s<span class="op">*</span>G_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><span class="math display">\[\frac{0.2411 s^3 + 0.1681 s^2 + 0.0144 s}{s^3 + 0.1241 s^2 + 0.0144 s}\]</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>t_out, y_out <span class="op">=</span> control.step_response(PID_s<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>PID_s<span class="op">*</span>G_s), T<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))<span class="op">;</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>plt.plot(t_out, y_out, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'control action'</span>)<span class="op">;</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>plt.grid()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-39-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>And finally, let’s apply the calculated controller to our <a href="https://andreamunafo.github.io/feedback_control/intro_to_control_theory.html#linearcar"><code>LinearCar</code></a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We select the car initial conditions (position and velocity)</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We create our car</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> LinearCar(x_0, params)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We define out inputs:</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">0</span>) <span class="co"># disturbance</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> <span class="dv">0</span>                 <span class="co"># Initial Input</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>controller <span class="op">=</span> PID(Kp<span class="op">=</span>Kp, Ki<span class="op">=</span>Ki, Kd<span class="op">=</span><span class="dv">0</span>)        <span class="co"># create pid control (Kp, Ki, Kd)</span></span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>controller.send(<span class="va">None</span>)               <span class="co"># initialize</span></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>desired_velocity <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a><span class="co"># And finally we define the simulation parameters</span></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">150</span>, <span class="fl">0.01</span> <span class="co"># time</span></span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a>control_action <span class="op">=</span> []</span>
+<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> np.arange(t0, tf, dt):    </span>
+<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># feedback loop</span></span>
+<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> controller.send((t, car.speedometer()[<span class="dv">0</span>], desired_velocity))</span>
+<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u, theta)</span>
+<span id="cb52-27"><a href="#cb52-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb52-28"><a href="#cb52-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot</span></span>
+<span id="cb52-29"><a href="#cb52-29" aria-hidden="true" tabindex="-1"></a>    x, y, v <span class="op">=</span> car.sensor_i()    </span>
+<span id="cb52-30"><a href="#cb52-30" aria-hidden="true" tabindex="-1"></a>    control_action.append(u)</span>
+<span id="cb52-31"><a href="#cb52-31" aria-hidden="true" tabindex="-1"></a>    position.append((x,y)) </span>
+<span id="cb52-32"><a href="#cb52-32" aria-hidden="true" tabindex="-1"></a>    velocity.append(v)</span>
+<span id="cb52-33"><a href="#cb52-33" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span>
+<span id="cb52-34"><a href="#cb52-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb52-35"><a href="#cb52-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'simulation complete'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>simulation complete</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))<span class="op">;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(time, velocity, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'max(y)=</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="bu">max</span>(velocity)))</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylim(<span class="dv">0</span>, <span class="fl">1.2</span>)</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylabel(<span class="st">'speed (m/s)'</span>)<span class="op">;</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].grid()<span class="op">;</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(time, control_action, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylabel(<span class="st">'control action'</span>)<span class="op">;</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].grid()<span class="op">;</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-41-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="applying-the-pid-control-to-the-real-car" class="level3">
+<h3 class="anchored" data-anchor-id="applying-the-pid-control-to-the-real-car">Applying the PID control to the real Car</h3>
+<ul>
+<li>We have calculated a PID controller based on a linear model of the car</li>
+<li>What happens when we apply it to the real, non-linear car?</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/9.car-uphill.png" alt="9.car-uphill.png" style="width: 350px;">
+</td>
+</tr>
+
+</tbody></table>
+<p><span class="math display">\[m\frac{dv}{dt} + \alpha|v|v+\beta v = \gamma u-mgsin(\theta)\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> feedback_control.intro_to_control_theory <span class="im">import</span> Car</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>Ki <span class="op">=</span> <span class="fl">0.1440000</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>Kp <span class="op">=</span> <span class="fl">0.2410951014356577</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>Kd <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>PID_s <span class="op">=</span> Kp <span class="op">+</span> Ki<span class="op">/</span>s <span class="op">+</span> Kd<span class="op">*</span>s</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(PID_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+0.2411 s + 0.144
+----------------
+       s
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We select the car initial conditions (position and velocity)</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>x_0 <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We create our car</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>car <span class="op">=</span> Car(x_0, params) <span class="co"># before we had: LinearCar(x_0, params)</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We define out inputs:</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.radians(<span class="dv">0</span>) <span class="co"># disturbance</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> <span class="dv">0</span>                 <span class="co"># Initial Input</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>controller <span class="op">=</span> PID(Kp<span class="op">=</span>Kp, Ki<span class="op">=</span>Ki, Kd<span class="op">=</span><span class="dv">0</span>)        <span class="co"># create pid control (Kp, Ki, Kd)</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>controller.send(<span class="va">None</span>)               <span class="co"># initialize</span></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>desired_velocity <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a><span class="co"># And finally we define the simulation parameters</span></span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>t0, tf, dt <span class="op">=</span> <span class="dv">0</span>, <span class="dv">150</span>, <span class="fl">0.01</span> <span class="co"># time</span></span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> []</span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>velocity <span class="op">=</span> []</span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> []</span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>control_action <span class="op">=</span> []</span>
+<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> np.arange(t0, tf, dt):  </span>
+<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># feedback loop</span></span>
+<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> controller.send((t, car.speedometer()[<span class="dv">0</span>], desired_velocity))    </span>
+<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>    car.step(dt, u, theta)</span>
+<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot</span></span>
+<span id="cb58-29"><a href="#cb58-29" aria-hidden="true" tabindex="-1"></a>    x, y, v <span class="op">=</span> car.sensor_i()    </span>
+<span id="cb58-30"><a href="#cb58-30" aria-hidden="true" tabindex="-1"></a>    control_action.append(u)</span>
+<span id="cb58-31"><a href="#cb58-31" aria-hidden="true" tabindex="-1"></a>    position.append((x,y)) </span>
+<span id="cb58-32"><a href="#cb58-32" aria-hidden="true" tabindex="-1"></a>    velocity.append(v)</span>
+<span id="cb58-33"><a href="#cb58-33" aria-hidden="true" tabindex="-1"></a>    time.append(t)</span>
+<span id="cb58-34"><a href="#cb58-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb58-35"><a href="#cb58-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'simulation complete'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>simulation complete</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))<span class="op">;</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(time, velocity, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'max(y)=</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="bu">max</span>(velocity)))</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylim(<span class="dv">0</span>, <span class="fl">1.2</span>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_ylabel(<span class="st">'speed (m/s)'</span>)<span class="op">;</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].grid()<span class="op">;</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(time, control_action, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_ylabel(<span class="st">'control action'</span>)<span class="op">;</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].grid()<span class="op">;</span></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="16_PID_Control_files/figure-html/cell-45-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p>The response is different. No overshoot, and no steady state error.</p></li>
+<li><p>What happens when we add noise? Try set <code>theta = np.radians(20) # disturbance</code> in the simulation cell. You will probably need to set <code>axs[0].set_ylim(-5, 1.2)</code> in the plot cell above.</p></li>
+<li><p>Look at the control action needed when a disturbance is present.</p></li>
+</ul>
+<p><strong>fin</strong></p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

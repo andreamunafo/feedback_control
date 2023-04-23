@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Stability Margins</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Stability Margins">
+<meta property="og:description" content="Given an LTI system with transfer function: \(G(s) = C(sI - A)^{-1}B\)">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Stability Margins">
+<meta name="twitter:description" content="Given an LTI system with transfer function: \(G(s) = C(sI - A)^{-1}B\)">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Stability Margins</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link active">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#gain-and-phase-margins" id="toc-gain-and-phase-margins" class="nav-link active" data-scroll-target="#gain-and-phase-margins">Gain and Phase Margins</a></li>
+  <li><a href="#margins" id="toc-margins" class="nav-link" data-scroll-target="#margins">Margins</a>
+  <ul class="collapse">
+  <li><a href="#why-do-we-need-margins" id="toc-why-do-we-need-margins" class="nav-link" data-scroll-target="#why-do-we-need-margins">Why do we need margins</a></li>
+  </ul></li>
+  <li><a href="#what-makes-a-system-unstable" id="toc-what-makes-a-system-unstable" class="nav-link" data-scroll-target="#what-makes-a-system-unstable">What makes a system unstable</a></li>
+  <li><a href="#what-makes-an-open-loop-system-unstable-in-closed-loop" id="toc-what-makes-an-open-loop-system-unstable-in-closed-loop" class="nav-link" data-scroll-target="#what-makes-an-open-loop-system-unstable-in-closed-loop">What makes an open loop system, unstable in closed loop</a></li>
+  <li><a href="#bode-plot" id="toc-bode-plot" class="nav-link" data-scroll-target="#bode-plot">Bode Plot</a>
+  <ul class="collapse">
+  <li><a href="#python-control-library-stability-margins" id="toc-python-control-library-stability-margins" class="nav-link" data-scroll-target="#python-control-library-stability-margins">Python Control Library: Stability Margins</a></li>
+  <li><a href="#additional-comments" id="toc-additional-comments" class="nav-link" data-scroll-target="#additional-comments">Additional comments</a></li>
+  <li><a href="#reading-stability-margins-misleading-values" id="toc-reading-stability-margins-misleading-values" class="nav-link" data-scroll-target="#reading-stability-margins-misleading-values">Reading stability margins: misleading values</a></li>
+  </ul></li>
+  <li><a href="#using-the-nyquist-plot-and-the-system-sensitity-revised" id="toc-using-the-nyquist-plot-and-the-system-sensitity-revised" class="nav-link" data-scroll-target="#using-the-nyquist-plot-and-the-system-sensitity-revised">Using the Nyquist Plot and the System Sensitity Revised</a>
+  <ul class="collapse">
+  <li><a href="#closest-point-of-the-nyquist-plot-to--1" id="toc-closest-point-of-the-nyquist-plot-to--1" class="nav-link" data-scroll-target="#closest-point-of-the-nyquist-plot-to--1">Closest point of the Nyquist plot to -1</a></li>
+  <li><a href="#considerations-on-stability-margins-relative-stability-and-nyquist-plots" id="toc-considerations-on-stability-margins-relative-stability-and-nyquist-plots" class="nav-link" data-scroll-target="#considerations-on-stability-margins-relative-stability-and-nyquist-plots">Considerations on stability margins, relative stability and Nyquist plots</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Stability Margins</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="gain-and-phase-margins" class="level2">
+<h2 class="anchored" data-anchor-id="gain-and-phase-margins">Gain and Phase Margins</h2>
+<p>Given an LTI system with transfer function: <span class="math inline">\(G(s) = C(sI - A)^{-1}B\)</span></p>
+<p>and an input signal: <span class="math inline">\(u(t)=Asin(\omega t)\)</span></p>
+<p>Assuming that the system is <strong>asymptotically stable</strong>, it is possible to verify that:</p>
+<p><span class="math display">\[y(t)=A|G(j\omega)|sin(\omega t + \angle G(j\omega) ) \]</span></p>
+<p>This means that the output <span class="math inline">\(y(t)\)</span> converges to a sinusoidal signal that has the <strong>same frequency</strong> of the input, and that has magnitude <span class="math inline">\(A|G(j\omega)|\)</span> and is shifted in phase by <span class="math inline">\(\angle G(j\omega)\)</span>.</p>
+<p>Note also that this is true independently of the initial state <span class="math inline">\(x_0\)</span>. In fact, since the system is asymptotically stable, the effect of the initial state on the output will go to zero.</p>
+
+
+<img src="img/26.freq-response.png" alt="freq-response.png" style="width: 550px;">
+
+
+<p>As a result: - Magnitude can change - Phase can change</p>
+<ul>
+<li>Gain: magnitude of output wrt magnitude of input</li>
+<li>Phase: shift of the signal (measured as angles or relative to the signal wavelength)
+<ul>
+<li>delay in the signal is a negative phase sift (convention)</li>
+</ul></li>
+<li>The output of a single input frequency is a combination of gain and phase shift</li>
+<li>Gain and Phase depends on the frequency (can be different at different frequencies)
+<ul>
+<li>See Bode Plots.</li>
+</ul></li>
+<li>When we talk about gain and phase margins we need to consider all frequencies</li>
+</ul>
+<p>See also notebook <code>06_Intro_to_freq_response_and_bode_plots</code></p>
+</section>
+<section id="margins" class="level2">
+<h2 class="anchored" data-anchor-id="margins">Margins</h2>
+<p>Informal definition: extra amount of a quantity that we can use if needed</p>
+<p>Gain and Phase margin: extra gain or phase that we have available before the system starts to oscillates or become unstable</p>
+<ul>
+<li>Robustness of the system</li>
+<li>Makes it possible to quantify how stable a system is
+<ul>
+<li>Systems (or designs) that have less margin could be considered as being “less” stable: smaller variations in the system could lead to instability</li>
+</ul></li>
+</ul>
+<section id="why-do-we-need-margins" class="level3">
+<h3 class="anchored" data-anchor-id="why-do-we-need-margins">Why do we need margins</h3>
+<ul>
+<li>When we design a control system we use a model</li>
+<li>Test is done in known conditions</li>
+<li>We make assumptions on how the system behaves</li>
+<li>Things rarely behave the way we expect!</li>
+<li>This leads to gain and phase errors</li>
+</ul>
+<p>If we think of a brushless DC motor: - Rotor inertia is different: commanded torque generates a different acceleration (gain error) - Power is sensitive to temperature (gain error) - Higher drag in bearing: motor is slower to respond (gain and phase error) - Slower computer: adds delay (phase error) - etc.</p>
+<p><strong>These are called Process Variations</strong>: We want our controller to be robust to these because we cannot know our system perfectly and hence we need margins.</p>
+<p>The more uncertainty we have the more margin we should design in.</p>
+</section>
+</section>
+<section id="what-makes-a-system-unstable" class="level2">
+<h2 class="anchored" data-anchor-id="what-makes-a-system-unstable">What makes a system unstable</h2>
+<ul>
+<li><span class="math inline">\(G(s)\)</span> is unstable if at least one pole (root of the characteristic eq.) is in the RHP (Re <span class="math inline">\(&gt;\)</span> 0 )</li>
+<li>We usually design the open loop system and then we use Bode, Nyquist, Root Locus to assess the closed loop stability and performance</li>
+<li>For this reason is useful to link the open loop performance to their closed loop ones.</li>
+</ul>
+</section>
+<section id="what-makes-an-open-loop-system-unstable-in-closed-loop" class="level2">
+<h2 class="anchored" data-anchor-id="what-makes-an-open-loop-system-unstable-in-closed-loop">What makes an open loop system, unstable in closed loop</h2>
+<p>Given a system <span class="math inline">\(G(s)\)</span></p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/59.feedback-error.png" alt="59.feedback-error" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<p>We know that the closed loop equivalent is:</p>
+<p><span class="math display">\[
+G_{c}(s) = \frac{G(s)}{1+G(s)}
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(G_{c}(s)\)</span> must have a pole in the RHP</p></li>
+<li><p>For this to happen we know that <span class="math inline">\(1+G(s)=0\)</span> or <span class="math inline">\(G(s)=-1 \Rightarrow G_c(s) \rightarrow \infty\)</span></p></li>
+<li><p>We should keep our open loop <span class="math inline">\(G(s)\)</span> away from -1 then!</p></li>
+<li><p>We saw this already with Nyquist</p></li>
+</ul>
+<p>It is useful to consider the <span class="math inline">\(-1\)</span> system in more details:</p>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/-1-system.png" alt="-1-system" style="width: 200px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><p>Gain is 1 (0 <span class="math inline">\(dB\)</span>)</p></li>
+<li><p>Phase is <span class="math inline">\(-180^o\)</span></p></li>
+<li><p>If our system, at any one frequency produces 0 <span class="math inline">\(dB\)</span> <strong>and</strong> a phase of <span class="math inline">\(-180^o\)</span>, then it is unstable</p></li>
+<li><p>Our system must stay away from that point throughout the frequency spectrum</p></li>
+</ul>
+<p>Margin: how far away our system is from the <span class="math inline">\(0dB\)</span> and <span class="math inline">\(-180^o\)</span> point</p>
+<ul>
+<li>Gain margin is defined as the amount of change in open-loop gain needed to make a closed-loop system unstable.</li>
+<li>Phase margin is defined as the amount of change in open-loop phase needed to make a closed-loop system unstable.</li>
+</ul>
+<p>see also <a href="https://www.sciencedirect.com/topics/engineering/phase-margin">stability margins</a></p>
+</section>
+<section id="bode-plot" class="level2">
+<h2 class="anchored" data-anchor-id="bode-plot">Bode Plot</h2>
+<ul>
+<li>Start identifying our point on the diagrams:</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/61.stability_margins-bode-0.png" alt="img/61.stability_margins-bode-1.png" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Let’s now suppose to increase gain</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/62.stability-margin-increase-gain.png" alt="62.stability-margin-increase-gain" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>Increasing gain, does not modify the phase</li>
+<li>The crossover frequency moves closer to where the phase diagram crosses the <span class="math inline">\(-180^o\)</span> point.</li>
+<li>Our system has become less stable</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/61.stability_margins-bode-1.png" alt="img/61.stability_margins-bode-1.png" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>If we choose the gain <span class="math inline">\(K\)</span> wrongly the system becomes unstable</li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/63.stability_margins-bode-2-1.png" alt="img/63.stability_margins-bode-2.png" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><p>The gain required is the gain at the <span class="math inline">\(-180^o\)</span> frequency. This is the <strong>gain margin</strong>.</p></li>
+<li><p>Similarly for the phase (e.g., slower computers would add a delay which only affects the phase)</p></li>
+</ul>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/64.stability_margins-bode-phase-margin-1.png" alt="img/64.stability_margins-bode-phase-margin-1.png" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li><strong>Phase margin</strong>: how much phase delay takes to make <span class="math inline">\(-180^o\)</span> phase at the 0 <span class="math inline">\(dB\)</span> gain frequency.</li>
+<li><span class="math inline">\(90^o\)</span> in our toy example</li>
+<li>Easy to read the gain and phase margin directly from the Bode plot</li>
+</ul>
+<section id="python-control-library-stability-margins" class="level3">
+<h3 class="anchored" data-anchor-id="python-control-library-stability-margins">Python Control Library: Stability Margins</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s define the open loop transfer function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> control.tf([<span class="fl">1.3</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">1</span>])</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     1.3 s + 2
+-------------------
+s^3 + s^2 + 6 s + 1
+</code></pre>
+</div>
+</div>
+<p>We can now call the <code>bode_plot</code> function of the Python Control Library to plot the Bode plots.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's also plot lines corresponding to the 0 dB point (gain plot), and the -180 deg point (phase plot)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.3</span>, <span class="fl">0.3</span>],[<span class="op">-</span><span class="dv">90</span>, <span class="dv">10</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.9</span>, <span class="fl">3.9</span>],[<span class="op">-</span><span class="dv">90</span>, <span class="dv">10</span>],<span class="st">'g--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span>],<span class="st">'b--'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.3</span>, <span class="fl">0.3</span>],[<span class="op">-</span><span class="dv">190</span>, <span class="dv">0</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">3.9</span>, <span class="fl">3.9</span>],[<span class="op">-</span><span class="dv">190</span>, <span class="dv">0</span>],<span class="st">'g--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>Approximately 130 deg of phase margin (red)</li>
+<li>Approximately 15 dB of gain margin (green)</li>
+</ul>
+<p>The command <code>margin</code> returns the gain and phase margins, and the corresponding crossover frequencies.</p>
+<p><strong>Note: gain value returned by the <code>margin</code> command is not in dB</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gm, pm, wpc, wgc <span class="op">=</span> control.margin(G)<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(gm, wpc))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin (dB) </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="dv">20</span><span class="op">*</span>np.log10(gm), wpc))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Phase Margin </span><span class="sc">{:.2f}</span><span class="st"> (deg) at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(pm, wgc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gain Margin 7.14 at frequency (rad/sec) 3.91
+Gain Margin (dB) 17.08 at frequency (rad/sec) 3.91
+Phase Margin 127.69 (deg) at frequency (rad/sec) 0.31</code></pre>
+</div>
+</div>
+</section>
+<section id="additional-comments" class="level3">
+<h3 class="anchored" data-anchor-id="additional-comments">Additional comments</h3>
+<ul>
+<li>Gain and phase margin refers to margin in the whole open loop system</li>
+<li>Uncertainty in one specific parameters can affect you more than you think.</li>
+<li>Try and change on of the parameters of the denominator of the <span class="math inline">\(G(s)\)</span> above and see what happens</li>
+</ul>
+<p>For example, consider what happens with the following transfer function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> control.tf([<span class="fl">1.3</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     1.3 s + 2
+-------------------
+s^3 + s^2 + 2 s + 1
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gm, pm, wpc, wgc <span class="op">=</span> control.margin(G1)<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(gm, wpc))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin (dB) </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="dv">20</span><span class="op">*</span>np.log10(gm), wpc))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Phase Margin </span><span class="sc">{:.2f}</span><span class="st"> (deg) at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(pm, wgc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gain Margin 1.43 at frequency (rad/sec) 1.96
+Gain Margin (dB) 3.10 at frequency (rad/sec) 1.96
+Phase Margin 5.04 (deg) at frequency (rad/sec) 1.79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G1, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's also plot lines corresponding to the 0 dB point (gain plot), and the -180 deg point (phase plot)</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.79</span>, <span class="fl">1.79</span>],[<span class="op">-</span><span class="dv">90</span>, <span class="dv">10</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.96</span>, <span class="fl">1.96</span>],[<span class="op">-</span><span class="fl">3.10</span>, <span class="dv">0</span>],<span class="st">'g--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.96</span>],[<span class="op">-</span><span class="fl">3.10</span>],<span class="st">'g.'</span>, markersize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span>],<span class="st">'b--'</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.79</span>, <span class="fl">1.79</span>],[<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="fl">5.04</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.79</span>],[<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="fl">5.04</span>],<span class="st">'r.'</span>, markersize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">1.96</span>, <span class="fl">1.96</span>],[<span class="op">-</span><span class="dv">190</span>, <span class="dv">0</span>],<span class="st">'g--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Effectively we have substantially reduced our stability margins.</p>
+</section>
+<section id="reading-stability-margins-misleading-values" class="level3">
+<h3 class="anchored" data-anchor-id="reading-stability-margins-misleading-values">Reading stability margins: misleading values</h3>
+<p>Let’s now consider the following transfer function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> control.tf([<span class="fl">0.38</span>, <span class="fl">0.038</span>, <span class="fl">0.38</span><span class="op">*</span><span class="fl">0.55</span>], [<span class="dv">1</span>, <span class="fl">1.06</span>, <span class="fl">.56</span>, <span class="fl">0.5</span>, <span class="dv">0</span>])</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0.38 s^2 + 0.038 s + 0.209
+---------------------------------
+s^4 + 1.06 s^3 + 0.56 s^2 + 0.5 s
+</code></pre>
+</div>
+</div>
+<p>And as before we can plot the Bode plots and verify what stability margins we have:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.41</span>, <span class="fl">0.41</span>],[<span class="op">-</span><span class="dv">40</span>, <span class="dv">10</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plt.sca(ax2)                 <span class="co"># phase plot</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span>],<span class="st">'b--'</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.41</span>, <span class="fl">0.41</span>],[<span class="op">-</span><span class="dv">180</span>, <span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="fl">69.77</span>],<span class="st">'r--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.41</span>],[<span class="op">-</span><span class="dv">180</span><span class="op">+</span><span class="fl">69.77</span>],<span class="st">'r.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p><strong>Infinite gain margin</strong>: phase diagram never crosses the -180 deg. This would mean that you can add any gain you desired and the closed loop system would never go unstable.</p></li>
+<li><p>Phase margin is approximately: 70 deg</p></li>
+</ul>
+<p>We can confirm this with the Python Control Library:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>gm, pm, wpc, wgc <span class="op">=</span> control.margin(G2)<span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(gm, wpc))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gain Margin (dB) </span><span class="sc">{:.2f}</span><span class="st"> at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(<span class="dv">20</span><span class="op">*</span>np.log10(gm), wpc))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Phase Margin </span><span class="sc">{:.2f}</span><span class="st"> (deg) at frequency (rad/sec) </span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(pm, wgc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gain Margin inf at frequency (rad/sec) nan
+Gain Margin (dB) inf at frequency (rad/sec) nan
+Phase Margin 69.77 (deg) at frequency (rad/sec) 0.41</code></pre>
+</div>
+</div>
+<ul>
+<li>However, consider the dip in the phase plot: a small phase lag into the system it would bring the phase diagram to cross the -180 deg line, and the gain, for that frequency is very close to 0dB.</li>
+<li>We do not have 70deg of phase margin, in practise we only have ~2 deg.</li>
+<li>This are important considerations when designing a controller</li>
+</ul>
+</section>
+</section>
+<section id="using-the-nyquist-plot-and-the-system-sensitity-revised" class="level2">
+<h2 class="anchored" data-anchor-id="using-the-nyquist-plot-and-the-system-sensitity-revised">Using the Nyquist Plot and the System Sensitity Revised</h2>
+<p><strong>Inserire spiegazione Margine fase e Guadagno nel Diagramma di Nyquist (see for ex. CA_AUT_L06_Marg_Stab_1.pdf</strong></p>
+<p>To try an understand what is happening a little more, let’s draw the Nyquist plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>control.nyquist_plot(G2)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.xlim((-1.2, 0))</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.ylim((-1.2, 1.2))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+
+<table style="margin: 0 auto" rules="none">
+<tbody><tr>
+<td>
+<img src="img/stability-margin-nyquist-1.png" alt="59.feedback-error" style="width: 500px;">
+</td>
+</tr>
+
+</tbody></table>
+<ul>
+<li>No amount of gain can move the plot around -1 (the gain is 0 when the plot crosses the real axis)</li>
+<li>In addition to the gain and phase margins we can consider the behaviour of the point that is closer to the -1 point.</li>
+<li>Process variations that affect that part of the plot are worse than pure gain or phase alone.</li>
+<li>This is where the sensitivity function of the system can help us.</li>
+</ul>
+<p>We saw that the sensitivity function is:</p>
+<p><span class="math display">\[
+S(s) = \frac{1}{1+GR}
+\]</span></p>
+<ul>
+<li>Describes how feedback influences the disturbances</li>
+<li>If <span class="math inline">\(|GR|\)</span> is large at frequencies where the power of the disturbance is concentrated, then <span class="math inline">\(|S|\)</span> is small and the effect of the disturbance on the output is attenuated</li>
+<li>Lower values of <span class="math inline">\(|S|\)</span> means higher attenuation of the external disturbance.</li>
+<li>Typically, plan disturbances are low frequency, and one would like <span class="math inline">\(|GR|\)</span> to be large at low frequency</li>
+</ul>
+<p>See notebook <code>08_Main_types_of_loops_and_transfer_functions</code>.</p>
+<p>We can also define the <em>Nominal Sensitivity Peak</em>:</p>
+<p><span class="math display">\[
+M_s = \max_{0 \leq \omega \leq \infty} | S(j\omega) | = \max_{0 \leq \omega \leq \infty} \Big| \frac{1}{1+G(j\omega)R(j\omega)} \Big|
+\]</span></p>
+<section id="closest-point-of-the-nyquist-plot-to--1" class="level3">
+<h3 class="anchored" data-anchor-id="closest-point-of-the-nyquist-plot-to--1">Closest point of the Nyquist plot to -1</h3>
+<ul>
+<li>This is the point that is most in danger of causing instability</li>
+<li>Rember that the Nyquist plot shows the open loop transfer function: <span class="math inline">\(G(j\omega)R(j\omega)\)</span></li>
+<li>We want to calculate the minimum distance between -1 and the curve <span class="math inline">\(G(j\omega)R(j\omega)\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+d = \min(|G(j\omega)R(j\omega) - (-1)|)
+\]</span></p>
+<ul>
+<li>Note that if we use the metric above, we have something that tells us <em>the smaller the number is the larger its sensitivity to variations</em> (similar to robustness)</li>
+<li>If we take the reciprocal insted we have a metric such that <em>the larger it is, the larger the sensitivity</em></li>
+</ul>
+<p><span class="math display">\[
+\max_{-\infty &lt; \omega &lt; \infty} \Big| \frac{1}{G(j\omega)R(j\omega) +1} \Big|
+\]</span></p>
+<ul>
+<li><p>Since Nyquist is symmetrical w.r.t the real axis we can restrict it to <span class="math inline">\({0 \leq \omega \leq \infty}\)</span>.</p></li>
+<li><p>We have now a new definition for our sensitivity function: <strong>it is the minimum distance between the point -1 and the Nyquist curve of <span class="math inline">\(R(j\omega)G(j\omega)\)</span></strong></p></li>
+</ul>
+<p>Let’s now consider the block diagram of a standard “servo” or tracking configuration of classical feedback control:</p>
+
+<!--td> <img src="img/standard-control-loop.png" alt="standard-control-loop" style="width: 550px;"/> </td-->
+
+<img src="img/system-generic.png" alt="system-generic" style="width: 550px;">
+
+
+<p>Let’s restrict ourselves to the inputs <span class="math inline">\(y_{ref}\)</span> and <span class="math inline">\(d\)</span>. In this case we saw that we can write:</p>
+<p><span class="math display">\[
+Y(s) = \frac{RG}{1+RG}Y_{ref}(s) + \frac{1}{1+RG}D(s)
+\]</span></p>
+<ul>
+<li>As we saw the sensitivity function captures what happens to the system when we have disturbances or process variation</li>
+<li>We can determine sensitivity across the entire spectrum using the Bode plot.</li>
+</ul>
+<p>Let’s revisit our system</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> control.tf([<span class="fl">0.38</span>, <span class="fl">0.038</span>, <span class="fl">0.38</span><span class="op">*</span><span class="fl">0.55</span>], [<span class="dv">1</span>, <span class="fl">1.06</span>, <span class="fl">.56</span>, <span class="fl">0.5</span>, <span class="dv">0</span>])</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0.38 s^2 + 0.038 s + 0.209
+---------------------------------
+s^4 + 1.06 s^3 + 0.56 s^2 + 0.5 s
+</code></pre>
+</div>
+</div>
+<p>We can calculate the sensitivity function <span class="math display">\[
+\frac{1}{1+G}
+\]</span></p>
+<p>as:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sensitivity <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">53</span><span class="op">/</span><span class="dv">50</span>, <span class="dv">14</span><span class="op">/</span><span class="dv">25</span>, <span class="fl">0.5</span>], [<span class="dv">1</span>, <span class="fl">1.0595</span>, <span class="fl">0.94</span>, <span class="fl">0.5378</span>, <span class="fl">0.2090</span>])   </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sensitivity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       s^3 + 1.06 s^2 + 0.56 s + 0.5
+--------------------------------------------
+s^4 + 1.06 s^3 + 0.94 s^2 + 0.5378 s + 0.209
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>) <span class="co"># 0 dB line</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="fl">0.71</span>],[<span class="dv">14</span>],<span class="st">'r.'</span>, markersize<span class="op">=</span><span class="dv">15</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">0.8</span>, <span class="dv">13</span>, <span class="st">'Max sensitivity'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Text(0.8, 13, 'Max sensitivity')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The Max Sensitivity Peak is approximately <span class="math inline">\(13\)</span> dB</li>
+<li>If we convert it back out of dB: 10^(13/20) = 4.5</li>
+<li>This is a very high value - Typical sensitivity peak should stay between 1.3 and 2</li>
+</ul>
+<p>Can we improve?</p>
+<ul>
+<li>Half the gain</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(<span class="fl">0.5</span><span class="op">*</span>G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The gain plot in the open loop dropped by 2 or 6 dB</li>
+</ul>
+<p>We can calculate the sensitivity function <span class="math display">\[
+\frac{1}{1+0.5*G}
+\]</span></p>
+<p>Note that we cannot simply multiply the previous sensitivity by 0.5. It matters where the gain is!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>new_sensitivity <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="fl">1.06</span>, <span class="fl">0.56</span>, <span class="fl">0.5</span>, <span class="dv">0</span>], </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                             [<span class="dv">1</span>, <span class="fl">1.05995</span>, <span class="fl">0.749986425</span>, <span class="fl">0.518980167284</span>, <span class="fl">0.104492961264</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span> <span class="co"># omega_limits=[0.5, 1]</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(new_sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span> <span class="co"># 0 dB line</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.plot([0.71],[14],'r.', markersize=15, linewidth=3)</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.text(0.8, 13, 'Max sensitivity');</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>We substantially improved the sensitivity</li>
+<li>Peak now less than 5 dB</li>
+<li>Which corresponds to 1.7</li>
+</ul>
+<p>What did we do to our system? Let’s now analyse the step response</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>t, yout <span class="op">=</span> control.step_response(G2<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>G2))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>t_new, yout_new <span class="op">=</span> control.step_response(<span class="fl">0.5</span><span class="op">*</span>G2<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="fl">0.5</span><span class="op">*</span>G2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>plt.plot(t, yout, <span class="st">'b'</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t_new, yout_new, <span class="st">'r'</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="dv">50</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Time (seconds)'</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Amplitude'</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>plt.grid()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>We have slowed down the response of the system. The rise time is now much slower.</li>
+<li>Reducing the gain across the frequency spectrum, affects low frequencies, which determine our rise time and our ability to follow slow moving reference signals</li>
+</ul>
+<p>Can we do better?</p>
+<p>Let’s apply a more complex controller (more to come later):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>notch <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">0.7</span><span class="op">**</span><span class="dv">2</span>], [<span class="dv">1</span>, <span class="fl">0.7</span><span class="op">/</span><span class="dv">2</span>, <span class="fl">0.7</span><span class="op">**</span><span class="dv">2</span>])</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># notch = (s**2 + 0.7**2)/(s**2 + 0.7/2*s + 0.7**2)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#formally this is a notch filter centered at 0.7 rad/s with a Q = 2. </span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This is pretty steep, so it should only affect a narrow frequency range</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(notch)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let’s see the bode plot of the new system</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(<span class="fl">0.5</span><span class="op">*</span>G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(notch<span class="op">*</span>G2, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>As expected only frequencies around 0.7 rad/s are affected.</li>
+</ul>
+<p>We can calculate the new sensitivity function:</p>
+<p><span class="math display">\[
+S = \frac{1}{1+notch \cdot G}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>notch_sensitivity <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="fl">1.41</span>, <span class="fl">1.421</span>, <span class="fl">1.2154</span>, <span class="fl">0.4494</span>, <span class="fl">0.245</span>, <span class="dv">0</span>], </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                               [<span class="dv">1</span>, <span class="fl">1.40979</span>, <span class="fl">1.801045539</span>, <span class="fl">1.253306815398</span>, <span class="fl">0.8446772388437</span>, <span class="fl">0.263622089835</span>, <span class="fl">0.10243055628</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>control.bode_plot(sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span> <span class="co"># omega_limits=[0.5, 1]</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>control.bode_plot(new_sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>control.bode_plot(notch_sensitivity, dB<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>ax1,ax2 <span class="op">=</span> plt.gcf().axes     <span class="co"># get subplot axes</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>plt.sca(ax1)                 <span class="co"># magnitude plot</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>plt.plot(plt.xlim(),[<span class="dv">0</span>, <span class="dv">0</span>],<span class="st">'b--'</span>)<span class="op">;</span> <span class="co"># 0 dB line</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li>The sensitivity peak has been moved to lower frequencies, but it still around <span class="math inline">\(5\)</span> dB</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>t_notch, yout_notch <span class="op">=</span> control.step_response(notch<span class="op">*</span>G2<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>notch<span class="op">*</span>G2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>plt.plot(t, yout, <span class="st">'b'</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>plt.plot(t_new, yout_new, <span class="st">'r'</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>plt.plot(t_notch, yout_notch, <span class="st">'g'</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="dv">50</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Time (seconds)'</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Amplitude'</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>plt.grid()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<ul>
+<li><p>The step response rise time is now closer to our original rise time</p></li>
+<li><p>The notch filter is not affecting low frequencies as much as the simple constant gain did</p></li>
+<li><p>Much more methods can be used and we will investigate other methods in the future</p></li>
+<li><p>Depends on performance requirements</p></li>
+<li><p>But also on the complexity of the control that we can have</p></li>
+<li><p>Regardless of the method however, taking into account the sensitivity is important!</p></li>
+</ul>
+</section>
+<section id="considerations-on-stability-margins-relative-stability-and-nyquist-plots" class="level3">
+<h3 class="anchored" data-anchor-id="considerations-on-stability-margins-relative-stability-and-nyquist-plots">Considerations on stability margins, relative stability and Nyquist plots</h3>
+<p>Let’s consider two systems:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>G1 <span class="op">=</span> control.tf([<span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">5</span>, <span class="dv">4</span>])</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> control.tf([<span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">4</span>])</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G1:'</span>, G1), <span class="bu">print</span>(<span class="st">'G2:'</span>, G2)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G1: 
+       1
+----------------
+30 s^2 + 5 s + 4
+
+G2: 
+       1
+---------------
+2 s^2 + 5 s + 4
+</code></pre>
+</div>
+</div>
+<p>Poles of the system <code>G1</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>np.roots([<span class="dv">30</span>, <span class="dv">5</span>, <span class="dv">4</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([-0.08333333+0.35551215j, -0.08333333-0.35551215j])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>control.pzmap(G1, plot<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Poles of the system <code>G2</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>np.roots([<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">4</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([-1.25+0.66143783j, -1.25-0.66143783j])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>control.pzmap(G2, plot<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-32-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>To confirm, let’s evaluate the step response of the two systems:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step response</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>t1, y1 <span class="op">=</span> control.step_response(G1)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>t2, y2 <span class="op">=</span> control.step_response(G2)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].plot(t1, y1)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'step response for G1'</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].plot(t2, y2)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'step response for G2'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-33-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="lets-now-look-at-the-nyquist-plots" class="level4">
+<h4 class="anchored" data-anchor-id="lets-now-look-at-the-nyquist-plots">Let’s now look at the Nyquist plots</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'G1:'</span>, G1), <span class="bu">print</span>(<span class="st">'G2:'</span>, G2)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>G1: 
+       1
+----------------
+30 s^2 + 5 s + 4
+
+G2: 
+       1
+---------------
+2 s^2 + 5 s + 4
+</code></pre>
+</div>
+</div>
+<ul>
+<li><ol type="1">
+<li><span class="math inline">\(|G|\)</span> and <span class="math inline">\(\angle G\)</span> at <span class="math inline">\(\omega=0\)</span> (start of the plot)</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li><span class="math inline">\(|G|\)</span> and <span class="math inline">\(\angle G\)</span> at <span class="math inline">\(\omega=\infty\)</span> (mid point of the plot)</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>Intersections with the imaginary axis</li>
+</ol></li>
+<li><ol start="4" type="1">
+<li>Intersections with the real axis</li>
+</ol></li>
+</ul>
+<hr>
+
+
+<img src="img/nyquist-relative-stability.png" alt="nyquist-relative-stability.png" style="width: 700px;">
+
+
+<p>For the system <code>G1</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>control.nyquist_plot(G1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-35-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>control.nyquist_plot(G2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-36-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> control</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>])</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    s + 1
+-------------
+s^2 + 2 s + 2
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>control.nyquist(G_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-38-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> control.tf([<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(G_s)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>control.nyquist(G_s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    s + 1
+-------------
+s^2 + 2 s + 1
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="12_Stability_Margins_files/figure-html/cell-39-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Part 1 Recap</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Part 1 Recap">
+<meta property="og:description" content="Please fill up the questionnaire at: https://esami.unipi.it">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Part 1 Recap">
+<meta name="twitter:description" content="Please fill up the questionnaire at: https://esami.unipi.it">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Part 1 Recap</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link active">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#jupyter-and-python" id="toc-jupyter-and-python" class="nav-link active" data-scroll-target="#jupyter-and-python">Jupyter and Python</a>
+  <ul class="collapse">
+  <li><a href="#installing-anaconda-and-dependencies-to-run-the-notebooks" id="toc-installing-anaconda-and-dependencies-to-run-the-notebooks" class="nav-link" data-scroll-target="#installing-anaconda-and-dependencies-to-run-the-notebooks">Installing Anaconda and dependencies to run the notebooks</a></li>
+  <li><a href="#going-back-to-work-opening-your-jupyter-notebooks" id="toc-going-back-to-work-opening-your-jupyter-notebooks" class="nav-link" data-scroll-target="#going-back-to-work-opening-your-jupyter-notebooks">Going back to work (opening your Jupyter notebooks)</a></li>
+  </ul></li>
+  <li><a href="#the-control-problem" id="toc-the-control-problem" class="nav-link" data-scroll-target="#the-control-problem">The Control Problem</a></li>
+  <li><a href="#lti-systems" id="toc-lti-systems" class="nav-link" data-scroll-target="#lti-systems">LTI systems</a></li>
+  <li><a href="#transfer-functions" id="toc-transfer-functions" class="nav-link" data-scroll-target="#transfer-functions">Transfer Functions</a></li>
+  <li><a href="#stability-and-other-properties" id="toc-stability-and-other-properties" class="nav-link" data-scroll-target="#stability-and-other-properties">Stability and other properties</a></li>
+  <li><a href="#block-diagrams" id="toc-block-diagrams" class="nav-link" data-scroll-target="#block-diagrams">Block diagrams</a></li>
+  <li><a href="#system-response" id="toc-system-response" class="nav-link" data-scroll-target="#system-response">System Response</a></li>
+  <li><a href="#frequency-response" id="toc-frequency-response" class="nav-link" data-scroll-target="#frequency-response">Frequency response</a></li>
+  <li><a href="#bode-plots" id="toc-bode-plots" class="nav-link" data-scroll-target="#bode-plots">Bode plots</a></li>
+  <li><a href="#final-value-theorem-and-steady-state-error" id="toc-final-value-theorem-and-steady-state-error" class="nav-link" data-scroll-target="#final-value-theorem-and-steady-state-error">Final value theorem and steady state error</a></li>
+  <li><a href="#diving-deeper-into-the-feedback-loop" id="toc-diving-deeper-into-the-feedback-loop" class="nav-link" data-scroll-target="#diving-deeper-into-the-feedback-loop">Diving deeper into the feedback loop</a></li>
+  <li><a href="#routh-hurwitz-criterion" id="toc-routh-hurwitz-criterion" class="nav-link" data-scroll-target="#routh-hurwitz-criterion">Routh-Hurwitz Criterion</a></li>
+  <li><a href="#coming-up-next" id="toc-coming-up-next" class="nav-link" data-scroll-target="#coming-up-next">Coming up next</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Part 1 Recap</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>Please fill up the questionnaire at: https://esami.unipi.it</p>
+<hr>
+<section id="jupyter-and-python" class="level2">
+<h2 class="anchored" data-anchor-id="jupyter-and-python">Jupyter and Python</h2>
+<section id="installing-anaconda-and-dependencies-to-run-the-notebooks" class="level3">
+<h3 class="anchored" data-anchor-id="installing-anaconda-and-dependencies-to-run-the-notebooks">Installing Anaconda and dependencies to run the notebooks</h3>
+<ul>
+<li><p>Install Anaconda: <a href="https://www.anaconda.com/products/individual">Anaconda Download Page</a></p></li>
+<li><p>Refer to the Anaconda documentation for more information <a href="https://docs.anaconda.com/anaconda/user-guide/getting-started/">here</a></p></li>
+<li><p>Open a terminal window:</p>
+<ul>
+<li>Windows: From the Start menu, search for and open “Anaconda Prompt”</li>
+<li>MacOS/Linux: Click the terminal icon.</li>
+</ul></li>
+<li><p>Once in a terminal,</p>
+<ul>
+<li>create an environment: <code>conda create --name env-automatic-control python=3.9</code></li>
+<li>activate it: <code>conda activate env-automatic-control</code></li>
+</ul></li>
+<li><p>Install everything that is needed</p></li>
+<li><p>Jupyter notebook:</p>
+<p><code>conda install -c conda-forge notebook</code></p></li>
+<li><p>Standard engineering libraries:</p>
+<p><code>python -m pip install matplotlib numpy pandas</code></p>
+<p><code>conda install numpy scipy matplotlib</code> # if not yet installed</p>
+<p><code>conda install -c conda-forge control</code></p>
+<p><code>conda install -c anaconda sympy</code></p></li>
+</ul>
+<p>You are set up!</p>
+</section>
+<section id="going-back-to-work-opening-your-jupyter-notebooks" class="level3">
+<h3 class="anchored" data-anchor-id="going-back-to-work-opening-your-jupyter-notebooks">Going back to work (opening your Jupyter notebooks)</h3>
+<ul>
+<li><p>Open a terminal window:</p>
+<ul>
+<li>Windows: From the Start menu, search for and open “Anaconda Prompt”</li>
+<li>MacOS/Linux: Click the terminal icon.</li>
+</ul></li>
+<li><p>Move to yur project folder (e.g.&nbsp;<code>cd /Users/&lt;USERNAME&gt;/MyProject/</code>)<br>
+(if you need to find out how to find your folder path in Windows read below: “Note: To find out where is your folder in Windows”)</p></li>
+<li><p>Activate your conda environment: <code>conda activate env-automatic-control</code></p></li>
+<li><p>Run: <code>jupyter notebook</code></p></li>
+</ul>
+<p>A new tab in your browser should open up automatically showing the jupyter home folder (your current folder). If it does not open, open your favourite brower and type: <code>localhost:8888</code> in the browser address bar. Sometime jupyter requires a token - this is automatically created when jupyter is started. Look back to your terminal window right after the command <code>jupyter notebook</code> there should be a line similar to:</p>
+<pre><code>To access the notebook, open this file in a browser:
+    file:///Users/&lt;YOUR_USERNAME&gt;/Library/Jupyter/runtime/nbserver-73848-open.html
+Or copy and paste one of these URLs:
+    http://localhost:8888/?token=66781622f3ed474ccf1f0f61e5708b035acfcf4e41cc7c8a
+ or http://127.0.0.1:8888/?token=66781622f3ed474ccf1f0f61e5708b035acfcf4e41cc7c8a</code></pre>
+<p>Copy and paste one of the last two addresses in your browser to start your jupyter session.</p>
+<p>You are ready to start coding!</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Note: To find out where is your folder in Windows:</strong> - Open Windows Explorer and go inside the folder you need - Right click on the address path and right-click - Select “copy address as text” (see picture below) - Go back to your Anaconda prompt and paste it (remember to type <code>cd</code> first!)</td>
+</tr>
+<tr class="even">
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="references" class="level4">
+<h4 class="anchored" data-anchor-id="references">References</h4>
+<ul>
+<li><a href="https://jupyter.org/install">Installing Jupyter Software</a></li>
+<li><a href="https://python-control.readthedocs.io/en/0.9.0/intro.html#installation">Python Control Library</a></li>
+</ul>
+<hr>
+</section>
+</section>
+</section>
+<section id="the-control-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-control-problem">The Control Problem</h2>
+<ul>
+<li>Systems and control systems</li>
+<li>Three problems:
+<ul>
+<li>system identification problem</li>
+<li>simulation problem</li>
+<li>control Problem</li>
+</ul></li>
+<li>Why do we need feedback control</li>
+</ul>
+</section>
+<section id="lti-systems" class="level2">
+<h2 class="anchored" data-anchor-id="lti-systems">LTI systems</h2>
+<ul>
+<li><p>Homogeneity</p></li>
+<li><p>Superposition (Additivity)</p></li>
+<li><p>Time Invariance</p></li>
+<li><p>Impulse Response &gt; LTI systems can be characterised by their response to an impulse function (the output of the system when presented with a brief input signal)</p></li>
+</ul>
+</section>
+<section id="transfer-functions" class="level2">
+<h2 class="anchored" data-anchor-id="transfer-functions">Transfer Functions</h2>
+<ul>
+<li>Laplace domain representation of a system</li>
+</ul>
+<blockquote class="blockquote">
+<p>Definition: Transfer function is the Laplace transform of the impulse response of a linear, time-invariant system with a single input and single output when you set the initial conditions to zero.</p>
+</blockquote>
+<ul>
+<li>State space vs Transfer functions</li>
+<li>Laplace Transform</li>
+</ul>
+<p>The Laplace transform is important because it is a tool for solving differential equations: <em>it transforms linear differential equations into algebraic equations, and convolution into multiplication!</em></p>
+<ul>
+<li>Derivatives and integrals become algebric operations</li>
+</ul>
+<p>From a system perspective, the Transfer function expresses the relation between the Laplace Transform of the input and that of the output:</p>
+<p><span class="math display">\[ Y(s)=\mathbf{c}^T(s\mathbf{I}-\mathbf{A})^{-1} \mathbf{b} U(s) \]</span></p>
+<ul>
+<li>Properties of the Laplace Transform (relationships between time and frequency)
+<ul>
+<li><span class="math inline">\(\frac{df}{dt}(t) \rightarrow sF(s)\)</span></li>
+<li><span class="math inline">\(af(t)\)</span> + <span class="math inline">\(bg(t) \rightarrow aF(s)+bG(s)\)</span></li>
+</ul></li>
+<li>Laplace transforms of known functions:
+<ul>
+<li><span class="math inline">\(\delta(t) \rightarrow 1\)</span></li>
+<li><span class="math inline">\(1(t) \rightarrow \frac{1}{s}\)</span></li>
+<li><span class="math inline">\(e^{-at} \rightarrow \frac{1}{s+a}\)</span><br>
+</li>
+<li>…</li>
+</ul></li>
+</ul>
+</section>
+<section id="stability-and-other-properties" class="level2">
+<h2 class="anchored" data-anchor-id="stability-and-other-properties">Stability and other properties</h2>
+<ul>
+<li><p>System <span class="math inline">\(G(s)\)</span> is asymptotically stable if all its poles have <span class="math inline">\(Re&lt;0\)</span></p></li>
+<li><p>System <span class="math inline">\(G(s)\)</span> is stable if all its poles have G(s) <span class="math inline">\(Re \le 0\)</span> and if those with <span class="math inline">\(Re=0\)</span> have multiplicity one.</p></li>
+<li><p>System <span class="math inline">\(G(s)\)</span> is unstable if it has at least one pole with <span class="math inline">\(Re&gt;0\)</span> or with <span class="math inline">\(Re=0\)</span> and multiplicity <span class="math inline">\(\ge 2\)</span>.</p></li>
+<li><p>BIBO stability:</p>
+<ul>
+<li>A system is BIBO stable (Bounded Input, Bounded Output) if for each limited input, there is a limited output</li>
+<li>For linear systems: BIBO stability if and only if poles of the transfer functions have <span class="math inline">\(Re&lt;0\)</span></li>
+</ul></li>
+<li><p>Stability of a system in a state space representation</p></li>
+<li><p>Controllability (Reachability)</p></li>
+<li><p>Observability</p></li>
+</ul>
+</section>
+<section id="block-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="block-diagrams">Block diagrams</h2>
+<ul>
+<li>Standard representation of interconnected systems and subsystems using Transfer Functions</li>
+<li>Block diagram algebra (serie, parallel, feedback) and equivalent block diagrams</li>
+<li>Zero-poles cancellations</li>
+<li>Impact on stability and other properties</li>
+</ul>
+</section>
+<section id="system-response" class="level2">
+<h2 class="anchored" data-anchor-id="system-response">System Response</h2>
+<ul>
+<li>Dominant pole approximation</li>
+<li>First-order and second-order systems
+<ul>
+<li><p>First-order systems: step response and performance</p></li>
+<li><p>time constant (<span class="math inline">\(\tau\)</span>) - Characterises completely the response of a first order system</p></li>
+<li><p>settling time: <span class="math inline">\(t_s = -\tau ln(0.05)\)</span> (time to get to 95% of steady state)</p></li>
+<li><p>Second order systems: step response and performance</p></li>
+<li><p>More parameters to define performance: max overshoot, time of max overshoot, settling time, oscillation period</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="frequency-response" class="level2">
+<h2 class="anchored" data-anchor-id="frequency-response">Frequency response</h2>
+<ul>
+<li>Assuming that the system is asymptotically stable,</li>
+<li>If we input a sinusoid <span class="math inline">\(Asin(\omega t)\)</span></li>
+<li>The output of the system converges $y(t)=A|G(j)|sin(t + G(j) ) $</li>
+<li><span class="math inline">\(G(j\omega)\)</span> is the frequency response</li>
+<li>If we know magnitude and phase of <span class="math inline">\(G(j\omega)\)</span> (for varying <span class="math inline">\(\omega\)</span>) then we know how the system behaves for all sinusoidal inputs with different driving frequencies.</li>
+</ul>
+</section>
+<section id="bode-plots" class="level2">
+<h2 class="anchored" data-anchor-id="bode-plots">Bode plots</h2>
+<ul>
+<li>Frequency Response and Bode Plots
+<ul>
+<li>analysing the gain and the phase shift across the full frequency spectrum</li>
+<li>gain diagram and phase diagram</li>
+</ul></li>
+<li>Leverages the properties of transfer functions and of logarithms:
+<ul>
+<li>The transfer function of linear systems are polynomial fractions in <span class="math inline">\(s\)</span></li>
+<li>It is always possible to factor polynomials in terms of their roots (zeros and poles)</li>
+<li>Each polynomial is the product of first-order or second-order (potentially with multiplicity <span class="math inline">\(&gt;\)</span> 1)</li>
+<li>To build the frequency response of the system is useful to have simple rules to represent each term</li>
+<li>The logarithm of a product is equal to a sum of logarithms</li>
+<li>remember to convert gain to dB: <span class="math inline">\(|G(j\omega)|_{dB}=20log_{10}|G(j\omega)|\)</span></li>
+</ul></li>
+<li>Sketching Bode Plots
+<ul>
+<li>Given a transfer function <span class="math inline">\(G(s)\)</span> we can obtain the (steady state) frequency response setting <span class="math inline">\(s=j\omega \rightarrow G(j\omega)\)</span></li>
+<li>$G(j) = + j $</li>
+<li>Gain: <span class="math inline">\(\sqrt{\text{real}^2 + \text{img}^2} = |G(j\omega)|\)</span></li>
+<li>Phase: <span class="math inline">\(atan2(\text{img}, \text{real}) = arg(G(j\omega)) = \angle G(j\omega)\)</span></li>
+<li>Our building blocks:
+<ul>
+<li>constant gain</li>
+<li>integrator</li>
+<li>simple pole</li>
+<li>complex poles</li>
+<li>specular behaviour for the zeros (properties of the logarithms)</li>
+<li>Transform the trasnfer function to the Bode form before drawing the Bode plots!</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="final-value-theorem-and-steady-state-error" class="level2">
+<h2 class="anchored" data-anchor-id="final-value-theorem-and-steady-state-error">Final value theorem and steady state error</h2>
+<ul>
+<li>Meaning of final value</li>
+<li>Theorem: for an asymptotically stable LTI system: $ <em>{t } x(t) = </em>{s } sX(s)$</li>
+<li>System type: number of poles at the origin</li>
+<li>Analysis of the final value for different system types and different inputs</li>
+<li>For a feedback system: the final value of the error is a much better indicator of the performance of our controller</li>
+</ul>
+</section>
+<section id="diving-deeper-into-the-feedback-loop" class="level2">
+<h2 class="anchored" data-anchor-id="diving-deeper-into-the-feedback-loop">Diving deeper into the feedback loop</h2>
+<ul>
+<li>Included load disturbances and measurement noise in the feedback loop</li>
+<li>Sensitivity function (feedback and disturbances / low frequency specifications)</li>
+<li>Complementary sensitivity function (feedback and measurements / high frequency specifications)</li>
+<li>Design requirements on the loop gain function <span class="math inline">\(|R(s)G(s)|\)</span></li>
+</ul>
+</section>
+<section id="routh-hurwitz-criterion" class="level2">
+<h2 class="anchored" data-anchor-id="routh-hurwitz-criterion">Routh-Hurwitz Criterion</h2>
+<ul>
+<li>Necessary and sufficient condition to analyse the stability of the systems without solving for the roots explicitely</li>
+<li>Usage can be extended to beyond stability
+<ul>
+<li>Gain margins</li>
+<li>Deal with requirement on the speed of the response (time to half)</li>
+</ul></li>
+</ul>
+</section>
+<section id="coming-up-next" class="level2">
+<h2 class="anchored" data-anchor-id="coming-up-next">Coming up next</h2>
+<ul>
+<li>Polar plots and the Nyquist plot</li>
+<li>Stability margins</li>
+<li>Root locus</li>
+<li>PID controllers</li>
+<li>Lead-lag/lad-lead compensators</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

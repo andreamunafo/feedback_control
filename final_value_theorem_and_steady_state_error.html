@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>feedback_control - Final Value Theorem and Steady State Error</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="feedback_control - Final Value Theorem and Steady State Error">
+<meta property="og:description" content="Before we can talk about control systems there is one more concept that we need to understand">
+<meta property="og:site-name" content="feedback_control">
+<meta name="twitter:title" content="feedback_control - Final Value Theorem and Steady State Error">
+<meta name="twitter:description" content="Before we can talk about control systems there is one more concept that we need to understand">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">feedback_control</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Final Value Theorem and Steady State Error</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Feedback Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus.html" class="sidebar-item-text sidebar-link">Syllabus - Principles of Automatic Control / Fondamenti di Automatica 2023</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started_with_python_and_jupyter_notebook.html" class="sidebar-item-text sidebar-link">Getting Started with Python and Jupyter Notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_control_theory.html" class="sidebar-item-text sidebar-link">Introduction to Control Theory: The Control Problem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transfer_functions.html" class="sidebar-item-text sidebar-link">Transfer Functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./block_diagrams.html" class="sidebar-item-text sidebar-link">Block Diagrams</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./system_response.html" class="sidebar-item-text sidebar-link">System Response</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro_to_freq_response_and_bode_plots.html" class="sidebar-item-text sidebar-link">Introduction to Frequency Response Methods: Bode Plots</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./final_value_theorem_and_steady_state_error.html" class="sidebar-item-text sidebar-link active">Final Value Theorem and Steady State Error</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./main_types_of_loops_and_transfer_functions.html" class="sidebar-item-text sidebar-link">Main types of loops and transfer functions</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./routh_hurwitz_criterion.html" class="sidebar-item-text sidebar-link">Routh-Hurwitz Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_1_recap.html" class="sidebar-item-text sidebar-link">Part 1 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nyquist_stability_criterion.html" class="sidebar-item-text sidebar-link">Nyquist Stability Criterion</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stability_margins.html" class="sidebar-item-text sidebar-link">Stability Margins</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loop-shaping.html" class="sidebar-item-text sidebar-link">Controller design: Loop analysis and shaping</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./root_locus.html" class="sidebar-item-text sidebar-link">Root Locus</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lead_lag_compensators.html" class="sidebar-item-text sidebar-link">Phase Lead/Phase Lag Compensators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pid_control.html" class="sidebar-item-text sidebar-link">PID Control</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part_2_recap.html" class="sidebar-item-text sidebar-link">Part 2 Recap</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./murray_hopper.html" class="sidebar-item-text sidebar-link">Grace Murray Hopper (1906-1992): A legacy of innovation and service</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./a_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./b_assignment.html" class="sidebar-item-text sidebar-link">Assignment Part 2</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">workspace</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/simple_pendulum.html" class="sidebar-item-text sidebar-link">Simulating a simple pendulum</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/dc_motor.html" class="sidebar-item-text sidebar-link">DC Motor</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workspace/workspace.html" class="sidebar-item-text sidebar-link">Workspace</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#final-value-theorem-and-steady-state-error" id="toc-final-value-theorem-and-steady-state-error" class="nav-link active" data-scroll-target="#final-value-theorem-and-steady-state-error">Final Value Theorem and Steady State Error</a></li>
+  <li><a href="#what-does-it-mean-to-have-a-final-value" id="toc-what-does-it-mean-to-have-a-final-value" class="nav-link" data-scroll-target="#what-does-it-mean-to-have-a-final-value">What does it mean to have a final value?</a></li>
+  <li><a href="#how-do-we-calculate-the-final-value" id="toc-how-do-we-calculate-the-final-value" class="nav-link" data-scroll-target="#how-do-we-calculate-the-final-value">How do we calculate the final value?</a></li>
+  <li><a href="#final-value-theorem" id="toc-final-value-theorem" class="nav-link" data-scroll-target="#final-value-theorem">Final Value Theorem</a>
+  <ul class="collapse">
+  <li><a href="#recap" id="toc-recap" class="nav-link" data-scroll-target="#recap">Recap</a></li>
+  </ul></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#steady-state-error" id="toc-steady-state-error" class="nav-link" data-scroll-target="#steady-state-error">Steady state error</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/andreamunafo/feedback_control/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Final Value Theorem and Steady State Error</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<section id="final-value-theorem-and-steady-state-error" class="level2">
+<h2 class="anchored" data-anchor-id="final-value-theorem-and-steady-state-error">Final Value Theorem and Steady State Error</h2>
+<p>Before we can talk about control systems there is one more concept that we need to understand</p>
+</section>
+<section id="what-does-it-mean-to-have-a-final-value" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-it-mean-to-have-a-final-value">What does it mean to have a final value?</h2>
+
+
+<img src="img/55.final_values_1.png" alt="55.final_values.png" style="width: 750px;">
+
+
+<p>Intuitively, if the output converges to a single value then the final value exists, if instead the output oscillates indefinitely or blows up to infinity then talking abut the final value is meaningless.</p>
+</section>
+<section id="how-do-we-calculate-the-final-value" class="level2">
+<h2 class="anchored" data-anchor-id="how-do-we-calculate-the-final-value">How do we calculate the final value?</h2>
+<ul>
+<li><p><strong>Time domain</strong></p>
+<ul>
+<li>Final Value = <span class="math inline">\(\lim_{t\rightarrow\infty} f(t)\)</span></li>
+</ul>
+<p>This means, for example that given a differential equation: - <span class="math inline">\(\large \ddot{x}(t) + 4\dot{x}(t) + 2x(t) + \delta(0)\)</span> - We can solve it and calculate <span class="math inline">\(\large \lim\limits_{t\rightarrow\infty} x(t)\)</span>.</p></li>
+<li><p><strong>S-Domain</strong></p>
+<ul>
+<li>We can work directly with the transfer function: <span class="math inline">\(\large F(s) = \mathcal{L}(f(t))\)</span> (s-domain representation of differential equations)</li>
+<li>Importantly, working in the S-domain simplifies the math: differential equations in the time domain become algebraic equations in the s-domain:
+<ul>
+<li><span class="math inline">\(\large s^2X(s)+3sX(s) + 2X(s) = 1\)</span></li>
+</ul></li>
+<li>We would like to have a way to calculate the final time value of a function using the s-domain representation of that function</li>
+<li>This is where the <strong>Final Value Theorem</strong> comes into play.</li>
+</ul></li>
+</ul>
+</section>
+<section id="final-value-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="final-value-theorem">Final Value Theorem</h2>
+<p>If and only if the linear time invariant system producing <span class="math inline">\(x(t)\)</span> is stable then</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(\large \lim\limits_{t \rightarrow \infty} x(t) = \lim\limits_{s \rightarrow 0} sX(s)\)</span></p>
+</blockquote>
+<ul>
+<li><p>We can use the Laplace transform directly</p></li>
+<li><p>Most of the time we already have the Laplace transform</p></li>
+<li><p>The Final Value Theorem does not work on every single transfer function</p></li>
+</ul>
+<p>We can differentiate four cases in the s-plane: - Right Half Plane (Real &gt; 0) - Imaginary axis (Real = 0) - Left Half Plane (Real &lt; 0) - The Origin</p>
+<p>And understand what it means to have a pole in each one of these regions.</p>
+<ul>
+<li><p><strong>Right Half Plane (Real &gt; 0):</strong> In this case, the system is unstable: The real component is positive, and <span class="math inline">\(e^{+st}\)</span> goes to infinity.</p>
+<ul>
+<li>The final value of a system with a pole in the RHP does not exist</li>
+</ul>
+<p>For ex. <span class="math display">\[G(s) = \frac{1}{s-2}\]</span> FVT: <span class="math display">\[\lim\limits_{s \rightarrow 0} \frac{s}{s-2}=0\]</span></p>
+<ul>
+<li>The FVT produces the wrong value if you use it.</li>
+</ul></li>
+<li><p><strong>Imaginary axis (Real = 0)</strong></p>
+<ul>
+<li>We know that the system will have oscillatory modes (<span class="math inline">\(e^{(jwt)}\)</span> produces sin/cos)</li>
+<li>The final value is undefined.</li>
+</ul>
+<p>For ex. <span class="math display">\[G(s) = \frac{1}{s^2+4}\]</span> FVT: <span class="math display">\[\lim\limits_{s \rightarrow 0} \frac{s}{s^2+4}=0\]</span></p>
+<ul>
+<li>The FVT produces the wrong value if you use it.</li>
+</ul></li>
+<li><p><strong>Left Half Plane (Real &lt; 0):</strong> In this case, the impulse response of the system is stable and eventually will go to zero.</p>
+<p>For ex. <span class="math display">\[G(s) = \frac{1}{s+2}\]</span> FVT: <span class="math display">\[\lim\limits_{s \rightarrow 0} \frac{s}{s+2}=0\]</span></p>
+<ul>
+<li>The FVT produces the correct value. Note that the value will be zero for every transfer function with poles only in the left half plane.</li>
+</ul></li>
+<li><p><strong>The Origin:</strong> In this case we are looking at a system like the integrator and the impulse response of an integrator is the integral of the impulse, which is 1.</p>
+<p>For ex. <span class="math display">\[G(s) = \frac{1}{s}\]</span> FVT: <span class="math display">\[\lim\limits_{s \rightarrow 0} \frac{s}{s}=1\]</span></p>
+<ul>
+<li>The FVT produces the correct value.</li>
+</ul></li>
+</ul>
+<p><strong>The number of poles at the origin is called <em>System Type</em></strong></p>
+<ul>
+<li>Type 0:
+<ul>
+<li>no poles at the origin</li>
+<li>FV = 0 (if all poles are in the LHP)</li>
+</ul></li>
+<li>Type 1:
+<ul>
+<li>one pole at the origin</li>
+<li>the final value is a real number (if all the other poles are in the LHP)</li>
+</ul></li>
+<li>Type 2:
+<ul>
+<li>two poles at the origin</li>
+<li>the final value is <span class="math inline">\(\large \inf\)</span> (the integral of a step is a ramp)</li>
+</ul></li>
+<li>Type 3 and above:
+<ul>
+<li>three or more poles at the origin</li>
+<li>the final value is <span class="math inline">\(\large \inf\)</span> (we are now integrating a ramp, etc.)</li>
+</ul></li>
+</ul>
+
+
+<img src="img/56.types_response.png" alt="56.types_response.png" style="width: 750px;">
+
+
+<section id="recap" class="level3">
+<h3 class="anchored" data-anchor-id="recap">Recap</h3>
+<ul>
+<li>We can use the Final Value Theorem if all poles are in the Left Half Plane or at the origin (<strong>aymptotically stable system</strong>).</li>
+<li>If there is even a single pole with <span class="math inline">\(\Re &gt; 0\)</span>, or a pair of complex conjugated poles (on the imaginary axis) then we cannot use the FVT.</li>
+</ul>
+</section>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<p>Let’s consider:</p>
+<ul>
+<li><p><span class="math inline">\(\large G(s)=\frac{1}{s^2+s}\)</span></p></li>
+<li><p><span class="math inline">\(\large u(t) = \delta(t) \rightarrow U(s)=1\)</span></p></li>
+<li><p>This is type 1 system:</p>
+<ul>
+<li>$G(s)= = $</li>
+</ul>
+
+
+<p><img src="img/57.example_1_poles.png" alt="57.example_1_poles" style="width: 250px;"></p>
+
+</li>
+</ul>
+<p>We can apply the Final Value Theorem:</p>
+<p><span class="math display">\[ G(0) = \lim\limits_{s \rightarrow 0} s \frac{1}{s}\frac{1}{s+1} = 1\]</span></p>
+<p>And in fact if we plot the impulse response: - <span class="math inline">\(\large y(t) = 1-e^{-t}\)</span></p>
+<p>And if we plot it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">20</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>y_t <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>time)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>plt.plot(time, y_t, color<span class="op">=</span><span class="st">'red'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="07_Final_value_theorem_and_steady_state_error_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p>Let’s now consider the same system, but with a different input: - <span class="math inline">\(\large u(t) = 1(t)\)</span> - a step input - <span class="math inline">\(\large U(s) = \frac{1}{s}\)</span></p>
+<p>When we do this, we are adding another pole at the origin:</p>
+
+
+<img src="img/58.example-2-integrator.png" alt="58.example-2-integrator" style="width: 350px;">
+
+
+<ul>
+<li>This is now a type 2 system</li>
+<li>We can apply the Final Value Theorem:</li>
+</ul>
+<p><span class="math display">\[ G(0) = \lim\limits_{s \rightarrow 0} s \frac{1}{s}\frac{1}{s^2+s} = \inf\]</span></p>
+</section>
+<section id="steady-state-error" class="level2">
+<h2 class="anchored" data-anchor-id="steady-state-error">Steady state error</h2>
+<p>Let’s know see what happens when we apply these concepts to a feedback system:</p>
+
+
+<img src="img/59.feedback-error.png" alt="59.feedback-error" style="width: 500px;">
+
+
+<ul>
+<li>We could apply the Final Value Theorem to find the final value of <span class="math inline">\(Y(s)\)</span>
+<ul>
+<li>Note that we need to reduce the system into a single transfer function first.</li>
+</ul></li>
+<li>However, if the system is correctly designed we want <span class="math inline">\(Y(s) \rightarrow U(s)\)</span>, so the output follows the input as closely as possible
+<ul>
+<li>e.g.&nbsp;We input a ramp, we would expect a ramp at the output.</li>
+<li>In this case the final value theorem would give us <span class="math inline">\(\large \infty\)</span>, but regardless what information have we gained?</li>
+</ul></li>
+<li>Instead, we design feedback control systems to drive the <em>error</em> between the reference input and the output to zero.</li>
+<li>The final value of the error is a much better indicator of the performance of our controller.</li>
+<li>This is called the <strong><em>Steady State Error</em></strong> and we can use the FVT to obtain it.</li>
+</ul>
+<p>First, we need to write the transfer function from the input <span class="math inline">\(U(s)\)</span> to the error <span class="math inline">\(Err(s)\)</span>. - To emphasise what we are doing, let’s re-write the block diagram:</p>
+
+
+<img src="img/60.feedback-error-1.png" alt="60.feedback-error-1" style="width: 500px;">
+
+
+<p>We know how to write the transfer function for this already: <span class="math display">\[E(s)=U(s)-Y(s)\]</span> <span class="math display">\[Y(s)=G(s)E(s)\]</span></p>
+<p><span class="math display">\[\Rightarrow E(s)=U(s)-G(s)E(s) \rightarrow E(s)+G(s)E(s) = U(s) \]</span> <span class="math display">\[ E(s)= \frac{U(s)}{1+G(s)}\]</span></p>
+<p><strong><em>Steady state error</em></strong></p>
+<p><span class="math display">\[E_{ss} = \lim \limits_{s\rightarrow0} s\frac{U(s)}{1+G(s)}\]</span></p>
+<p>We can now figure out what the steady state error is replacing <span class="math inline">\(U(s)\)</span> with the appropriate input we want to study the response of (e.g.&nbsp;1 (impulse) <span class="math inline">\(\frac{1}{s}\)</span> (step), <span class="math inline">\(\frac{1}{s^2}\)</span> (ramp)).</p>
+<p>The same observations we did before apply: - Depending on the input we are adding poles at the origin, and hence increasing the type of the system. - This means that the system might not be able to follow you inputs perfectly. - This depends on the design specifications and we might need to change the controller - More on this later, for now you might need to modify the system adding a zero at the origin.</p>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
